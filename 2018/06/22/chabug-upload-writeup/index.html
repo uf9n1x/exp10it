@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ChaBug Upload WriteUp | X1r0z Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="假上传点, 其实就是个简单的 SQLi. filename 时间盲注, 能用 BurpSuite 跑. 无提示地过滤了 and or union 关键字, 用 &amp;amp;&amp;amp; || 绕过. ctf.tar.gz">
+<meta name="keywords" content="php,writeup">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ChaBug Upload WriteUp">
+<meta property="og:url" content="https://exp10it.cn/2018/06/22/chabug-upload-writeup/index.html">
+<meta property="og:site_name" content="X1r0z Blog">
+<meta property="og:description" content="假上传点, 其实就是个简单的 SQLi. filename 时间盲注, 能用 BurpSuite 跑. 无提示地过滤了 and or union 关键字, 用 &amp;amp;&amp;amp; || 绕过. ctf.tar.gz">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-02T03:06:31.261Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ChaBug Upload WriteUp">
+<meta name="twitter:description" content="假上传点, 其实就是个简单的 SQLi. filename 时间盲注, 能用 BurpSuite 跑. 无提示地过滤了 and or union 关键字, 用 &amp;amp;&amp;amp; || 绕过. ctf.tar.gz">
+  
+    <link rel="alternate" href="/atom.xml" title="X1r0z Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-chabug-upload-writeup" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/22/chabug-upload-writeup/" class="article-date">
+  <time class="post-time" datetime="2018-06-21T16:00:00.000Z" itemprop="datePublished">
+    <span class="post-month">6月</span><br/>
+    <span class="post-day">22</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ChaBug Upload WriteUp
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf/">ctf</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>假上传点, 其实就是个简单的 SQLi.</p>
+<p>filename 时间盲注, 能用 BurpSuite 跑.</p>
+<p>无提示地过滤了 <code>and or union</code> 关键字, 用 <code>&amp;&amp;</code> <code>||</code> 绕过.</p>
+<p><a href="http://exp10it-1252109039.cossh.myqcloud.com/2018/06/23/1529737472.gz" target="_blank" rel="noopener">ctf.tar.gz</a></p>
+<a id="more"></a>
+<p>源码</p>
+<p>index.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=&quot;upload.php&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">&lt;input type=&quot;file&quot; name=&quot;file&quot; /&gt;</span><br><span class="line">&lt;input type=&quot;hidden&quot; name=&quot;filepath&quot; value=&quot;upload/&quot; /&gt;</span><br><span class="line">&lt;input type=&quot;hidden&quot; name=&quot;filename&quot; value=&quot;&lt;?php echo time().&apos;.jpg&apos;;?&gt;&quot; /&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;上传&quot; /&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">$dir = opendir(&apos;upload/&apos;);</span><br><span class="line">while(($filename=readdir($dir))!==false)&#123;</span><br><span class="line">	if(($filename !=&apos;.&apos;) &amp;&amp; ($filename!=&apos;..&apos;))&#123;</span><br><span class="line">		echo $filename.&apos; &apos;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">closedir($dir);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>upload.php</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">function waf($str)&#123;</span><br><span class="line">	$keyword = array(&apos;union&apos;,&apos;insert&apos;,&apos;update&apos;,&apos;delete&apos;,&apos;where&apos;,&apos;and&apos;,&apos;or&apos;);</span><br><span class="line">	foreach($keyword as $v)&#123;</span><br><span class="line">		while(stripos($str,$v)!==false)&#123;</span><br><span class="line">			$str = str_ireplace($v,&apos;&apos;,$str);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return $str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if(isset($_POST[&apos;submit&apos;]))&#123;</span><br><span class="line">	$filename = time().&apos;.jpg&apos;;</span><br><span class="line">	move_uploaded_file($_FILES[&apos;file&apos;][&apos;tmp_name&apos;],&apos;upload/&apos;.$filename);</span><br><span class="line">	echo &apos;File saved successfully!&apos;;</span><br><span class="line">	echo &apos;&lt;br /&gt;&apos;;</span><br><span class="line">	echo &apos;upload/&apos;.$filename;</span><br><span class="line">	echo &apos;&lt;br /&gt;&apos;;</span><br><span class="line"></span><br><span class="line">	$conn = mysqli_connect(&apos;localhost&apos;,&apos;root&apos;,&apos;root&apos;,&apos;ctf&apos;);</span><br><span class="line">	$name = waf($_POST[&apos;filename&apos;]);</span><br><span class="line">	$sql = &quot;INSERT INTO logs VALUES(&apos;$name&apos;)&quot;;</span><br><span class="line">	$res = mysqli_query($conn,$sql) or die(&apos;saving information error&apos;);</span><br><span class="line">	echo &apos;saved information successfully&apos;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>搅屎脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">import os,sys</span><br><span class="line">import time</span><br><span class="line"></span><br><span class="line">str0 = &apos;&apos;&apos;</span><br><span class="line">&lt;?php</span><br><span class="line">if(isset($_POST[&apos;a&apos;]))&#123;</span><br><span class="line">	echo &apos;hint: union insert update delete where and or&apos;;</span><br><span class="line">&#125;</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line"></span><br><span class="line">str1 = &apos;&apos;&apos;</span><br><span class="line">&lt;html&gt;&lt;body&gt;&lt;center&gt;&lt;form method=&quot;POST&quot;&gt;&lt;input type=&quot;password&quot; name=&quot;getpwd&quot;&gt; &lt;input type=&quot;submit&quot; value=&quot; O K &quot;&gt;&lt;/form&gt;&lt;/center&gt;&lt;/body&gt;&lt;/html&gt;</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line"></span><br><span class="line">str2 = &apos;&apos;&apos;</span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;title&gt;AUTHENTICATION REQUIRED&lt;/title&gt;</span><br><span class="line">&lt;style type=&quot;text/css&quot;&gt;</span><br><span class="line">body, table, tr, td, div, select, input, textarea, pre, code &#123; font: 100% &apos;sans-serif&apos;,sans-serif; text-decoration: none; &#125;</span><br><span class="line">td, div &#123; max-width: 1024px; &#125;</span><br><span class="line">input, select, textarea &#123; border: 0; padding: 0; &#125;</span><br><span class="line">input, select, textarea &#123; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; -ms-box-sizing: border-box; &#125;</span><br><span class="line">input::-moz-focus-inner &#123; border: 0;padding: 0; &#125;</span><br><span class="line">body &#123; background-color: #717678; font-family: &apos;sans-serif&apos;,sans-serif !important; font-size: 10px !important; color: #525252;&#125;</span><br><span class="line">*:focus &#123;outline: none;&#125;</span><br><span class="line">.but1, .but2, .but3, .actbut, .but1:active, .but2:active, .but3:active .actbut:active &#123; border: 1px solid #cccccc; margin-left: 1px; text-shadow: 1px 1px 2px #ffffff; vertical-align: middle; &#125;</span><br><span class="line">.but1, .but2, .but3, .actbut &#123; background: #F5F5F5;</span><br><span class="line">filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=&apos;#F5F5F5&apos;, endColorstr=&apos;#E0E0E0&apos;);</span><br><span class="line">background: -webkit-gradient(linear, left top, left bottom, from(#F5F5F5), to(#E0E0E0));</span><br><span class="line">background: -moz-linear-gradient(top, #F5F5F5, #E0E0E0);</span><br><span class="line">background: -o-linear-gradient(top, #F5F5F5, #E0E0E0);</span><br><span class="line"> &#125;</span><br><span class="line">.but1:hover, .but2:hover, .but3:hover, .actbut:hover &#123; background: #E0E0E0;</span><br><span class="line">filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=&apos;#E0E0E0&apos;, endColorstr=&apos;#F5F5F5&apos;);</span><br><span class="line">background: -webkit-gradient(linear, left top, left bottom, from(#E0E0E0), to(#F5F5F5));</span><br><span class="line">background: -moz-linear-gradient(top, #E0E0E0, #F5F5F5);</span><br><span class="line">background: -o-linear-gradient(top, #E0E0E0, #F5F5F5);</span><br><span class="line"> cursor: pointer; &#125;</span><br><span class="line">.but1 &#123; width: 28px; height: 18px; font-size: 10px; font-weight: bold; &#125;</span><br><span class="line">.but2 &#123; color: #4F4F4F; padding: 0 10px 0 10px; height: 20px; font-size: 10px; &#125;</span><br><span class="line">.actbut &#123; color: #4F4F4F; padding: 0 10px 0 10px; height: 18px; font-size: 10px; font-weight: normal; &#125;</span><br><span class="line"></span><br><span class="line">.login &#123; background: #F2F2F2; border: 1px solid #777777 ; -moz-box-shadow: #666666 0 0 8px; -webkit-box-shadow: 0 0 8px #666666; box-shadow: 0 0 8px #666666; margin-top: 150px; padding: 10px; text-align: left; &#125;</span><br><span class="line">.login td &#123; padding: 0; &#125;</span><br><span class="line">.login input &#123;  background-color: #FFFFFF; border: 1px solid #CCCCCC; color: #333333; margin: 1px; margin-right: 0; height:20px; width:150px; font-size: 10px; text-shadow: 1px 1px 5px #dddddd; vertical-align: middle; &#125;</span><br><span class="line">.lerror &#123; color: #FF0000; padding-bottom: 10px !important; &#125;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; align=&quot;center&quot; class=&quot;login&quot;&gt;</span><br><span class="line">&lt;tr valign=&quot;middle&quot;&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;form method=&quot;POST&quot; action=&quot;&quot;&gt;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot; align=&quot;center&quot;&gt;</span><br><span class="line">&lt;tr valign=&quot;middle&quot;&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;span style=&quot;font-size: 9px; color: #333333; font-weight: bold;&quot;&gt;USER&amp;nbsp; &lt;/span&gt;&lt;/td&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;input type=&quot;text&quot; name=&quot;zu&quot; value=&quot;&quot;&gt;&lt;/td&gt;</span><br><span class="line">&lt;/tr&gt;</span><br><span class="line">&lt;tr valign=&quot;middle&quot;&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;span style=&quot;font-size: 9px; color: #333333; font-weight: bold;&quot;&gt;PASS&amp;nbsp; &lt;/span&gt;&lt;/td&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;input type=&quot;password&quot; name=&quot;zp&quot; value=&quot;&quot;&gt;&lt;/td&gt;</span><br><span class="line">&lt;/tr&gt;</span><br><span class="line">&lt;tr valign=&quot;middle&quot;&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;/td&gt;</span><br><span class="line">&lt;td&gt;</span><br><span class="line">&lt;input type=&quot;submit&quot; value=&quot;Connect&quot; class=&quot;but2&quot;&gt;&lt;/td&gt;</span><br><span class="line">&lt;/tr&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;/form&gt;&lt;/td&gt;</span><br><span class="line">&lt;/tr&gt;</span><br><span class="line">&lt;/table&gt;</span><br><span class="line">&lt;/body&gt;&lt;/html&gt;</span><br><span class="line">&apos;&apos;&apos;</span><br><span class="line"></span><br><span class="line">print(&apos;[*] 搅屎开始!&apos;)</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">	dirlist = os.listdir(&apos;upload/&apos;)</span><br><span class="line">	if &apos;phpspy.php&apos; in dirlist:</span><br><span class="line">		print(&apos;[*] 搅屎完毕!&apos;)</span><br><span class="line">		sys.exit()</span><br><span class="line">	if len(dirlist)&gt;=20:</span><br><span class="line">		with open(&apos;upload/&apos;+str(int(time.time()))+&apos;.php&apos;,&apos;w+&apos;) as f:</span><br><span class="line">			f.write(str0)</span><br><span class="line">		print(&apos;[+] 搅屎x1&apos;)</span><br><span class="line">	if len(dirlist)&gt;=30:</span><br><span class="line">		with open(&apos;upload/bypass.php&apos;,&apos;w+&apos;) as f:</span><br><span class="line">			f.write(str1)</span><br><span class="line">		print(&apos;[+] 搅屎x2&apos;)</span><br><span class="line">	if len(dirlist)&gt;=40:</span><br><span class="line">		with open(&apos;upload/phpspy.php&apos;,&apos;w+&apos;) as f:</span><br><span class="line">			f.write(str2)</span><br><span class="line">		print(&apos;[+] 搅屎x3&apos;)</span><br><span class="line">	print(&apos;[-] 等待下一波搅屎&apos;)</span><br><span class="line">	time.sleep(60)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://exp10it.cn/2018/06/22/chabug-upload-writeup/" data-id="cjkbzjdo90092bqntopdqucut" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/php/">php</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/06/23/msfvenom-ng/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          MSFvenom-NG
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/06/20/msfvenom-multi-encode/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">msfvenom multiple encode</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">X1r0z Blog</h1>
+    <h2 class="blog-subtitle">剑之所指, 心之所向</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/X1r0z" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="https://chabug.org/" target="_blank" title="ChaBug">
+          ChaBug
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://blog.dyboy.cn/" target="_blank" title="DYBOY">
+          DYBOY
+        </a>
+      
+        <a class="hvr-bounce-in" href="https://exp10it.cn/" target="_blank" title="超级无敌宇宙大帅比">
+          超级无敌宇宙大帅比
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 X1r0z<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/about" title="" class="menuItem">关于</a>
+          
+            <a href="/project" title="" class="menuItem">项目</a>
+          
+        </div>
+        
+          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

