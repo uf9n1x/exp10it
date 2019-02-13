@@ -23,7 +23,7 @@
     <a href="/" id="title"></a>
 	</h1>
 	</div>
-<div id="md" style="display: none;">
+<xmp id="md" style="display: none;">
 <!-- markdown -->
 除第一次需要指定 payload 外, 其他都用 `-p -` 代替, 多重编码需要指定 `--platform` 和 `-a` 并用 `-f raw` 输出, 最后一次编码更改为 `-f exe`
 
@@ -44,7 +44,7 @@ encs += '-e ' + list(encoders.keys())[-1] + ' -i ' + encoders.get(list(encoders.
 args += encs + '-f exe > msf.exe'
 ```
 <!-- markdown end -->
-</div>
+</xmp>
 <div class="entry" id="main">
 <!-- content -->
 <p>除第一次需要指定 payload 外, 其他都用 <code>-p -</code> 代替, 多重编码需要指定 <code>--platform</code> 和 <code>-a</code> 并用 <code>-f raw</code> 输出, 最后一次编码更改为 <code>-f exe</code></p>

