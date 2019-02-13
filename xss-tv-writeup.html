@@ -19,9 +19,9 @@
     	</ul>
     </div>
 	<div class="wrap-header">
-	<h1>
+    <h1>
     <a href="/" id="title"></a>
-	</h1>
+    </h1>
 	</div>
 <xmp id="md" style="display: none;">
 <!-- markdown -->
@@ -61,7 +61,7 @@
 
 ## level 5
 
-on 事件被转义成 o_n, script 标签也被转义成 scr_ipt
+on 事件被转义成 `o_n`, script 标签也被转义成 `scr_ipt`
 
 换一个姿势
 
@@ -97,7 +97,7 @@ keyword 中没有 `http://` 就显示为非法链接
 
 ## level 10
 
-查看源代码发现有三个隐藏参数, t_link t_history t_sort, 其中只有 t_sort 可控
+查看源代码发现有三个隐藏参数, `t_link t_history t_sort`, 其中只有 `t_sort` 可控
 
 由于标签是 hidden 的就不能触发 on 事件, 所以要改回 text 状态
 
@@ -105,7 +105,7 @@ keyword 中没有 `http://` 就显示为非法链接
 
 ## level 11
 
-隐藏参数多了个 t_referer, 抓包修改 referer 即可
+隐藏参数多了个 `t_referer`, 抓包修改 referer 即可
 
 `1" type="text" onmouseover="alert(0)`
 
@@ -196,7 +196,7 @@ src 直接包含第一关的内容传参 keyword 为 payload, 并没啥屌用, �
 
 <h2 id="level5">level 5</h2>
 
-<p>on 事件被转义成 o<em>n, script 标签也被转义成 scr</em>ipt</p>
+<p>on 事件被转义成 <code>o_n</code>, script 标签也被转义成 <code>scr_ipt</code></p>
 
 <p>换一个姿势</p>
 
@@ -232,7 +232,7 @@ src 直接包含第一关的内容传参 keyword 为 payload, 并没啥屌用, �
 
 <h2 id="level10">level 10</h2>
 
-<p>查看源代码发现有三个隐藏参数, t<em>link t</em>history t<em>sort, 其中只有 t</em>sort 可控</p>
+<p>查看源代码发现有三个隐藏参数, <code>t_link t_history t_sort</code>, 其中只有 <code>t_sort</code> 可控</p>
 
 <p>由于标签是 hidden 的就不能触发 on 事件, 所以要改回 text 状态</p>
 
@@ -240,7 +240,7 @@ src 直接包含第一关的内容传参 keyword 为 payload, 并没啥屌用, �
 
 <h2 id="level11">level 11</h2>
 
-<p>隐藏参数多了个 t_referer, 抓包修改 referer 即可</p>
+<p>隐藏参数多了个 <code>t_referer</code>, 抓包修改 referer 即可</p>
 
 <p><code>1" type="text" onmouseover="alert(0)</code></p>
 
