@@ -148,13 +148,13 @@ a 上架设 socks 代理, 端口 1800, 数据通过 b 转发到内网的任何�
 ## portfwd
 
 ```
-portfwd add -r 1234 -r 192.168.1.100 -p 3389
+portfwd add -l 1234 -r 192.168.1.100 -p 3389
 ```
 
 删除
 
 ```
-portfwd del -r 1234
+portfwd del -l 1234
 ```
 
 ## reDuh reGeorg Tunna
@@ -183,13 +183,13 @@ server: lcx.exe -slave 192.168.1.100 8888 127.0.0.1 3389
 server: ew.exe -s rssocks -d 192.168.1.100 -e 8888
 </code></pre>
 
-<h3>端口转发</h3>
+<h3 id="">端口转发</h3>
 
 <pre><code>client: ew.exe -s lcx_listen -l 1234 -e 8888
 server: ew.exe -s lcx_slave -d 192.168.1.100 -e 8888 -f 127.0.0.1 3389
 </code></pre>
 
-<h3>多级级联</h3>
+<h3 id="">多级级联</h3>
 
 <pre><code>a: 192.168.1.100
 b: 192.168.1.101,10.0.0.1
@@ -247,14 +247,14 @@ b: 192.168.1.101,10.0.0.1
 c: 10.0.0.2
 </code></pre>
 
-<h3>本地端口转发</h3>
+<h3 id="">本地端口转发</h3>
 
 <pre><code>a: ssh  -CfNg -L 1234:10.0.0.2:3389 root@192.168.1.101
 </code></pre>
 
 <p>a 上 1234 端口的数据通过 b 被转发到 c 上的 3389 端口</p>
 
-<h3>远程端口转发</h3>
+<h3 id="">远程端口转发</h3>
 
 <pre><code>a: ssh CfNg -R 1234:192.168.1.100:3389 root@192.168.1.101
 </code></pre>
@@ -270,12 +270,12 @@ c: 10.0.0.2
 
 <h2 id="portfwd">portfwd</h2>
 
-<pre><code>portfwd add -r 1234 -r 192.168.1.100 -p 3389
+<pre><code>portfwd add -l 1234 -r 192.168.1.100 -p 3389
 </code></pre>
 
 <p>删除</p>
 
-<pre><code>portfwd del -r 1234
+<pre><code>portfwd del -l 1234
 </code></pre>
 
 <h2 id="reduhregeorgtunna">reDuh reGeorg Tunna</h2>
