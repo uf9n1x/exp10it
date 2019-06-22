@@ -88,13 +88,17 @@ net group "Domain Adminis" exp10it /add /domain
 ```
 net view \\DC 查询共享
 
-net use z: \\DC\c$ 映射盘符
+net use z: \\DC\c$ 匿名映射盘符
+
+net use z: \\DC\c$ password /user:username 登录映射盘符
 
 net use z: /del 删除映射
 
 net share name$=d:\web 创建共享
 
 net use z: \\DC\name$ 映射共享
+
+net use z: \\DC\name$ password /user:username 登录映射共享
 
 net share name$ /del 删除共享
 ```
@@ -169,13 +173,17 @@ net group "Domain Adminis" exp10it /add /domain
 
 <pre><code>net view \\DC 查询共享
 
-net use z: \\DC\c$ 映射盘符
+net use z: \\DC\c$ 匿名映射盘符
+
+net use z: \\DC\c$ password /user:username 登录映射盘符
 
 net use z: /del 删除映射
 
 net share name$=d:\web 创建共享
 
 net use z: \\DC\name$ 映射共享
+
+net use z: \\DC\name$ password /user:username 登录映射共享
 
 net share name$ /del 删除共享
 </code></pre>
