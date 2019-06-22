@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+有的命令含有 `/domain`, 多数指在域控上查询, 即在域控上执行该命令, 并回显结果
+
+其中 `dsquery`  命令仅能在域控上使用
+
+```
+net view 获取域/工作组内计算机 (可能不全)
+
+net view /domain  获取所有域/工作组
+
+net config Workstation 获取当前计算机信息
+
+nbtstat -A 192.168.1.100 获取 IP 对应 MAC 地址
+
+ping -n 1 DC -4 根据计算机名获取对应 IP, -4 指获取 IPv4 地址
+```
+
+```
+dsquery user 获取域内所有用户, 以 ldap 方式回显
+
+dsquery computer 获取域内所有计算机, 以 ldap 方式回显
+
+net user /domain 获取域内所有用户
+
+net localgroup /domain 获取域内所有本地组
+
+net group /domain 获取域内所有全局组
+```
+
+其中部分域组如下, 其中域控独立于 `Domain Computers` 组, 故仅能在 `Domain Controllers` 组中被查询到
+
+```
+Domain Admins 域内管理员组
+
+Domain Computers 域内计算机组
+
+Domain Controllers 域内控制器组
+
+Domain Guests 域内来宾用户组
+
+Domain Users 域内用户组
+```
+
+获取域组内成员
+
+```
+net group "Domain Controllers" /domain
+
+net group "Domain Admins" /domain
+```
+
+创建域用户/提升为域管理员
+
+```
+net user exp10it 1234abcd!@#$ /add /domain
+
+net group "Domain Adminis" exp10it /add /domain
+```
+
+设置共享, 其中默认共享为 `盘符$`, 如 C 盘共享为 `c$`
+
+```
+net view \\DC 查询共享
+
+net use z: \\DC\c$ 映射盘符
+
+net use z: /del 删除映射
+
+net share name$=d:\web 创建共享
+
+net use z: \\DC\name$ 映射共享
+
+net share name$ /del 删除共享
+```
+
+定位域控
+
+```
+net time /domain
+
+nslookup -type=SRV _ldap._tcp.
+
+ipconfig
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>有的命令含有 <code>/domain</code>, 多数指在域控上查询, 即在域控上执行该命令, 并回显结果</p>
+
+<p>其中 <code>dsquery</code>  命令仅能在域控上使用</p>
+
+<pre><code>net view 获取域/工作组内计算机 (可能不全)
+
+net view /domain  获取所有域/工作组
+
+net config Workstation 获取当前计算机信息
+
+nbtstat -A 192.168.1.100 获取 IP 对应 MAC 地址
+
+ping -n 1 DC -4 根据计算机名获取对应 IP, -4 指获取 IPv4 地址
+</code></pre>
+
+<pre><code>dsquery user 获取域内所有用户, 以 ldap 方式回显
+
+dsquery computer 获取域内所有计算机, 以 ldap 方式回显
+
+net user /domain 获取域内所有用户
+
+net localgroup /domain 获取域内所有本地组
+
+net group /domain 获取域内所有全局组
+</code></pre>
+
+<p>其中部分域组如下, 其中域控独立于 <code>Domain Computers</code> 组, 故仅能在 <code>Domain Controllers</code> 组中被查询到</p>
+
+<pre><code>Domain Admins 域内管理员组
+
+Domain Computers 域内计算机组
+
+Domain Controllers 域内控制器组
+
+Domain Guests 域内来宾用户组
+
+Domain Users 域内用户组
+</code></pre>
+
+<p>获取域组内成员</p>
+
+<pre><code>net group "Domain Controllers" /domain
+
+net group "Domain Admins" /domain
+</code></pre>
+
+<p>创建域用户/提升为域管理员</p>
+
+<pre><code>net user exp10it 1234abcd!@#$ /add /domain
+
+net group "Domain Adminis" exp10it /add /domain
+</code></pre>
+
+<p>设置共享, 其中默认共享为 <code>盘符$</code>, 如 C 盘共享为 <code>c$</code></p>
+
+<pre><code>net view \\DC 查询共享
+
+net use z: \\DC\c$ 映射盘符
+
+net use z: /del 删除映射
+
+net share name$=d:\web 创建共享
+
+net use z: \\DC\name$ 映射共享
+
+net share name$ /del 删除共享
+</code></pre>
+
+<p>定位域控</p>
+
+<pre><code>net time /domain
+
+nslookup -type=SRV _ldap._tcp.
+
+ipconfig
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "commands-in-domain-penetration.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
