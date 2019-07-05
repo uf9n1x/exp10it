@@ -51,7 +51,7 @@ socat TCP4-LISTEN:8080,fork TCP4:[team server]:8080
 
 配置不同的 A 记录指向重定向器的 IP
 
-之后配置 NS 记录指向重定向器所在域名
+之后配置 NS 记录指向重定向器所在域名.
 
 ```
 r1         A   192.168.1.100
@@ -62,7 +62,7 @@ games      NS  r2.exp10it.cn
 pictures   NS  r3.exp10it.cn
 ```
 
-在重定向器中执行命令, 如果使用 `windows/beacon_dns/reverse_dns_txt` 则仅须转发 53 端口
+在重定向器中执行命令, 如果使用 `windows/beacon_dns/reverse_dns_txt` 则仅须转发 53 端口.
 
 ```
 socat UDP4-LISTEN:53,fork UDP4:[team server]:53
@@ -105,7 +105,7 @@ socat TCP4-LISTEN:8080,fork TCP4:[team server]:8080
 
 <p>配置不同的 A 记录指向重定向器的 IP</p>
 
-<p>之后配置 NS 记录指向重定向器所在域名</p>
+<p>之后配置 NS 记录指向重定向器所在域名.</p>
 
 <pre><code>r1         A   192.168.1.100
 r2         A   192.168.1.101
@@ -115,7 +115,7 @@ games      NS  r2.exp10it.cn
 pictures   NS  r3.exp10it.cn
 </code></pre>
 
-<p>在重定向器中执行命令, 如果使用 <code>windows/beacon_dns/reverse_dns_txt</code> 则仅须转发 53 端口</p>
+<p>在重定向器中执行命令, 如果使用 <code>windows/beacon_dns/reverse_dns_txt</code> 则仅须转发 53 端口.</p>
 
 <pre><code>socat UDP4-LISTEN:53,fork UDP4:[team server]:53
 socat TCP4-LISTEN:8080,fork TCP4:[team server]:8080
@@ -134,7 +134,7 @@ socat TCP4-LISTEN:8080,fork TCP4:[team server]:8080
 <br>
     <div id="disqus_thread"></div>
 	<div class="footer">
-		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+		<p>© Copyright 2017-2019 by X1r0z</p>
 	</div>
 </div>
 <script src="main.js"></script>
