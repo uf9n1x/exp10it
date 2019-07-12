@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+applocker 即"应用程序控制策略", 顾名思义, 该策略对计算机上的应用程序具有严格的限制.
+
+具体来说, applocker 限制你能运行哪些软件, 哪些脚本, 在哪运行, 能安装哪些软件, 什么厂商的软件, 等等.
+
+在渗透测试中, 目标主机可能配置了 applocker 以禁止例如第三方 exe, vbs ps1 脚本的运行, 不过就现在看来也是个很鸡肋的功能.
+
+applocker 的默认策略允许 `C:\Program Files (x86)\`, `C:\Program Files\`, `C:\Windows\` 中可执行文件和脚本的运行, 同时允许带数字签名或在 `C:\Windows\Installer\` 中 msi 程序的运行.
+ 
+即使 applocker 限制了可执行文件的路径, 但我们可以利用 windows 自带的程序间接的运行指定的 payload.
+
+以下程序(包括但不限于)可间接执行 payload 绕过 applocker.
+
+```
+mshta
+msbuild
+msiexec
+rundll32
+regasm
+regsvcs
+regsvr32
+installutil
+```
+
+演示略.
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>applocker 即"应用程序控制策略", 顾名思义, 该策略对计算机上的应用程序具有严格的限制.</p>
+
+<p>具体来说, applocker 限制你能运行哪些软件, 哪些脚本, 在哪运行, 能安装哪些软件, 什么厂商的软件, 等等.</p>
+
+<p>在渗透测试中, 目标主机可能配置了 applocker 以禁止例如第三方 exe, vbs ps1 脚本的运行, 不过就现在看来也是个很鸡肋的功能.</p>
+
+<p>applocker 的默认策略允许 <code>C:\Program Files (x86)\</code>, <code>C:\Program Files\</code>, <code>C:\Windows\</code> 中可执行文件和脚本的运行, 同时允许带数字签名或在 <code>C:\Windows\Installer\</code> 中 msi 程序的运行.</p>
+
+<p>即使 applocker 限制了可执行文件的路径, 但我们可以利用 windows 自带的程序间接的运行指定的 payload.</p>
+
+<p>以下程序(包括但不限于)可间接执行 payload 绕过 applocker.</p>
+
+<pre><code>mshta
+msbuild
+msiexec
+rundll32
+regasm
+regsvcs
+regsvr32
+installutil
+</code></pre>
+
+<p>演示略.</p>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "windows-bypass-applocker.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
