@@ -105,6 +105,8 @@ responder -I eth0 -rwdv
 
 `-w` 参数使 Responder 开启 WPAD 代理服务器, 在不影响 HTTP 正常访问的情况下监听用户所浏览的 URL 及 Cookies 等信息, 也能获取到 Net-NTLM Hash.
 
+另外还有 `-A` 参数指定 Responder 仅仅监听请求, 而不进行欺骗, 这对于管理员使用习惯的分析是一个很不错的方式.
+
 至此在 Client 中对不存在的主机名发送请求, Responder 将会回应请求并获取到 Client 发送的 Net-NTLM Hash. 同时也会使 Client 启用 Responder 的 WPAD 代理服务器并对浏览内容进行持续监听.
 
 注意在上文中也说过, 对局域网中已存在的主机名进行欺骗也能进行, 不过效果并不理想, 实际测试中仅在 Windows Server 2003 上测试成功 (欺骗 2003 机器的主机名).
@@ -140,13 +142,15 @@ Client <---> Attacker (LLMNR/NetBIOS-NS/WPAD Attack) Responder
 Client ---> Attacker  <---> Target (LLMNR/NetBIOS-NS/WPAD) Responder + Impacket
 ```
 
-一句话概况就是, 如果想要 SMB 重放, 就必须得用 Impacket, 如果想要流量经过自己, 就必须得用 Responder (或是 Web 服务器 + UNC 路径).
+一句话概括, 想要 SMB 重放, 就必须得用 Impacket, 想要流量经过自己, 就必须得用 Responder (或是 Web 服务器 + UNC 路径). 如果你是第一次在实战中利用这个漏洞, 建议先单独开 Responder 收集 Net-NTLM Hash 和浏览信息, 或者仅仅使用 `-A` 参数, 先摸清管理员的日常使用习惯, 再根据实际情况决定是否使用 Impacket.
 
 `smbrelayx.py` 在 2008 R2 系统中的利用, 除非指定登录凭据, 否则就会拿当前用户的凭据进行登录, 这就需要 Client 和 Target 的用户凭据完全相同, 工作组中可能很少遇到, 但在域内环境中这和域控和域内计算机的关系非常类似, 域管理员在一般情况下可以直接登录域内的计算机. 利用这一点加上 UNC 路径可以更好的隐蔽, 同时又达到了欺骗的效果.
 
 Responder 对已有主机名的欺骗效果不太理想, 事实上 Metasploit 中 Spoof 的一系列模块也是这样, 不过仔细想想, 这样也可以使得内网中的资源可以被正常访问, 也就提高了隐蔽性. 这里有一个利用场景: 内网中架设了防火墙, 如果计算机试图访问被防火墙拦截了的网址呢?
 
 另外 Responder 中提供了自定义 PAC 的选项, 可以通过在某些网页弹出登录框的方式达到欺骗的效果 (例如管理员网站后台).
+
+文章虽然有点长, 但大部分篇幅都在讲述如何进行 "欺骗" 而不是 "重放", 如果单纯去理解 SMB 重放攻击的话, 那就是一句话: 将别人的 SMB 数据包请求拿过来给自己用. 重放攻击和 SMB 签名息息相关, 理解了签名就对重放攻击有一个比较清晰的认识了.
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
@@ -228,6 +232,8 @@ Responder 对已有主机名的欺骗效果不太理想, 事实上 Metasploit �
 
 <p><code>-w</code> 参数使 Responder 开启 WPAD 代理服务器, 在不影响 HTTP 正常访问的情况下监听用户所浏览的 URL 及 Cookies 等信息, 也能获取到 Net-NTLM Hash.</p>
 
+<p>另外还有 <code>-A</code> 参数指定 Responder 仅仅监听请求, 而不进行欺骗, 这对于管理员使用习惯的分析是一个很不错的方式.</p>
+
 <p>至此在 Client 中对不存在的主机名发送请求, Responder 将会回应请求并获取到 Client 发送的 Net-NTLM Hash. 同时也会使 Client 启用 Responder 的 WPAD 代理服务器并对浏览内容进行持续监听.</p>
 
 <p>注意在上文中也说过, 对局域网中已存在的主机名进行欺骗也能进行, 不过效果并不理想, 实际测试中仅在 Windows Server 2003 上测试成功 (欺骗 2003 机器的主机名).</p>
@@ -260,13 +266,15 @@ Client &lt;---&gt; Attacker (LLMNR/NetBIOS-NS/WPAD Attack) Responder
 Client ---&gt; Attacker  &lt;---&gt; Target (LLMNR/NetBIOS-NS/WPAD) Responder + Impacket
 </code></pre>
 
-<p>一句话概况就是, 如果想要 SMB 重放, 就必须得用 Impacket, 如果想要流量经过自己, 就必须得用 Responder (或是 Web 服务器 + UNC 路径).</p>
+<p>一句话概括, 想要 SMB 重放, 就必须得用 Impacket, 想要流量经过自己, 就必须得用 Responder (或是 Web 服务器 + UNC 路径). 如果你是第一次在实战中利用这个漏洞, 建议先单独开 Responder 收集 Net-NTLM Hash 和浏览信息, 或者仅仅使用 <code>-A</code> 参数, 先摸清管理员的日常使用习惯, 再根据实际情况决定是否使用 Impacket.</p>
 
 <p><code>smbrelayx.py</code> 在 2008 R2 系统中的利用, 除非指定登录凭据, 否则就会拿当前用户的凭据进行登录, 这就需要 Client 和 Target 的用户凭据完全相同, 工作组中可能很少遇到, 但在域内环境中这和域控和域内计算机的关系非常类似, 域管理员在一般情况下可以直接登录域内的计算机. 利用这一点加上 UNC 路径可以更好的隐蔽, 同时又达到了欺骗的效果.</p>
 
 <p>Responder 对已有主机名的欺骗效果不太理想, 事实上 Metasploit 中 Spoof 的一系列模块也是这样, 不过仔细想想, 这样也可以使得内网中的资源可以被正常访问, 也就提高了隐蔽性. 这里有一个利用场景: 内网中架设了防火墙, 如果计算机试图访问被防火墙拦截了的网址呢?</p>
 
 <p>另外 Responder 中提供了自定义 PAC 的选项, 可以通过在某些网页弹出登录框的方式达到欺骗的效果 (例如管理员网站后台).</p>
+
+<p>文章虽然有点长, 但大部分篇幅都在讲述如何进行 "欺骗" 而不是 "重放", 如果单纯去理解 SMB 重放攻击的话, 那就是一句话: 将别人的 SMB 数据包请求拿过来给自己用. 重放攻击和 SMB 签名息息相关, 理解了签名就对重放攻击有一个比较清晰的认识了.</p>
 <!-- content end -->
 </div>
 <br>
