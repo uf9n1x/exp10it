@@ -51,7 +51,7 @@ server: ew.exe -s rssocks -d 192.168.1.100 -e 8888
 
 ```
 client: ew.exe -s lcx_listen -l 1234 -e 8888
-server: ew.exe -s lcx_slave -d 192.168.1.100 -e 8888 -f 127.0.0.1 3389
+server: ew.exe -s lcx_slave -d 192.168.1.100 -e 8888 -f 127.0.0.1 -g 3389
 ```
 
 ### 多级级联
@@ -186,7 +186,7 @@ server: ew.exe -s rssocks -d 192.168.1.100 -e 8888
 <h3 id="">端口转发</h3>
 
 <pre><code>client: ew.exe -s lcx_listen -l 1234 -e 8888
-server: ew.exe -s lcx_slave -d 192.168.1.100 -e 8888 -f 127.0.0.1 3389
+server: ew.exe -s lcx_slave -d 192.168.1.100 -e 8888 -f 127.0.0.1 -g 3389
 </code></pre>
 
 <h3 id="">多级级联</h3>
@@ -287,7 +287,7 @@ c: 10.0.0.2
 <br>
     <div id="disqus_thread"></div>
 	<div class="footer">
-		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+		<p>© Copyright 2017-2019 by X1r0z</p>
 	</div>
 </div>
 <script src="main.js"></script>
