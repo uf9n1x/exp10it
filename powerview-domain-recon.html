@@ -183,7 +183,7 @@ Get-DomainSID
 
 **Get-DomainGroup**
 
-返回当前域的所有组.
+返回当前域的所有组. 实际测试中只能查看域内管理员组, 本地无法查看, 以下同.
 
 ```
 Get-DomainGroup | Select SAMAccountName
@@ -322,6 +322,8 @@ Find-InterestingFile
 ```
 
 ## Meta
+
+Meta 个人感觉翻译为 "对全体域内计算机进行操作的脚本" 更为合适, 当然, 需要域管权限.
 
 **Find-DomainUserLocation**
 
@@ -536,7 +538,7 @@ Set-DomainUserPassword -Identity test -AccountPassword $Password
 
 <p><strong>Get-DomainGroup</strong></p>
 
-<p>返回当前域的所有组.</p>
+<p>返回当前域的所有组. 实际测试中只能查看域内管理员组, 本地无法查看, 以下同.</p>
 
 <pre><code>Get-DomainGroup | Select SAMAccountName
 </code></pre>
@@ -658,6 +660,8 @@ Set-DomainUserPassword -Identity test -AccountPassword $Password
 </code></pre>
 
 <h2 id="meta">Meta</h2>
+
+<p>Meta 个人感觉翻译为 "对全体域内计算机进行操作的脚本" 更为合适, 当然, 需要域管权限.</p>
 
 <p><strong>Find-DomainUserLocation</strong></p>
 
