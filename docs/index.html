@@ -7,6 +7,14 @@
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title> Loading... </title>
 <script>
+function gethash(){
+  if(window.location.hostname == "127.0.0.1"){
+    return 'bXffdPAFPEfWAaabbaEXbFAbcFfbcCEPaOCTccdPMTI3LjAuMC4x'
+  } else {
+    return 'bXffdPAFPEfWAaabbaEXbFAbcFfbcCEPaOCTccdPZXhwMTBpdC5jbg=='
+  }
+}
+
 window.config = {
   organization: false,
   order: 'CREATED_AT',
@@ -15,7 +23,7 @@ window.config = {
   repository: 'exp10it',
   authors: 'X1r0z',
   ignores: '',
-  hash: 'bXffdPAFPEfWAaabbaEXbFAbcFfbcCEPaOCTccdPZXhwMTBpdC5jbg==',
+  hash: gethash(),
   perpage: 7,
 }
 </script>
