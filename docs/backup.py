@@ -12,11 +12,13 @@ folder = 'posts/'
 if not os.path.exists(folder):
 	os.mkdir(folder)
 
+token = 'c#c8d8b28cd9f7cda349#d0818fc56b9955d3c03a#0'
+
 url = 'https://api.github.com/repos/X1r0z/exp10it/issues'
 
 headers = {
 	'Accept': 'application/vnd.github.v3+json',
-	'Authorization': 'token a5cef10acab3f91e535bce45ad7f9d2b16ad972e'
+	'Authorization': token.replace('#', '')
 }
 
 p = 1
