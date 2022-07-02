@@ -1,9 +1,9 @@
-## exp10it
+# X1r0z Blog
 
-博客地址 [exp10it.cn](https://exp10it.cn).
+[exp10it.cn](https://exp10it.cn)
 
-代码基于 [LoeiFy/Mirror](https://github.com/LoeiFy/Mirror) 修改.
+基于 [hugo](https://github.com/gohugoio/hugo) 搭建
 
-禁止任何形式的 Issue.
+主题基于 [xiaoheiAh/hugo-theme-pure](https://github.com/xiaoheiAh/hugo-theme-pure)
 
-有问题联系邮箱 [i@exp10it.cn](mailto:i@exp10it.cn).
+自己微改代码高亮部分字体
