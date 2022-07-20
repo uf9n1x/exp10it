@@ -1,5 +1,5 @@
 ---
-title: "Typecho Writeup"
+title: "Typecho WriteUp"
 date: 2018-03-17T00:00:00+08:00
 draft: false
 tags: ['php','ctf']
