@@ -56,7 +56,7 @@ else{echo "please input a";}
 'a1' == 0 // true
 'a1' == 1 // false
 
-'0e123' == '0e456'
+'0e123' == '0e456' //true
 ```
 
 PHP 会将 `1a` 转换成 `1` (因为开头是数字, 后面的字符串直接被截断了)
@@ -444,7 +444,7 @@ echo "please input pass!";
 
 这里 if 中加了 `!`, 即我们要使 `strcmp($pass,$pass1)` 的结果是 0, 才能显示出 flag
 
-`strcmp()` 在 PHP 的一些版本中存在这数组绕过漏洞, 因为函数比较的是字符串, 如果我们给参数传递一个数组进去, 就会爆 Warning 同时返回 0
+`strcmp()` 在 PHP 的一些版本中存在着数组绕过漏洞, 因为函数比较的是字符串, 如果我们给参数传递一个数组进去, 就会爆 Warning 同时返回 0
 
 POST 传递
 

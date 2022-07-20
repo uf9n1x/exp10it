@@ -61,7 +61,7 @@ about.php
 
 可以尝试爆破, 但这个先放一边, 我们接着看源码
 
-tips 说了 xss 与题目无关, 所以我们看一下 antiinjec.php
+tips 说了 xss 与题目无关, 所以我们看一下 antiinject.php
 
 ```
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
