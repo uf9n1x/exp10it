@@ -1,5 +1,5 @@
 ---
-title: "Ctfshow Web入门[信息搜集] WriteUp"
+title: "ctfshow Web入门[信息搜集] WriteUp"
 date: 2022-07-20T22:07:23+08:00
 draft: false
 tags: ['ctf','php']
