@@ -99,8 +99,8 @@ params:
     avatar: avatar.png
     gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
     author: X1r0z
-    author_title: Student, ChaBug
-    author_description: Student, ChaBug
+    author_title: Student, NJUPT
+    author_description: Student, NJUPT
     location: Jiangsu, China
     follow: https://github.com/X1r0z
     # Social Links

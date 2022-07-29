@@ -141,7 +141,7 @@ echo mt_rand();
 
 ![20220722112625](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220722112625.png)
 
-md5 flag 截取前8位然后转10进制作为种子`
+md5 flag 截取前8位然后转10进制作为种子
 
 `http://bae73641-ed2c-4237-af90-0e68675b4648.challenge.ctf.show/?r=1` -55428564
 
