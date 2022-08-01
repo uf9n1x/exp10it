@@ -1,5 +1,5 @@
 ---
-title: "CG CTF Web WriteUp"
+title: "CG CTF Web Writeup"
 date: 2022-07-20T13:12:17+08:00
 draft: false
 tags: ['php','ctf','sqli']

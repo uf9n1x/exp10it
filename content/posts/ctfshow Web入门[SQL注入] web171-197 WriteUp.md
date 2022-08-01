@@ -1,5 +1,5 @@
 ---
-title: "ctfshow Web入门[SQL注入] web171-197 WriteUp"
+title: "ctfshow Web入门[SQL注入] web171-197 Writeup"
 date: 2022-07-25T21:49:56+08:00
 draft: false
 tags: ['sqli','ctf','php']

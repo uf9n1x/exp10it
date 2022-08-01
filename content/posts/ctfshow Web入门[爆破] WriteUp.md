@@ -1,5 +1,5 @@
 ---
-title: "ctfshow Web入门[爆破] WriteUp"
+title: "ctfshow Web入门[爆破] Writeup"
 date: 2022-07-22T14:00:43+08:00
 draft: false
 tags: ['ctf']

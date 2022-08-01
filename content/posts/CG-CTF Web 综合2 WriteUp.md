@@ -1,5 +1,5 @@
 ---
-title: "CG CTF Web 综合2 WriteUp"
+title: "CG CTF Web 综合2 Writeup"
 date: 2022-07-20T16:08:22+08:00
 draft: false
 tags: ['php','ctf','sqli']

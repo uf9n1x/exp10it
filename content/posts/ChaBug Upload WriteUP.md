@@ -1,5 +1,5 @@
 ---
-title: "ChaBug Upload WriteUp"
+title: "ChaBug Upload Writeup"
 date: 2018-06-22T00:00:00+08:00
 draft: false
 tags: ['ctf']
