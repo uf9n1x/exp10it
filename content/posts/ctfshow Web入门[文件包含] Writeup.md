@@ -1,5 +1,5 @@
 ---
-title: "Ctfshow Web入门[文件包含] Writeup"
+title: "ctfshow Web入门[文件包含] Writeup"
 date: 2022-08-04T11:32:16+08:00
 draft: false
 tags: ['ctf','php']
