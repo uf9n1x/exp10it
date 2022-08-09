@@ -1,5 +1,5 @@
 ---
-title: "ctfshow Web入门[命令执行] Web29-55 Writeup"
+title: "ctfshow Web入门[命令执行] web29-55 Writeup"
 date: 2022-08-08T16:55:37+08:00
 draft: false
 tags: ['ctf']
@@ -550,7 +550,7 @@ tac nl od 依然可以绕过
 
 tac 和 nl 绕过
 
-查了一些发现 sed cut awk curl 也能读文件
+查了一下发现 sed cut awk curl 也能读文件
 
 以下仅列举一点内容 (因为我也不太会用...)
 
@@ -693,13 +693,13 @@ hint 的方法比较有意思
 base64 绕过
 
 ```
-http://770265fe-2a54-4d73-98b5-cd44b3dce236.challenge.ctf.show/?c=/???/????64%20????.???
+http://770265fe-2a54-4d73-98b5-cd44b3dce236.challenge.ctf.show/?c=/???/????64 ????.???
 ```
 
 bzip2 (注意路径是 /usr/bin/bzip2)
 
 ```
-http://770265fe-2a54-4d73-98b5-cd44b3dce236.challenge.ctf.show/?c=/???/???/????2%20????.???
+http://770265fe-2a54-4d73-98b5-cd44b3dce236.challenge.ctf.show/?c=/???/???/????2 ????.???
 ```
 
 `.` 执行缓存文件绕过
