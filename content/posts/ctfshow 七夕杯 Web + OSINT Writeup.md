@@ -40,9 +40,9 @@ Crypto Re Misc 只做了签到题, 就不写过来了
 
 <!--more-->
 
-# Web
+## Web
 
-## web签到
+### web签到
 
 ![20220805173309](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805173309.png)
 
@@ -116,7 +116,7 @@ sh 0
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208062007000.png)
 
-## easy_calc
+### easy_calc
 
 ![20220805174541](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805174541.png)
 
@@ -163,7 +163,7 @@ flag 在 /secret 中
 
 ![20220805175251](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805175251.png)
 
-## easy_cmd
+### easy_cmd
 
 ![20220805175813](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805175813.png)
 
@@ -189,9 +189,9 @@ flag 在 /secret 中
 
 写 wp 的时候发现 ifconfig 和 ping 那两步其实并不需要, 直接 nc 也能弹 shell, 不太理解给剩下三个命令是什么意思...
 
-# OSINT
+## OSINT
 
-## 社工签到
+### 社工签到
 
 ![osint1](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/osint1.jpeg)
 
@@ -211,7 +211,7 @@ Google 搜图 `https://www.google.com.hk/imghp`
 
 后面又发了公告应该把 flag 改正过来了
 
-## 迷失的大象
+### 迷失的大象
 
 ![osint2](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/osint2.jpeg)
 
@@ -233,7 +233,7 @@ flag 格式 `ctfshow{原籍县区全称}`
 
 ![20220805181351](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220805181351.png)
 
-## 大飞机
+### 大飞机
 
 ![osint3](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/osint3.jpg)
 
