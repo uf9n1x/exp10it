@@ -16,17 +16,17 @@ $global-background-color-black: #000000 !default;
 
 // Color of the text
 $global-font-color: #161209 !default;
-$global-font-color-dark: #4D4D4D !default;
+$global-font-color-dark: #a9a9b3 !default;
 $global-font-color-black: #d9d9d9 !default;
 
 // Color of the secondary text
-$global-font-secondary-color: #4D4D4D !default;
+$global-font-secondary-color: #4d4d4d !default;
 $global-font-secondary-color-dark: #b5b5b5 !default;
-$global-font-secondary-color-black: #4D4D4D !default;
+$global-font-secondary-color-black: #a9a9b3 !default;
 
 // Color of the link
 $global-link-color: #161209 !default;
-$global-link-color-dark: #4D4D4D !default;
+$global-link-color-dark: #a9a9b3 !default;
 $global-link-color-black: #d9d9d9 !default;
 
 // Color of the hover link
@@ -48,7 +48,7 @@ $custom-scrollbar-height: .5rem;
 // Color of the scrollbar
 $custom-scrollbar-color: #87878d !default;
 // Color of the hover scrollbar
-$custom-scrollbar-hover-color: #4D4D4D !default;
+$custom-scrollbar-hover-color: #a9a9b3 !default;
 // ========== Scrollbar ========== //
 
 // ========== Selection ========== //
@@ -116,8 +116,8 @@ $blockquote-color-black: #59c5ec !default;
 // ========== Pagination ========== //
 // Color of the link in pagination
 $pagination-link-color: #2d96bd !default;
-$pagination-link-color-dark: #4D4D4D !default;
-$pagination-link-color-black: #4D4D4D !default;
+$pagination-link-color-dark: #a9a9b3 !default;
+$pagination-link-color-black: #a9a9b3 !default;
 
 // Color of the hover link in pagination
 $pagination-link-hover-color: #000 !default;
@@ -201,7 +201,7 @@ $code-type-map: (
 
 // Color map of the code highlight
 $code-highlight-color-map: (
-  /* Parentheses */ 'p': #4D4D4D,
+  /* Parentheses */ 'p': #a9a9b3,
   /* Keyword */ 'k': #b501a9,
   /* KeywordConstant */ 'kc': #b501a9,
   /* KeywordDeclaration */ 'kd': #b501a9,
@@ -276,7 +276,7 @@ $code-highlight-color-map: (
   /* TextWhitespace */ 'w': #bbbbbb,
 ) !default;
 $code-highlight-color-map-dark: (
-  /* Parentheses */ 'p': #4D4D4D,
+  /* Parentheses */ 'p': #a9a9b3,
   /* Keyword */ 'k': #d371e3,
   /* KeywordConstant */ 'kc': #d371e3,
   /* KeywordDeclaration */ 'kd': #d371e3,
@@ -297,7 +297,7 @@ $code-highlight-color-map-dark: (
   /* NameFunctionMagic */ 'fm': #19b9c4,
   /* NameLabel */ 'nl': #41b0f5,
   /* NameNamespace */ 'nn': #41b0f5,
-  /* NameOther */ 'nx': #4D4D4D,
+  /* NameOther */ 'nx': #a9a9b3,
   /* NameProperty */ 'py': #41b0f5,
   /* NameTag */ 'nt': #41b0f5,
   /* NameVariable */ 'nv': #41b0f5,
@@ -351,7 +351,7 @@ $code-highlight-color-map-dark: (
   /* TextWhitespace */ 'w': #bbbbbb,
 ) !default;
 $code-highlight-color-map-black: (
-  /* Parentheses */ 'p': #4D4D4D,
+  /* Parentheses */ 'p': #a9a9b3,
   /* Keyword */ 'k': #d371e3,
   /* KeywordConstant */ 'kc': #d371e3,
   /* KeywordDeclaration */ 'kd': #d371e3,
@@ -372,7 +372,7 @@ $code-highlight-color-map-black: (
   /* NameFunctionMagic */ 'fm': #19b9c4,
   /* NameLabel */ 'nl': #41b0f5,
   /* NameNamespace */ 'nn': #41b0f5,
-  /* NameOther */ 'nx': #4D4D4D,
+  /* NameOther */ 'nx': #a9a9b3,
   /* NameProperty */ 'py': #41b0f5,
   /* NameTag */ 'nt': #41b0f5,
   /* NameVariable */ 'nv': #41b0f5,
@@ -467,7 +467,7 @@ $friend-link-background-color-black: #111111 !default;
 
 // Color of friend link text
 $friend-link-color: #2d96bd !default;
-$friend-link-color-dark: #4D4D4D !default;
+$friend-link-color-dark: #a9a9b3 !default;
 $friend-link-color-black: #d9d9d9 !default;
 
 // Color of hover friend link text
