@@ -9,28 +9,13 @@ categories: ['内网渗透']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 dnscat2 是一款基于 DNS 协议的代理隧道. 不仅支持端口转发, 另外还有执行命令, 文件传输等功能, 不过实测下来都不怎么好用.
 

@@ -9,28 +9,13 @@ categories: ['内网渗透']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 Linux 内核的内存子系统在处理写时拷贝 (Copy-on-Write) 时存在条件竞争漏洞, 导致可以破坏私有只读内存映射.
 

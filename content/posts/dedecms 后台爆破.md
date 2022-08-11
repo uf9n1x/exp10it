@@ -9,28 +9,13 @@ categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.
 

@@ -9,28 +9,13 @@ categories: ['内网渗透']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 PowerView 是基于 PowerShell 的域渗透信息收集脚本, 该脚本完全通过 PowerShell, WMI 和 Win32 API 的方式实现诸如 net 等一系列命令以达到躲避检测的效果.
 

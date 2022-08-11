@@ -1,8 +1,10 @@
 baseURL = "https://exp10it.cn"
-
+# [en, zh-cn, fr, pl, ...] determines default content language
+# [en, zh-cn, fr, pl, ...] 设置默认的语言
+defaultContentLanguage = "en"
 # theme
 # 主题
-theme = "LoveIt"
+theme = "DoIt"
 # themes directory
 # 主题目录
 themesDir = "./themes"
@@ -10,29 +12,6 @@ themesDir = "./themes"
 # website title
 # 网站标题
 title = "X1r0z Blog"
-
-# determines default content language ["en", "zh-cn", "fr", "pl", ...]
-# 设置默认的语言 ["en", "zh-cn", "fr", "pl", ...]
-defaultContentLanguage = "en"
-# language code ["en", "zh-CN", "fr", "pl", ...]
-# 网站语言, 仅在这里 CN 大写 ["en", "zh-CN", "fr", "pl", ...]
-languageCode = "en"
-# language name ["English", "简体中文", "Français", "Polski", ...]
-# 语言名称 ["English", "简体中文", "Français", "Polski", ...]
-languageName = "English"
-# whether to include Chinese/Japanese/Korean
-# 是否包括中日韩文字
-hasCJKLanguage = false
-
-# default amount of posts in each pages
-# 默认每页列表显示的文章数目
-paginate = 12
-# google analytics code [UA-XXXXXXXX-X]
-# 谷歌分析代号 [UA-XXXXXXXX-X]
-googleAnalytics = ""
-# copyright description used only for seo schema
-# 版权描述，仅仅用于 SEO
-copyright = ""
 
 # whether to use robots.txt
 # 是否使用 robots.txt
@@ -44,85 +23,268 @@ enableGitInfo = true
 # 是否使用 emoji 代码
 enableEmoji = true
 
-# ignore some build errors
-# 忽略一些构建错误
-ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
-
-# Author config
-# 作者配置
-[author]
-  name = "X1r0z"
-  email = "i@exp10it.cn"
-  link = "https://github.com/X1r0z"
-
-# Menu config
-# 菜单配置
-[menu]
-  [[menu.main]]
+[languages]
+  [languages.en]
     weight = 1
-    identifier = "posts"
-    # you can add extra information before the name (HTML format is supported), such as icons
-    # 你可以在名称 (允许 HTML 格式) 之前添加其他信息, 例如图标
-    pre = ""
-    # you can add extra information after the name (HTML format is supported), such as icons
-    # 你可以在名称 (允许 HTML 格式) 之后添加其他信息, 例如图标
-    post = ""
-    name = "Posts"
-    url = "/posts/"
-    # title will be shown when you hover on this menu link
-    # 当您将鼠标悬停在此菜单链接上时, 将显示标题
-    title = ""
-  [[menu.main]]
-    weight = 2
-    identifier = "tags"
-    pre = ""
-    post = ""
-    name = "Tags"
-    url = "/tags/"
-    title = ""
-  [[menu.main]]
-    weight = 3
-    identifier = "categories"
-    pre = ""
-    post = ""
-    name = "Categories"
-    url = "/categories/"
-    title = ""
+    # language code
+    languageCode = "en"
+    # language name
+    languageName = "English"
+    # whether to include Chinese/Japanese/Korean
+    hasCJKLanguage = false
+    # default amount of posts in each pages
+    paginate = 12
+    # [UA-XXXXXXXX-X] google analytics code (replaced by params.analytics.google)
+    googleAnalytics = ""
+    # copyright description used only for seo schema
+    copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License."
+    # Menu config
+    [languages.en.menu]
+      [[languages.en.menu.main]]
+        identifier = "posts"
+        # you can add extra information before the name (HTML format is supported), such as icons
+        pre = ""
+        # you can add extra information after the name (HTML format is supported), such as icons
+        post = ""
+        name = "Posts"
+        url = "/posts/"
+        # title will be shown when you hover on this menu link.
+        title = ""
+        weight = 1
+      [[languages.en.menu.main]]
+        identifier = "tags"
+        pre = ""
+        post = ""
+        name = "Tags"
+        url = "/tags/"
+        title = ""
+        weight = 2
+      [[languages.en.menu.main]]
+        identifier = "categories"
+        pre = ""
+        post = ""
+        name = "Categories"
+        url = "/categories/"
+        title = ""
+        weight = 3
+      [[languages.en.menu.main]]
+        identifier = "about"
+        pre = ""
+        post = ""
+        name = "About"
+        url = "/about/"
+        title = ""
+        weight = 4
+      [[languages.en.menu.main]]
+        identifier = "github"
+        pre = "<i class='fab fa-github fa-fw'></i>"
+        post = ""
+        name = ""
+        url = "https://github.com/X1r0z/exp10it"
+        title = "GitHub"
+        weight = 5
+    [languages.en.params]
+      # site description
+      description = "X1r0z Blog"
+      # site keywords
+      keywords = ["x1r0z", "blog", "security", "web", "ctf", "pentest", "php", "python", "java"]
+      # App icon config
+      [languages.en.params.app]
+        # optional site title override for the app when added to an iOS home screen or Android launcher
+        title = "X1r0z Blog"
+        # whether to omit favicon resource links
+        noFavicon = false
+        # modern SVG favicon to use in place of older style .png and .ico files
+        svgFavicon = ""
+        # Safari mask icon color
+        iconColor = "#5bbad5"
+        # Windows v8-10 tile color
+        tileColor = "#da532c"
+      # Search config
+      [languages.en.params.search]
+        enable = true
+        # type of search engine ("lunr", "algolia", "fuse")
+        type = "fuse"
+        # max index length of the chunked content
+        contentLength = 4000
+        # placeholder of the search bar
+        placeholder = ""
+        # max number of results length
+        maxResultLength = 10
+        # snippet length of the result
+        snippetLength = 300
+        # HTML tag name of the highlight part in results
+        highlightTag = "em"
+        # whether to use the absolute URL based on the baseURL in search index
+        absoluteURL = false
+        [languages.en.params.search.algolia]
+          index = "en_index"
+          appID = ""
+          searchKey = ""
+        [languages.en.params.search.fuse]
+          # https://fusejs.io/api/options.html
+          isCaseSensitive = false
+          minMatchCharLength = 2
+          findAllMatches = false
+          location = 0
+          threshold = 0.1
+          distance = 100
+          ignoreLocation = true
+          useExtendedSearch = false
+          ignoreFieldNorm = false
+      # Home page config
+      [languages.en.params.home]
+        # amount of RSS pages
+        rss = 10
+        # Home page profile
+        [languages.en.params.home.profile]
+          enable = true
+          # Gravatar Email for preferred avatar in home page
+          gravatarEmail = ""
+          # URL of avatar shown in home page
+          avatarURL = "/images/avatar.png"
+          # title shown in home page (HTML format is supported)
+          title = "X1r0z"
+          # subtitle shown in home page
+          subtitle = "Student, NJUPT"
+          # whether to use typeit animation for subtitle
+          typeit = true
+          # whether to show social links
+          social = true
+          # disclaimer (HTML format is supported)
+          disclaimer = ""
+        # Home page posts
+        [languages.en.params.home.posts]
+          enable = true
+          # special amount of posts in each home posts page
+          paginate = 7
+      # Social config in home page
+      [languages.en.params.social]
+        GitHub = "X1r0z"
+        Linkedin = ""
+        Twitter = ""
+        Instagram = ""
+        Facebook = ""
+        Telegram = ""
+        Medium = ""
+        Gitlab = ""
+        Youtubelegacy = ""
+        Youtubecustom = ""
+        Youtubechannel = ""
+        Tumblr = ""
+        Quora = ""
+        Keybase = ""
+        Pinterest = ""
+        Reddit = ""
+        Codepen = ""
+        FreeCodeCamp = ""
+        Bitbucket = ""
+        Stackoverflow = ""
+        Weibo = ""
+        Odnoklassniki = ""
+        VK = ""
+        Flickr = ""
+        Xing = ""
+        Snapchat = ""
+        Soundcloud = ""
+        Spotify = ""
+        Bandcamp = ""
+        Paypal = ""
+        Fivehundredpx = ""
+        Mix = ""
+        Goodreads = ""
+        Lastfm = ""
+        Foursquare = ""
+        Hackernews = ""
+        Kickstarter = ""
+        Patreon = ""
+        Steam = ""
+        Twitch = ""
+        Strava = ""
+        Skype = ""
+        Whatsapp = ""
+        Zhihu = ""
+        Douban = ""
+        Angellist = ""
+        Slidershare = ""
+        Jsfiddle = ""
+        Deviantart = ""
+        Behance = ""
+        Dribbble = ""
+        Wordpress = ""
+        Vine = ""
+        Googlescholar = ""
+        Researchgate = ""
+        Thingiverse = ""
+        Devto = ""
+        Gitea = ""
+        XMPP = ""
+        Matrix = ""
+        Bilibili = ""
+        ORCID = ""
+        QQ = ""
+        QQGroup = ""
+        Liberapay = ""
+        Ko-Fi = ""
+        BuyMeACoffee = ""
+        Linktree = ""
+        Email = "i@exp10it.cn"
+        RSS = true
+        [languages.en.params.social.Mastodon]
+          # id = "@xxxx"
+          # prefix = "https://mastodon.technology/"
+        [languages.en.params.social.Diaspora]
+          # id = "@xxxx"
+          # prefix = "https://yyyy/"
+      # Sponsor config
+      [languages.en.params.sponsor]
+        enable = false
+        bio = "If you find this post helpful, please consider sponsoring."
+        link = "https://github.com/sponsors/HEIGE-PCloud"
+        # custom = "<a href=\"https://www.buymeacoffee.com/PCloud\" target=\"_blank\"><img src=\"https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png\" alt=\"Buy Me A Coffee\" style=\"height: 40px !important;width: 145 !important;\" ></a>"
 
 [params]
-  # site default theme ["auto", "light", "dark"]
-  # 网站默认主题 ["auto", "light", "dark"]
-  defaultTheme = "auto"
+  # website title
+  # 网站标题
+  title = "X1r0z Blog"
+  # DoIt theme version
+  # DoIt 主题版本
+  version = "0.2.X"
+  # site default theme ("light", "dark", "black", "auto")
+  # 网站默认主题 ("light", "dark", "black", "auto")
+  defaultTheme = "light"
   # public git repo url only then enableGitInfo is true
   # 公共 git 仓库路径，仅在 enableGitInfo 设为 true 时有效
   gitRepo = "https://github.com/X1r0z/exp10it"
-  # which hash function used for SRI, when empty, no SRI is used
-  # ["sha256", "sha384", "sha512", "md5"]
-  # 哪种哈希函数用来 SRI, 为空时表示不使用 SRI
-  # ["sha256", "sha384", "sha512", "md5"]
+  # which hash function used for SRI, when empty, no SRI is used ("sha256", "sha384", "sha512", "md5")
+  # 哪种哈希函数用来 SRI, 为空时表示不使用 SRI ("sha256", "sha384", "sha512", "md5")
   fingerprint = ""
   # date format
   # 日期格式
   dateFormat = "2006-01-02"
-  # website title for Open Graph and Twitter Cards
-  # 网站标题, 用于 Open Graph 和 Twitter Cards
-  title = "X1r0z Blog"
-  # website description for RSS, SEO, Open Graph and Twitter Cards
-  # 网站描述, 用于 RSS, SEO, Open Graph 和 Twitter Cards
-  description = "X1r0z Blog"
   # website images for Open Graph and Twitter Cards
   # 网站图片, 用于 Open Graph 和 Twitter Cards
-  images = [""]
-
+  images = ["/images/avatar.png"]
+  # enable PWA
+  # 开启 PWA 支持
+  enablePWA = false
+  # license information
+  # 许可协议信息 (支持 HTML 格式)
+  license = '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'
+  # [Experimental] Bundle js
+  bundle = false
   # Header config
   # 页面头部导航栏配置
   [params.header]
-    # desktop header mode ["fixed", "normal", "auto"]
-    # 桌面端导航栏模式 ["fixed", "normal", "auto"]
+    # desktop header mode ("fixed", "normal", "auto")
+    # 桌面端导航栏模式 ("fixed", "normal", "auto")
     desktopMode = "fixed"
-    # mobile header mode ["fixed", "normal", "auto"]
-    # 移动端导航栏模式 ["fixed", "normal", "auto"]
+    # mobile header mode ("fixed", "normal", "auto")
+    # 移动端导航栏模式 ("fixed", "normal", "auto")
     mobileMode = "auto"
+    # theme change mode ("switch", "select")
+    # 主题切换模式 ("switch", "select")
+    themeChangeMode = "switch"
     # Header title config
     # 页面头部导航栏标题配置
     [params.header.title]
@@ -134,7 +296,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       name = "X1r0z Blog"
       # you can add extra information before the name (HTML format is supported), such as icons
       # 你可以在名称 (允许 HTML 格式) 之前添加其他信息, 例如图标
-      pre = "<i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i>"
+      pre = "<i class='far fa-edit fa-fw'></i>"
       # you can add extra information after the name (HTML format is supported), such as icons
       # 你可以在名称 (允许 HTML 格式) 之后添加其他信息, 例如图标
       post = ""
@@ -148,13 +310,17 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     enable = true
     # Custom content (HTML format is supported)
     # 自定义内容 (支持 HTML 格式)
-    custom = ""
+    custom = ''
     # whether to show Hugo and theme info
     # 是否显示 Hugo 和主题信息
     hugo = true
+    # Hosted on (HTML format is supported)
+    # 托管服务信息 (支持 HTML 格式)
+    # <a title="Github Pages" href="https://docs.github.com/en/pages/" target="_blank" rel="noopener noreffer">GitHub Pages</a>
+    hostedOn = '<a title="Github Pages" href="https://docs.github.com/en/pages/" target="_blank" rel="noopener noreffer">GitHub Pages</a>' 
     # whether to show copyright info
     # 是否显示版权信息
-    copyright = false
+    copyright = true
     # whether to show the author
     # 是否显示作者
     author = true
@@ -180,6 +346,13 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     # amount of RSS pages
     # RSS 文章数目
     rss = 10
+    # recently updated posts settings
+    # 最近更新文章设置
+    [params.section.recentlyUpdated]
+      enable = false
+      rss = true
+      days = 30
+      maxCount = 10
 
   # List (category or tag) page config
   # List (目录或标签) 页面配置
@@ -194,176 +367,8 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     # RSS 文章数目
     rss = 10
 
-  # App icon config
-  # 应用图标配置
-  [params.app]
-    # optional site title override for the app when added to an iOS home screen or Android launcher
-    # 当添加到 iOS 主屏幕或者 Android 启动器时的标题, 覆盖默认标题
-    title = "X1r0z Blog"
-    # whether to omit favicon resource links
-    # 是否隐藏网站图标资源链接
-    noFavicon = false
-    # modern SVG favicon to use in place of older style .png and .ico files
-    # 更现代的 SVG 网站图标, 可替代旧的 .png 和 .ico 文件
-    svgFavicon = ""
-    # Android browser theme color
-    # Android 浏览器主题色
-    themeColor = "#ffffff"
-    # Safari mask icon color
-    # Safari 图标颜色
-    iconColor = "#5bbad5"
-    # Windows v8-11 tile color
-    # Windows v8-11 磁贴颜色
-    tileColor = "#da532c"
-
-  # Search config
-  # 搜索配置
-  [params.search]
-    enable = true
-    # type of search engine ["lunr", "algolia"]
-    # 搜索引擎的类型 ["lunr", "algolia"]
-    type = "lunr"
-    # max index length of the chunked content
-    # 文章内容最长索引长度
-    contentLength = 4000
-    # placeholder of the search bar
-    # 搜索框的占位提示语
-    placeholder = ""
-    # max number of results length
-    # 最大结果数目
-    maxResultLength = 10
-    # snippet length of the result
-    # 结果内容片段长度
-    snippetLength = 30
-    # HTML tag name of the highlight part in results
-    # 搜索结果中高亮部分的 HTML 标签
-    highlightTag = "em"
-    # whether to use the absolute URL based on the baseURL in search index
-    # 是否在搜索索引中使用基于 baseURL 的绝对路径
-    absoluteURL = false
-    [params.search.algolia]
-      index = ""
-      appID = ""
-      searchKey = ""
-
-  # Home page config
-  # 主页信息设置
-  [params.home]
-    # amount of RSS pages
-    # RSS 文章数目
-    rss = 10
-    # Home page profile
-    # 主页个人信息
-    [params.home.profile]
-      enable = true
-      # Gravatar Email for preferred avatar in home page
-      # Gravatar 邮箱，用于优先在主页显示的头像
-      gravatarEmail = ""
-      # URL of avatar shown in home page
-      # 主页显示头像的 URL
-      avatarURL = "/images/avatar.png"
-      # title shown in home page (HTML format is supported)
-      # 主页显示的网站标题 (支持 HTML 格式)
-      title = "X1r0z Blog"
-      # subtitle shown in home page (HTML format is supported)
-      # 主页显示的网站副标题 (允许 HTML 格式)
-      subtitle = "Student, NJUPT"
-      # whether to use typeit animation for subtitle
-      # 是否为副标题显示打字机动画
-      typeit = true
-      # whether to show social links
-      # 是否显示社交账号
-      social = true
-      # disclaimer (HTML format is supported)
-      # 免责声明 (支持 HTML 格式)
-      disclaimer = ""
-    # Home page posts
-    # 主页文章列表
-    [params.home.posts]
-      enable = true
-      # special amount of posts in each home posts page
-      # 主页每页显示文章数量
-      paginate = 6
-  # Social config in home page
-  # 主页的社交信息设置
-  [params.social]
-    GitHub = "https://github.com/X1r0z"
-    Linkedin = ""
-    Twitter = ""
-    Instagram = ""
-    Facebook = ""
-    Telegram = ""
-    Medium = ""
-    Gitlab = ""
-    Youtubelegacy = ""
-    Youtubecustom = ""
-    Youtubechannel = ""
-    Tumblr = ""
-    Quora = ""
-    Keybase = ""
-    Pinterest = ""
-    Reddit = ""
-    Codepen = ""
-    FreeCodeCamp = ""
-    Bitbucket = ""
-    Stackoverflow = ""
-    Weibo = ""
-    Odnoklassniki = ""
-    VK = ""
-    Flickr = ""
-    Xing = ""
-    Snapchat = ""
-    Soundcloud = ""
-    Spotify = ""
-    Bandcamp = ""
-    Paypal = ""
-    Fivehundredpx = ""
-    Mix = ""
-    Goodreads = ""
-    Lastfm = ""
-    Foursquare = ""
-    Hackernews = ""
-    Kickstarter = ""
-    Patreon = ""
-    Steam = ""
-    Twitch = ""
-    Strava = ""
-    Skype = ""
-    Whatsapp = ""
-    Zhihu = ""
-    Douban = ""
-    Angellist = ""
-    Slidershare = ""
-    Jsfiddle = ""
-    Deviantart = ""
-    Behance = ""
-    Dribbble = ""
-    Wordpress = ""
-    Vine = ""
-    Googlescholar = ""
-    Researchgate = ""
-    Mastodon = ""
-    Thingiverse = ""
-    Devto = ""
-    Gitea = ""
-    XMPP = ""
-    Matrix = ""
-    Bilibili = ""
-    Discord = ""
-    DiscordInvite = ""
-    Lichess = ""
-    ORCID = ""
-    Pleroma = ""
-    Kaggle = ""
-    MediaWiki= ""
-    Plume = ""
-    HackTheBox = ""
-    RootMe= ""
-    Email = ""
-    RSS = ""
-
-  # Page global config
-  # 文章页面全局配置
+  # Page config
+  # 文章页面配置
   [params.page]
     # whether to hide a page from home page
     # 是否在主页隐藏一篇文章
@@ -389,9 +394,40 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     # whether to show link to Raw Markdown content of the content
     # 是否显示原始 Markdown 文档内容的链接
     linkToMarkdown = true
+    # configure the link to view source the post
+    # 配置文章原始文件的链接
+    linkToSource = ""
+    # "https://github.com/user/repo/blob/main/{path}"
+    # configure the link to edit the post
+    # 配置编辑文章的链接
+    linkToEdit = ""
+    # https://github.com/user/repo/edit/main/{path}
+    # https://gitlab.com/user/repo/-/edit/main/{path}
+    # https://bitbucket.org/user/repo/src/main/{path}?mode=edit
+    # configure the link to report issue for the post
+    # 配置提交错误的链接
+    linkToReport = ""
+    # https://github.com/user/repo/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
+    # https://gitlab.com/user/repo/-/issues/new?issue[title]=[bug]%20{title}&issue[description]=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://gitlab.com/user/repo/-/edit/main/{path}|
     # whether to show the full text content in RSS
     # 是否在 RSS 中显示全文内容
     rssFullText = false
+    # Page style ("normal", "wide")
+    # 页面样式 ("normal", "wide")
+    pageStyle = "normal"
+    # whether to enable series navigation
+    # 是否使用系列导航
+    seriesNavigation = true
+    # Display a message at the beginning of an article to warn the reader that its content might be outdated.
+    # 在文章开头显示提示信息，提醒读者文章内容可能过时。
+    [params.page.outdatedArticleReminder]
+      enable = false
+      # Display the reminder if the last modified time is more than 90 days ago.
+      # 如果文章最后更新于这天数之前，显示提醒
+      reminder = 90
+      # Display warning if the last modified time is more than 180 days ago.
+      # 如果文章最后更新于这天数之前，显示警告
+      warning = 180
     # Table of the contents config
     # 目录配置
     [params.page.toc]
@@ -403,7 +439,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       keepStatic = false
       # whether to make the table of the contents in the sidebar automatically collapsed
       # 是否使侧边目录自动折叠展开
-      auto = true
+      auto = false
     # Code config
     # 代码配置
     [params.page.code]
@@ -412,19 +448,36 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       copy = true
       # the maximum number of lines of displayed code by default
       # 默认展开显示的代码行数
-      maxShownLines = 50
+      maxShownLines = 10
+    # Table config
+    # 表格配置
+    [params.page.table]
+      # whether to enable sorting in the tables
+      # 是否开启表格排序
+      sort = true
+    [params.page.header]
+      # whether to enable auto header numbering
+      # 是否开启标题自动编号
+      [params.page.header.number]
+        enable = false
+        [params.page.header.number.format]
+          h2 = "{h2} {title}"
+          h3 = "{h2}.{h3} {title}"
+          h4 = "{h2}.{h3}.{h4} {title}"
+          h5 = "{h2}.{h3}.{h4}.{h5} {title}"
+          h6 = "{h2}.{h3}.{h4}.{h5}.{h6} {title}"
     # KaTeX mathematical formulas config (KaTeX https://katex.org/)
     # KaTeX 数学公式配置 (KaTeX https://katex.org/)
     [params.page.math]
       enable = false
-      # default inline delimiter is $ ... $ and \( ... \)
-      # 默认行内定界符是 $ ... $ 和 \( ... \)
-      inlineLeftDelimiter = ""
-      inlineRightDelimiter = ""
-      # default block delimiter is $$ ... $$, \[ ... \], \begin{equation} ... \end{equation} and some other functions
-      # 默认块定界符是 $$ ... $$, \[ ... \],  \begin{equation} ... \end{equation} 和一些其它的函数
+      # default block delimiter is $$ ... $$ and \\[ ... \\]
+      # 默认块定界符是 $$ ... $$ 和 \\[ ... \\]
       blockLeftDelimiter = ""
       blockRightDelimiter = ""
+      # default inline delimiter is $ ... $ and \\( ... \\)
+      # 默认行内定界符是 $ ... $ 和 \\( ... \\)
+      inlineLeftDelimiter = ""
+      inlineRightDelimiter = ""
       # KaTeX extension copy_tex
       # KaTeX 插件 copy_tex
       copyTex = true
@@ -473,8 +526,12 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       Line = true
       Instapaper = false
       Pocket = false
+      Digg = false
+      Stumbleupon = false
       Flipboard = false
       Weibo = true
+      Renren = false
+      Myspace = false
       Blogger = false
       Baidu = false
       Odnoklassniki = false
@@ -482,10 +539,11 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       Skype = false
       Trello = false
       Mix = false
+      Telegram = true
     # Comment config
     # 评论系统设置
     [params.page.comment]
-      enable = false
+      enable = true
       # Disqus comment config (https://disqus.com/)
       # Disqus 评论系统设置 (https://disqus.com/)
       [params.page.comment.disqus]
@@ -497,39 +555,53 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       # Gitalk 评论系统设置 (https://github.com/gitalk/gitalk)
       [params.page.comment.gitalk]
         enable = false
-        owner = "X1r0z"
-        repo = "exp10it"
+        owner = ""
+        repo = ""
         clientId = ""
         clientSecret = ""
       # Valine comment config (https://github.com/xCss/Valine)
       # Valine 评论系统设置 (https://github.com/xCss/Valine)
       [params.page.comment.valine]
-        enable = false
-        appId = ""
-        appKey = ""
+        enable = true
+        appId = "akLQ26jybmktV9apB3nOmo5U-gzGzoHsz"
+        appKey = "eP1Ll3UDRY7ubEps9k4off0s"
         placeholder = ""
         avatar = "mp"
         meta= ""
         pageSize = 10
-        # automatically adapt the current theme i18n configuration when empty
-        # 为空时自动适配当前主题 i18n 配置
-        lang = ""
+        lang = "zh-CN"
         visitor = true
         recordIP = true
         highlight = true
-        enableQQ = false
-        serverURLs = "https://leancloud.hugoloveit.com"
+        enableQQ = true
+        serverURLs = ""
         # emoji data file name, default is "google.yml"
-        # ["apple.yml", "google.yml", "facebook.yml", "twitter.yml"]
-        # located in "themes/LoveIt/assets/lib/valine/emoji/" directory
+        # ("apple.yml", "google.yml", "facebook.yml", "twitter.yml")
+        # located in "themes/DoIt/assets/data/emoji/" directory
         # you can store your own data files in the same path under your project:
-        # "assets/lib/valine/emoji/"
+        # "assets/data/emoji/"
         # emoji 数据文件名称, 默认是 "google.yml"
-        # ["apple.yml", "google.yml", "facebook.yml", "twitter.yml"]
-        # 位于 "themes/LoveIt/assets/lib/valine/emoji/" 目录
+        # ("apple.yml", "google.yml", "facebook.yml", "twitter.yml")
+        # 位于 "themes/DoIt/assets/data/emoji/" 目录
         # 可以在你的项目下相同路径存放你自己的数据文件:
-        # "assets/lib/valine/emoji/"
+        # "assets/data/emoji/"
         emoji = ""
+      # Waline comment config (https://waline.js.org)
+      # Waline 评论系统设置 (https://waline.js.org)
+      [params.page.comment.waline]
+        enable = false
+        serverURL = "https://do-it-waline-comment.vercel.app"
+        pageview = true
+        comment = true
+        # emoji = ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
+        # meta = ['nick', 'mail', 'link']
+        # requiredMeta = []
+        # login = 'enable'
+        # wordLimit = 0
+        # pageSize = 10
+        # imageUploader = false
+        # highlighter = false
+        # texRenderer = false
       # Facebook comment config (https://developers.facebook.com/docs/plugins/comments)
       # Facebook 评论系统设置 (https://developers.facebook.com/docs/plugins/comments)
       [params.page.comment.facebook]
@@ -537,8 +609,6 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
         width = "100%"
         numPosts = 10
         appId = ""
-        # automatically adapt the current theme i18n configuration when empty
-        # 为空时自动适配当前主题 i18n 配置
         languageCode = ""
       # Telegram comments config (https://comments.app/)
       # Telegram comments 评论系统设置 (https://comments.app/)
@@ -551,12 +621,13 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
         colorful = true
         dislikes = false
         outlined = false
+        dark = false
       # Commento comment config (https://commento.io/)
       # Commento comment 评论系统设置 (https://commento.io/)
       [params.page.comment.commento]
         enable = false
-      # utterances comment config (https://utteranc.es/)
-      # utterances comment 评论系统设置 (https://utteranc.es/)
+      # Utterances comment config (https://utteranc.es/)
+      # Utterances comment 评论系统设置 (https://utteranc.es/)
       [params.page.comment.utterances]
         enable = false
         # owner/repo
@@ -565,36 +636,69 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
         label = ""
         lightTheme = "github-light"
         darkTheme = "github-dark"
-      # giscus comment config (https://giscus.app/)
-      # giscus comment 评论系统设置 (https://giscus.app/zh-CN)
-      [params.page.comment.giscus]
-        # You can refer to the official documentation of giscus to use the following configuration.
-        # 你可以参考官方文档来使用下列配置
+      # Twikoo comment config (https://twikoo.js.org/)
+      # Twikoo comment 评论系统设置 (https://twikoo.js.org/)
+      [params.page.comment.twikoo]
         enable = false
+        envId = "https://doit-docs-comment-twikoo.vercel.app/"
+        region = ""
+        path = ""
+        visitor = true
+        commentCount = true
+      # Vssue comment config (https://vssue.js.org//)
+      # Vssue comment 评论系统设置 (https://vssue.js.org//)
+      [params.page.comment.vssue]
+        enable = false
+        platform = "" # ("bitbucket", "gitea", "gitee", "github", "gitlab")
+        owner = ""
         repo = ""
-        repoId = ""
-        category = "Announcements"
-        categoryId = ""
-        # automatically adapt the current theme i18n configuration when empty
-        # 为空时自动适配当前主题 i18n 配置
-        lang = ""
-        mapping = "pathname"
-        reactionsEnabled = "1"
-        emitMetadata = "0"
-        inputPosition = "bottom"
-        lazyLoading = false
+        clientId = ""
+        clientSecret = ""
+      # Remark42 comment config (https://remark42.com/)
+      # Remark42 comment 评论系统设置 (https://remark42.com/)
+      [params.page.comment.remark42]
+        enable = false
+        host = ""
+        site_id = ""
+        max_shown_comments = 15
+        show_email_subscription = true
+        simple_view = false
+      # giscus comment config (https://giscus.app/)
+      # giscus comment 评论系统设置 (https://giscus.app/)
+      [params.page.comment.giscus]
+        enable = false
+        # owner/repo
+        dataRepo = ""
+        dataRepoId = ""
+        dataCategory = ""
+        dataCategoryId = ""
+        dataMapping = "pathname"
+        dataStrict = "0"
+        dataReactionsEnabled = "1"
+        dataEmitMetadata = "0"
+        dataInputPosition = "bottom"
         lightTheme = "light"
         darkTheme = "dark"
+        dataLang = "en"
     # Third-party library config
     # 第三方库配置
     [params.page.library]
       [params.page.library.css]
         # someCSS = "some.css"
+        # [params.page.library.css.someOtherCSS]
+        #   src = "someOther.css"
+        #   defer = true
+        #   attr = "customAttribute"
         # located in "assets/" 位于 "assets/"
         # Or 或者
         # someCSS = "https://cdn.example.com/some.css"
       [params.page.library.js]
-        # someJavascript = "some.js"
+        # someJavaScript = "some.js"
+        # [params.page.library.js.someOtherJavaScript]
+        #   src = "someOther.js"
+        #   defer = false
+        #   async = true
+        #   attr = "customAttribute"
         # located in "assets/" 位于 "assets/"
         # Or 或者
         # someJavascript = "https://cdn.example.com/some.js"
@@ -609,6 +713,14 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       [params.page.seo.publisher]
         name = "X1r0z"
         logoUrl = "/images/avatar.png"
+
+  # Sponsor config
+  # 赞助设置
+  [params.sponsor]
+    enable = false
+    bio = "If you find this post helpful, please consider sponsoring."
+    link = "https://github.com/sponsors/HEIGE-PCloud"
+    # custom = "<a href=\"https://www.buymeacoffee.com/PCloud\" target=\"_blank\"><img src=\"https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png\" alt=\"Buy Me A Coffee\" style=\"height: 40px !important;width: 145 !important;\" ></a>"
 
   # TypeIt config
   # TypeIt 配置
@@ -634,6 +746,8 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     yandex = ""
     pinterest = ""
     baidu = ""
+    so = ""
+    sogou = ""
 
   # Site SEO config
   # 网站 SEO 配置
@@ -661,12 +775,21 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
       # server url for your tracker if you're self hosting
       # 自行托管追踪器时的主机路径
       server = ""
+    # Baidu Analytics
+    [params.analytics.baidu]
+      id = ""
+    # Umami Analytics
+    [params.analytics.umami]
+      data_website_id = ""
+      src = ""
+      data_domains = ""
     # Plausible Analytics
     [params.analytics.plausible]
-      dataDomain = ""
-    # Yandex Metrica
-    [params.analytics.yandexMetrica]
-      id = ""
+      data_domain = ""
+      src = ""
+    # Cloudflare Analytics
+    [params.analytics.cloudflare]
+      token = ""
 
   # Cookie consent config
   # Cookie 许可配置
@@ -683,16 +806,16 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
   # 第三方库文件的 CDN 设置
   [params.cdn]
     # CDN data file name, disabled by default
-    # ["jsdelivr.yml"]
-    # located in "themes/LoveIt/assets/data/cdn/" directory
+    # ("jsdelivr.yml")
+    # located in "themes/DoIt/assets/data/cdn/" directory
     # you can store your own data files in the same path under your project:
     # "assets/data/cdn/"
     # CDN 数据文件名称, 默认不启用
-    # ["jsdelivr.yml"]
-    # 位于 "themes/LoveIt/assets/data/cdn/" 目录
+    # ("jsdelivr.yml")
+    # 位于 "themes/DoIt/assets/data/cdn/" 目录
     # 可以在你的项目下相同路径存放你自己的数据文件:
     # "assets/data/cdn/"
-    data = "jsdelivr.yml"
+    data = ""
 
   # Compatibility config
   # 兼容性设置
@@ -737,6 +860,15 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
   [markup.tableOfContents]
     startLevel = 2
     endLevel = 6
+
+# Author config
+# 作者配置
+[author]
+  name = "X1r0z"
+  email = "i@exp10it.cn"
+  link = "https://github.com/X1r0z"
+  avatar = "/images/avatar.png"
+  gravatarEmail = ""
 
 # Sitemap config
 # 网站地图配置
@@ -785,91 +917,9 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
   taxonomy = ["HTML", "RSS"]
   taxonomyTerm = ["HTML"]
 
-# Multilingual
-# 多语言
-[languages]
-  [languages.en]
-    weight = 1
-    languageCode = "en"
-    languageName = "English"
-    hasCJKLanguage = false
-    copyright = "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License."
-    [languages.en.menu]
-      [[languages.en.menu.main]]
-        weight = 1
-        identifier = "posts"
-        pre = ""
-        post = ""
-        name = "Posts"
-        url = "/posts/"
-        title = ""
-      [[languages.en.menu.main]]
-        weight = 2
-        identifier = "tags"
-        pre = ""
-        post = ""
-        name = "Tags"
-        url = "/tags/"
-        title = ""
-      [[languages.en.menu.main]]
-        weight = 3
-        identifier = "categories"
-        pre = ""
-        post = ""
-        name = "Categories"
-        url = "/categories/"
-        title = ""
-      [[languages.en.menu.main]]
-        weight = 5
-        identifier = "about"
-        pre = ""
-        post = ""
-        name = "About"
-        url = "/about/"
-        title = ""
-      [[languages.en.menu.main]]
-        weight = 6
-        identifier = "github"
-        pre = "<i class='fab fa-github fa-fw' aria-hidden='true'></i>"
-        post = ""
-        name = ""
-        url = "https://github.com/dillonzq/LoveIt"
-        title = "GitHub"
-    [languages.en.params]
-      [languages.en.params.search]
-        enable = true
-        type = "algolia"
-        contentLength = 4000
-        placeholder = ""
-        maxResultLength = 10
-        snippetLength = 30
-        highlightTag = "em"
-        absoluteURL = false
-        [languages.en.params.search.algolia]
-          index = "index.en"
-          appID = "PASDMWALPK"
-          searchKey = "b42948e51daaa93df92381c8e2ac0f93"
-      [languages.en.params.home]
-        rss = 10
-        [languages.en.params.home.profile]
-          enable = true
-          gravatarEmail = ""
-          avatarURL = "/images/avatar.png"
-          title = "X1r0z Blog"
-          subtitle = "Student, NJUPT"
-          typeit = true
-          social = true
-          disclaimer = ""
-      [languages.en.params.social]
-        GitHub = "X1r0z"
-        # Twitter = "xxxx"
-        # Instagram = "xxxx"
-        # Facebook = "xxxx"
-        # Telegram = "xxxx"
-        # Youtubelegacy = "xxxx"
-        # Phone = "555-555-555"
-        Email = "i@exp10it.cn"
-        RSS = true
-        [languages.en.params.social.Mastodon]
-          # id = "@xxxx"
-          # prefix = "https://mastodon.technology/"
+# Options for taxonomies
+# 用于分类的设置
+[taxonomies]
+author = "authors"
+category = "categories"
+tag = "tags"

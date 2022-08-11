@@ -9,28 +9,13 @@ categories: ['linux']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 从 Deepin 换到了 Manjaro, 中间体验过 Ubuntu, 各种 PPA 加上网上零零散散的 deb 包, 找起来挺费事的
 

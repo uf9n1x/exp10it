@@ -9,28 +9,13 @@ categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 当 LOAD DATA INFILE 指定 LOCAL 时, 用户无需 FILE 权限, 文件将由客户端读取, 并把数据发送至服务器上.
 

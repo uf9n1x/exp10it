@@ -9,28 +9,13 @@ categories: ['内网渗透']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 Malleable C2 是 Cobalt Strike 的一项功能, 意为 "可定制的" 的 C2 服务器. Malleable C2 允许我们仅通过一个简单的配置文件来改变 Beacon 与 C2 通信时的流量特征与行为.
 

@@ -9,28 +9,13 @@ categories: ["漏洞复现"]
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 在 Office 中宏指对文档样式, 字体, 排版, 格式修改等一系列操作的统称, 通过 VBA 来完成.
 

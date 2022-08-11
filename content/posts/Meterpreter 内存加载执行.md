@@ -9,28 +9,13 @@ categories: ['内网渗透','bypass']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
-
 
 具体原理和进程注入类似, 先创建一个正常的进程, 然后把这个进程里的内存空间覆盖成我们想要执行的程序.
 
