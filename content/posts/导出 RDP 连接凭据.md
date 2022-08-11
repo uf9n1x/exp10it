@@ -2,18 +2,35 @@
 title: "导出 RDP 连接凭据"
 date: 2019-07-09T00:00:00+08:00
 draft: false
-tags: ['rdp','mimikatz']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['rdp','mimikatz']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 rdp 连接记录默认存储在注册表 `HKEY_CURRENT_USER\Software\Microsoft\Terminal Server Client\` 位置.
 

@@ -2,18 +2,35 @@
 title: "MS17-010 Attack bat"
 date: 2018-06-03T00:00:00+08:00
 draft: false
-tags: ['ms17-010']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ms17-010']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 需要提取 NSA 工具包里的 Eternalblue.exe 和 Doublepulsar.exe 还有一堆必备的 xml 文件.
 

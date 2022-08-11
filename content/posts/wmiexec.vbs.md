@@ -2,18 +2,35 @@
 title: "wmiexec.vbs"
 date: 2018-04-06T00:00:00+08:00
 draft: false
-tags: ["vbs",'windows']
-categories: ["内网渗透"]
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["vbs",'windows']
+categories: ["内网渗透"]
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 WMI 是一项核心的 Windows 管理技术, 用户可以使用 WMI 管理本地和远程计算机.
 

@@ -2,18 +2,35 @@
 title: "CG CTF Web Writeup"
 date: 2022-07-20T13:12:17+08:00
 draft: false
-tags: ['php','ctf','sqli']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['php','ctf','sqli']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 好久没打 ctf 了
 
@@ -30,7 +47,7 @@ Web 题除了访问不了的都做完了, 一些过程比较长的题会单独�
 
 ## md5 collision
 
-```
+```php
 $md51 = md5('QNKCDZO');
 $a = @$_GET['a'];
 $md52 = @md5($a);
@@ -47,7 +64,7 @@ else{echo "please input a";}
 
 简单来说 PHP 使用 `==` 进行比较时, 会先将左右两个变量转换成相同的数据类型, 然后再进行比较
 
-```
+```php
 'a' == 0 // true
 
 '1a' == 0 // false
@@ -150,7 +167,7 @@ s878926199a
 
 ## 签到2
 
-```
+```html
 <p>输入框：<input type="password" value="" name="text1" maxlength="10"><br>
 ```
 
@@ -184,7 +201,7 @@ js `windows.location` 跳转, 浏览器 `view-source` 直接绕过
 
 ## php decode
 
-```
+```php
 <?php
 function CLsI($ZzvSWE) {
  
@@ -235,7 +252,7 @@ cookie 中的 Login 改成1
 
 查看 robots.txt
 
-```
+```php
 TIP:sql.php
 
 <?php
@@ -288,7 +305,7 @@ if($_GET[id]) {
 
 ## /x00
 
-```
+```php
 <?php
 if (isset ($_GET['nctf'])) {
     if (@ereg ("^[1-9]+$", $_GET['nctf']) === FALSE)
@@ -313,7 +330,7 @@ PHP 中的正则匹配会有00截断漏洞, 就是说程序遇到00之后就会�
 
 ## bypass again
 
-```
+```php
 <?php
 if (isset($_GET['a']) and isset($_GET['b'])) {
 if ($_GET['a'] != $_GET['b'])
@@ -329,7 +346,7 @@ print 'Wrong.';
 
 ## 变量覆盖
 
-```
+```php
 <?php
 extract($_POST);
 if ($pass == $thepassword_123) { ?>
@@ -382,7 +399,7 @@ filename 00 截断不行, 但 upload path 截断可以
 
 ## SQL注入1
 
-```
+```php
 <html>
 <head>
 Secure Web Login
@@ -422,7 +439,7 @@ user 可以注入, 直接把后面的 pw 注释掉, 注意闭合 `')`, 密码随
 
 ## pass check
 
-```
+```php
 $pass=@$_POST['pass'];
 $pass1=***********;//被隐藏起来的密码
 if(isset($pass))
@@ -454,7 +471,7 @@ POST 传递
 
 ## 起名字真难
 
-```
+```php
 <?php
 function noother_says_correct($number)
 {
@@ -500,7 +517,7 @@ base64 解码是 `ctfuser`, 改成 `admin` 再编码回去, 接着 POST 数据�
 
 ## SQL Injection
 
-```
+```php
 
 <!--
 #GOAL: login as admin,then get the flag;
@@ -563,7 +580,7 @@ history of bash, 就是 bash 的历史纪录 `.bash_history`
 
 这题也很有意思
 
-```
+```php
 <html>
 <head>
 Secure Web Login II
@@ -631,7 +648,7 @@ vi vim 异常退出的备份文件名为 `.filename.swp`
 
 ![20220720155255](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220720155255.png)
 
-```
+```php
 if(strlen($token)!=10) die('fail');
 if($token!='0') die('fail');
 ```
@@ -642,7 +659,7 @@ if($token!='0') die('fail');
 
 ## file_get_contents
 
-```
+```php
 <!--$file = $_GET['file'];
 if(@file_get_contents($file) == "meizijiu"){
     echo $nctf;
@@ -657,7 +674,7 @@ GET 传参, 还要读取文件, 用 PHP 伪协议
 
 ## 变量覆盖 (另一道)
 
-```
+```php
 <!--foreach($_GET as $key => $value){  
         $$key = $value;  
 }  

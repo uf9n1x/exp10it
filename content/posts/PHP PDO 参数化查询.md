@@ -2,18 +2,35 @@
 title: "PHP PDO 参数化查询"
 date: 2018-05-12T00:00:00+08:00
 draft: false
-tags: ['sqli','php']
-categories: ['编程']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['sqli','php']
+categories: ['编程']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 PHP 数据对象 (PDO) 扩展为 PHP 访问数据库定义了一个轻量级的一致接口.
 

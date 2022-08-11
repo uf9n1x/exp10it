@@ -2,18 +2,35 @@
 title: "Ubuntu 提权 EXP"
 date: 2018-03-30T00:00:00+08:00
 draft: false
-tags: ['exp','linux']
-categories: ['linux']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['exp','linux']
+categories: ['linux']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 该漏洞存在于 Linux 内核带有的 eBPF bpf(2) 系统调用中, 当用户提供恶意 BPF 程序使 eBPF 验证器模块产生计算错误, 导致任意内存读写问题.
 

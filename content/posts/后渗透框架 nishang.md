@@ -2,18 +2,35 @@
 title: "后渗透框架 nishang"
 date: 2019-07-26T00:00:00+08:00
 draft: false
-tags: ['powershell']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['powershell']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 nishang 是基于 PowerShell 的攻击框架, 面向红队和渗透测试人员, 该框架提供了许多有用的脚本和 Payload, 适用于渗透测试的各个阶段.
 

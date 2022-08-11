@@ -2,18 +2,35 @@
 title: "PHP 对象注入"
 date: 2018-05-13T00:00:00+08:00
 draft: false
-tags: ['php']
-categories: ['编程']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['php']
+categories: ['编程']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 序列化 (serialize) 指将 PHP 变量/数组/函数/类 转换为可保存或传输的过程, 再通过反序列化 (unserialize) 转换为原来的数据使用.
 

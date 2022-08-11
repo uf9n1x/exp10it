@@ -2,18 +2,35 @@
 title: "PowerView 域内信息收集"
 date: 2019-07-26T00:00:00+08:00
 draft: false
-tags: ['powershell']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['powershell']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 PowerView 是基于 PowerShell 的域渗透信息收集脚本, 该脚本完全通过 PowerShell, WMI 和 Win32 API 的方式实现诸如 net 等一系列命令以达到躲避检测的效果.
 

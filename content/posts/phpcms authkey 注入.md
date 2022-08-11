@@ -2,18 +2,35 @@
 title: "phpcms authkey 注入"
 date: 2018-02-04T00:00:00+08:00
 draft: false
-tags: ['cms']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['cms']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 phpcms 在安装时, 由于在同一个页面中连续使用 mt_rand(), 未进行有效 mt_srand() 种子随机化操作, 导致 authkey 存在泄漏风险.
 

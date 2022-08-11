@@ -2,18 +2,35 @@
 title: "dedecms 后台爆破"
 date: 2018-03-03T00:00:00+08:00
 draft: false
-tags: ['cms']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['cms']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 在 Windows 里, 我们只需要知道文件所在目录, 通过 FindFirstFile winapi 函数就可以访问到文件.
 

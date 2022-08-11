@@ -2,18 +2,35 @@
 title: "Django 快速入门"
 date: 2018-08-28T00:00:00+08:00
 draft: false
-tags: ['python','django']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['python','django']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 Django 是基于 Python 的 MVC 式 Web 框架.
 

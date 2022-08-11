@@ -2,18 +2,35 @@
 title: "Manjaro Linux 入坑指南"
 date: 2018-08-10T00:00:00+08:00
 draft: false
-tags: ['linux','manjaro']
-categories: ['linux']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['linux','manjaro']
+categories: ['linux']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 从 Deepin 换到了 Manjaro, 中间体验过 Ubuntu, 各种 PPA 加上网上零零散散的 deb 包, 找起来挺费事的
 

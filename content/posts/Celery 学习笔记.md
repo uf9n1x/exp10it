@@ -2,18 +2,35 @@
 title: "Celery 学习笔记"
 date: 2018-08-12T00:00:00+08:00
 draft: false
-tags: ['python']
-categories: ['编程']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['python']
+categories: ['编程']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 Celery 是一个强大的异步任务调度框架.
 

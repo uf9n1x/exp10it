@@ -2,18 +2,35 @@
 title: "模拟 BugScan Node 的通信机制"
 date: 2018-08-24T00:00:00+08:00
 draft: false
-tags: ["python"]
-categories: ["web","编程"]
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["python"]
+categories: ["web","编程"]
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 大多数扫描器都是基于 B/S 或 C/S 架构, 但执行任务都是在 server 端进行, 像 bugscan 这样挂载节点执行扫描, server 只负责与节点通信的结构让人眼前一亮.
 

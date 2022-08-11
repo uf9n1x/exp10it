@@ -2,18 +2,35 @@
 title: "2022 强网杯 Web 部分 WriteUp"
 date: 2022-08-01T18:22:43+08:00
 draft: false
-tags: ['php','ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['php','ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 我来当分母啦!
 
@@ -63,7 +80,7 @@ a:1:{i:0;s:36:"f64fdd2149a6611a1a43868d8a54afc1.png";}
 
 config.inc.php
 
-```
+```php
 <?php
 spl_autoload_register();
 error_reporting(0);
@@ -92,7 +109,7 @@ set-cookie 的时候进行了 `serialize()`
 
 不过 config.inc.php 开头的两句话感觉不太对劲
 
-```
+```php
 spl_autoload_register();
 error_reporting(0);
 ```
@@ -121,7 +138,7 @@ error_reporting(0);
 
 很巧的是文件上传采用的是黑名单机制
 
-```
+```php
 blackext = ["php", "php5", "php3", "html", "swf", "htm","phtml"];
 ```
 
@@ -135,7 +152,7 @@ blackext = ["php", "php5", "php3", "html", "swf", "htm","phtml"];
 
 然后我们本地构造一个类 `fb1878a933b5d5d3d86d5309059e63a3`
 
-```
+```php
 <?php
 
 class fb1878a933b5d5d3d86d5309059e63a3{};
@@ -259,7 +276,7 @@ Go 的第三方 JSON 解析器 jsonparser, 会返回第一个键值对
 
 利用两者 JSON 解析器的差异, 我们构造 payload 如下
 
-```
+```json
 {"product":[{"id":1,"num":0},{"id":2,"num":-1,"num":1}]}
 ```
 
@@ -309,7 +326,7 @@ class.php 中存在三个类 Upload AdminShow GuestShow
 
 Upload 当时没想好怎么利用, 就转过来看 AdminShow 和 UserShow 两个类
 
-```
+```php
 class GuestShow{
     public $file;
     public $contents;
@@ -405,7 +422,7 @@ GuestShow 中 `__destruct` 方法中的 `echo $this` 会触发 `__toString`
 
 于是 payload 如下
 
-```
+```php
 <?php
 
 class AdminShow{

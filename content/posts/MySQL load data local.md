@@ -2,18 +2,35 @@
 title: "MySQL load data local"
 date: 2018-07-22T00:00:00+08:00
 draft: false
-tags: ['mysql']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['mysql']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 当 LOAD DATA INFILE 指定 LOCAL 时, 用户无需 FILE 权限, 文件将由客户端读取, 并把数据发送至服务器上.
 

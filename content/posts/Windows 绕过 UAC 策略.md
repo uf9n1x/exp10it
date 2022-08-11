@@ -2,18 +2,35 @@
 title: "Windows 绕过 UAC 策略"
 date: 2019-07-12T00:00:00+08:00
 draft: false
-tags: ['windows','uac']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['windows','uac']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 UAC 全称 User Access Control, 其作用为在程序进行管理员权限的操作时对用户进行通知, 经确认以后方可才能继续执行操作.
 

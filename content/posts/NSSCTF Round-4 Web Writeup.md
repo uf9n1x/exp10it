@@ -2,18 +2,35 @@
 title: "NSSCTF Round#4 Web Writeup"
 date: 2022-08-03T22:12:24+08:00
 draft: false
-tags: ['ctf','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 等 ez_web (revenge) 出来才发现原来的 ez_web 直接读 /flag 就行...
 
@@ -29,7 +46,7 @@ ez_rce 一开始因为没装插件的原因一直想不出来 (被打)
 
 index.php
 
-```
+```php
 <?php
 class LoveNss{
     public $ljt;
@@ -57,7 +74,7 @@ if(isset($_POST['file'])){
 
 upload.php
 
-```
+```php
 <?php
 if ($_FILES["file"]["error"] > 0){
     echo "上传异常";
@@ -94,7 +111,7 @@ else{
 
 payload
 
-```
+```php
 <?php
 
 class LoveNss{
@@ -149,7 +166,7 @@ PHP 官方手册查了一下发现有签名校验
 
 贴一下改签的脚本
 
-```
+```python
 from hashlib import sha1
 
 file = open('phar.phar','rb+').read()
@@ -183,7 +200,7 @@ open('new.phar','wb').write(new_file)
 
 index.php 略有改动
 
-```
+```php
 if(isset($_POST['file'])){
     if (preg_match("/flag/i", $file)) {
     	die("nonono");

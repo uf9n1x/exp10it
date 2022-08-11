@@ -2,18 +2,35 @@
 title: "CG CTF Web 综合2 Writeup"
 date: 2022-07-20T16:08:22+08:00
 draft: false
-tags: ['php','ctf','sqli']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['php','ctf','sqli']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 题目很综合, 出的很好
 
@@ -63,7 +80,7 @@ about.php
 
 tips 说了 xss 与题目无关, 所以我们看一下 antiinject.php
 
-```
+```php
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php
 function antiinject($content){
@@ -85,7 +102,7 @@ return $info;
 
 另外发现了 passencode.php
 
-```
+```php
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php
 function passencode($content){
@@ -145,7 +162,7 @@ order by 绕过有个小技巧, 就是构造 `ooorrderrder`, 因为 `order` 含�
 
 顺便贴一下当时盲注写的脚本
 
-```
+```python
 #-*-coding:utf-8-*-
 
 import requests

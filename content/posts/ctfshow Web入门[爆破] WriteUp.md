@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[爆破] Writeup"
 date: 2022-07-22T14:00:43+08:00
 draft: false
-tags: ['ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 爆破类, 有个 PHP 伪随机数漏洞的知识点
 
@@ -92,7 +109,7 @@ mw
 
 附上脚本
 
-```
+```python
 import hashlib
 
 dicts = 'qwertyuiopasdfghjklzxcvbnm1234567890'
@@ -122,7 +139,7 @@ for a in dicts:
 
 本机运行 PHP 代码
 
-```
+```php
 <?php
 
 mt_srand(372619038);
@@ -165,7 +182,7 @@ md5 flag 截取前8位然后转10进制作为种子
 
 PHP 本机执行
 
-```
+```php
 <?php
 
 mt_srand(293358836);

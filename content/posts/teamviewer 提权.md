@@ -2,18 +2,35 @@
 title: "teamviewer 提权"
 date: 2018-02-23T00:00:00+08:00
 draft: false
-tags: ['exp']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['exp']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 teamviewer 连接的时候只需要 ID 和 密码
 

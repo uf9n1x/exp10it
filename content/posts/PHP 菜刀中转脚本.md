@@ -2,18 +2,35 @@
 title: "PHP 菜刀中转脚本"
 date: 2018-01-31T00:00:00+08:00
 draft: false
-tags: ['php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 有的服务器 管理员脑抽把 POST 方法禁止
 

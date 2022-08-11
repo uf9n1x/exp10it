@@ -2,18 +2,35 @@
 title: "Windows SPN 攻击"
 date: 2019-07-19T00:00:00+08:00
 draft: false
-tags: ["windows",'spn']
-categories: ["内网渗透"]
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["windows",'spn']
+categories: ["内网渗透"]
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 SPN 全称 Service Principal Name, 即服务主体名称. 将服务实例和服务账户与 Kerberos 协议相关联. 简单来说, SPN 使得域内的服务(例如 MSSQL Exchange FTP CIFS)在进行身份认证时都能采用 Kerberos 协议.
 

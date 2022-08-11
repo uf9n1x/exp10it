@@ -2,18 +2,35 @@
 title: "SQL 盲注二分法"
 date: 2022-07-28T20:00:43+08:00
 draft: false
-tags: ['sqli','python']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['sqli','python']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 之前一直都是整个过一遍字典... 二分法没怎么研究
 
@@ -25,7 +42,7 @@ autoCollapseToc: false
 
 二分法 时间复杂度为 `O(log2n)`, 二分法查找比遍历字典查找效率高得多
 
-```
+```python
 import requests
 
 url = 'http://a2a7e64c-6f02-4059-84fc-3cdda760b232.challenge.ctf.show/api/index.php?id=1'

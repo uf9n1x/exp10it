@@ -2,18 +2,35 @@
 title: "绕过 PowerShell 的执行策略"
 date: 2018-05-04T00:00:00+08:00
 draft: false
-tags: ['powershell','bypass']
-categories: ['bypass']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['powershell','bypass']
+categories: ['bypass']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 PowerShell Execution Policy 是用来决定哪些类型的 PowerShell 代码可以在系统中运行.
 

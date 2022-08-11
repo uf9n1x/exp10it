@@ -2,18 +2,35 @@
 title: "MSF ShellCode Bypass"
 date: 2018-05-03T00:00:00+08:00
 draft: false
-tags: ["metasploit",'shellcode','bypass','python']
-categories: ['bypass']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["metasploit",'shellcode','bypass','python']
+categories: ['bypass']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 利用 Python 在内存中执行 ShellCode, 经过 Pynstaller 的封装达到免杀的效果.
 

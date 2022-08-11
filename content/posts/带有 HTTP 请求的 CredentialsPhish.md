@@ -2,18 +2,35 @@
 title: "带有 HTTP 请求的 CredentialsPhish"
 date: 2019-07-29T00:00:00+08:00
 draft: false
-tags: ['powershell']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['powershell']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 因为 nishang 中的 Invoke-CredentialsPhish 只能将用户名和密码输出显示, 所以就自己改了改.
 

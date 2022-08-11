@@ -2,18 +2,35 @@
 title: "C++ ShellCode 加载器"
 date: 2019-08-05T00:00:00+08:00
 draft: false
-tags: ['shellcode','c++','bypass']
-categories: ['bypass']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['shellcode','c++','bypass']
+categories: ['bypass']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 通过 Win32 API 实现从内存中加载 ShellCode.
 

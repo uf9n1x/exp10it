@@ -2,18 +2,35 @@
 title: "绕过 360 对 PowerShell 的拦截"
 date: 2019-08-06T00:00:00+08:00
 draft: false
-tags: ['360','powershell','bypass']
-categories: ['内网渗透','bypass']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['360','powershell','bypass']
+categories: ['内网渗透','bypass']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 360 不拦截 PowerShell 本身的执行, 拦截的是其它进程对 powershell.exe 的调用.
 

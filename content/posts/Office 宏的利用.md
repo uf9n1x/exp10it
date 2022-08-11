@@ -2,18 +2,35 @@
 title: "Office 宏的利用"
 date: 2019-07-30T00:00:00+08:00
 draft: false
-tags: ["windows",'office']
-categories: ["漏洞复现"]
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["windows",'office']
+categories: ["漏洞复现"]
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 在 Office 中宏指对文档样式, 字体, 排版, 格式修改等一系列操作的统称, 通过 VBA 来完成.
 

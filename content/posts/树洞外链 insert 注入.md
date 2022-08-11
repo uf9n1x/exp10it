@@ -2,18 +2,35 @@
 title: "树洞外链 insert 注入"
 date: 2018-01-01T00:00:00+08:00
 draft: false
-tags: ['cms','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['cms','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 树洞外链是一款免费开源的 PHP 外链网盘系统.
 

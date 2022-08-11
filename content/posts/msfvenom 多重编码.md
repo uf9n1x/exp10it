@@ -2,18 +2,35 @@
 title: "msfvenom 多重编码"
 date: 2018-06-20T00:00:00+08:00
 draft: false
-tags: ["metasploit"]
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ["metasploit"]
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 除第一次需要指定 payload 外, 其他都用 `-p -` 代替, 多重编码需要指定 `--platform` 和 `-a` 并用 `-f raw` 输出, 最后一次编码更改为 `-f exe`
 

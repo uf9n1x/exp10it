@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[PHP特性] web89-110 Writeup"
 date: 2022-08-10T18:39:05+08:00
 draft: false
-tags: ['ctf','php']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf','php']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 PHP 的相关特性, 例如弱类型, 变量覆盖
 
@@ -63,7 +80,7 @@ http://e1400b46-43c1-413e-a644-00d0f4fc4559.challenge.ctf.show/?num=1146aaa
 
 多行匹配 (不匹配换行符)
 
-````
+````re
 ^xxx$
 ^yyy$
 ^zzz$
@@ -71,7 +88,7 @@ http://e1400b46-43c1-413e-a644-00d0f4fc4559.challenge.ctf.show/?num=1146aaa
 
 单行匹配 (匹配换行符, 相当于一行)
 
-```
+```re
 ^xxx
 yyy
 zzz$
@@ -228,7 +245,7 @@ GET 一个 ?HTTP_FLAG=flag 加 POST 一个 HTTP_FLAG=flag
 
 这里考察的是 `in_array()` 的漏洞 (其实还是弱类型转换)
 
-```
+```php
 var_dump(in_array('1abc', [1,2,3,4,5])); // true
 var_dump(in_array('abc', [1,2,3,4,5])); // false
 var_dump(in_array('abc', [0,1,2,3,4,5])); // true
@@ -246,7 +263,7 @@ var_dump(in_array('abc', [0,1,2,3,4,5])); // true
 
 该漏洞的修复方式如下
 
-```
+```php
 in_array($_GET['n'], $allow, true);
 ```
 
@@ -318,7 +335,7 @@ JKLMOZ 4a4b4c4d4f5a
 
 那么我们需要找到一个合适的 payload , 使它经过 base64 + hex 之后的字符串仅包含 `[0-9]` 和 `e`, 才能够绕过 `is_numeric()` 的检测
 
-```
+```php
 <?php
 echo bin2hex(str_replace('=', '', base64_encode($_GET[1])));
 ?>
@@ -427,7 +444,7 @@ GET: ?v3[]= POST: v1=
 
 首先参数 c 必须要以字母为开头和结尾, 然后反转再取整的结果要等于 877
 
-这里 `ereg()` 存在截断漏洞, `%00` 后的字符串不解析
+不过这里的 `ereg()` 存在截断漏洞, `%00` 后的字符串不解析
 
 构造 `aa%00778` 来绕过 `ereg()` 的检测
 
@@ -470,7 +487,7 @@ hint 的方法, 用的是 Exception 类
 
 过滤的挺多的...
 
-hint 提示是 `FilesystemIterator ` 类
+hint 提示是 `FilesystemIterator` 类
 
 利用 `FilesystemIteraor` 的构造方法列目录
 

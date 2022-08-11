@@ -2,18 +2,35 @@
 title: "termite 跳板机管理"
 date: 2018-02-22T00:00:00+08:00
 draft: false
-tags: ['windows','linux']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['windows','linux']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 Termite 是一款跳板机管理工具, 支持多种平台, 跳板机间可相互连接, 支持正反向 shell, socks 代理, 端口转发.
 

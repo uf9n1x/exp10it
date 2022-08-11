@@ -2,18 +2,35 @@
 title: "EarthWorm 内网穿透"
 date: 2018-02-18T00:00:00+08:00
 draft: false
-tags: ['windows','linux']
-categories: ['内网渗透']
 author: "X1r0z"
 
-# weight: 1  # Top page
+tags: ['windows','linux']
+categories: ['内网渗透']
 
-# You can also close(false) or open(true) something for this content.
-# P.S. comment can only be closed
-comment: false
-toc: false
-autoCollapseToc: false
+hiddenFromHomePage: false
+hiddenFromSearch: false
+twemoji: false
+lightgallery: true
+ruby: true
+fraction: true
+fontawesome: true
+linkToMarkdown: true
+rssFullText: false
+
+toc:
+  enable: true
+  auto: true
+code:
+  copy: true
+  maxShownLines: 50
+math:
+  enable: false
+share:
+  enable: true
+comment:
+  enable: true
 ---
+
 
 EW 是一套便携式的网络穿透工具, 具有 SOCKS v5服务架设和端口转发两大核心功能, 可在复杂网络环境下完成网络穿透.
 
