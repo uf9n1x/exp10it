@@ -4,7 +4,7 @@ date: 2018-02-06T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['php','bypass']
+tags: ['php']
 categories: ['web','bypass']
 
 hiddenFromHomePage: false

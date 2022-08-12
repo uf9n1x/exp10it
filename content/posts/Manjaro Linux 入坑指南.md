@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['linux','manjaro']
-categories: ['linux']
+categories: ['编程']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

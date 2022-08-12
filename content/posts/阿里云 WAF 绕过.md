@@ -4,7 +4,7 @@ date: 2018-04-21T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ["waf","aliyun",'bypass']
+tags: ["waf","aliyun"]
 categories: ["web","bypass"]
 
 hiddenFromHomePage: false

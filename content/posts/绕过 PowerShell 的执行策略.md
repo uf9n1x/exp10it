@@ -4,7 +4,7 @@ date: 2018-05-04T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['powershell','bypass']
+tags: ['powershell']
 categories: ['bypass']
 
 hiddenFromHomePage: false

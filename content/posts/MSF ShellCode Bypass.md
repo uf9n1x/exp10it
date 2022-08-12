@@ -4,7 +4,7 @@ date: 2018-05-03T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ["metasploit",'shellcode','bypass','python']
+tags: ["metasploit",'shellcode','python']
 categories: ['bypass']
 
 hiddenFromHomePage: false

@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['php']
-categories: ['web']
+categories: ['web', 'bypass']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

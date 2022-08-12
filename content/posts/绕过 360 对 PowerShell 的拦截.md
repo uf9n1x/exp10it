@@ -4,7 +4,7 @@ date: 2019-08-06T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['360','powershell','bypass']
+tags: ['360','powershell']
 categories: ['内网渗透','bypass']
 
 hiddenFromHomePage: false

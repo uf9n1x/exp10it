@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['ldap','note']
-categories: ['note']
+categories: ['编程']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['python','django']
-categories: ['web']
+categories: ['编程']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

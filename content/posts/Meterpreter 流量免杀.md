@@ -4,7 +4,7 @@ date: 2019-08-04T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['metasploit','bypass']
+tags: ['metasploit']
 categories: ['bypass','内网渗透']
 
 hiddenFromHomePage: false

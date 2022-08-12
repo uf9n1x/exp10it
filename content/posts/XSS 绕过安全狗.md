@@ -4,7 +4,7 @@ date: 2018-08-15T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['xss','bypass','safedog']
+tags: ['xss','safedog']
 categories: ['web','bypass']
 
 hiddenFromHomePage: false

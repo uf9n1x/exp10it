@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['exp','linux']
-categories: ['linux']
+categories: ['内网渗透']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

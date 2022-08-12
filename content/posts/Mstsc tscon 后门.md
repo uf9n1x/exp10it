@@ -4,7 +4,7 @@ date: 2018-07-11T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: []
+tags: ['persistence']
 categories: ['内网渗透']
 
 hiddenFromHomePage: false
