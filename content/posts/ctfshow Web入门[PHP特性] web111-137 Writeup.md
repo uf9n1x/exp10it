@@ -23,7 +23,7 @@ lightgallery: false
 
 ## web111
 
-![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208101805550.png)
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208121905634.png)
 
 hint 提示考察全局变量 (其实是超全局变量 `$GLOBALS`)
 
@@ -435,7 +435,7 @@ f[]=123
 
 hint 提示是正则表达式溢出
 
-[https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html](https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html)
+参考文章 [https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html](https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html)
 
 回溯失败时会返回 false
 
