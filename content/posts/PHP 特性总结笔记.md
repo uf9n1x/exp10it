@@ -1,0 +1,571 @@
+---
+title: "PHP 特性总结笔记"
+date: 2022-08-13T19:24:37+08:00
+lastmod: 2022-08-13T19:24:37+08:00
+draft: true
+author: "X1r0z"
+
+tags: ['php', 'ctf']
+categories: ['web', 'CTF 笔记']
+
+hiddenFromHomePage: false
+hiddenFromSearch: false
+
+toc:
+  enable: true
+math:
+  enable: false
+lightgallery: false
+---
+
+~~知不知道 PHP 语言的含金量啊?~~
+
+<!--more-->
+
+不定期更新, 主要记录 CTF 刷题过程中的各种 PHP 特性
+
+反序列化和命令执行的相关 tricks 会单独写在其它笔记中
+
+## 类型转换
+
+PHP 是一个弱类型语言, 变量之间进行比较时, 若两个变量类型不一致, 会进行强制类型转换
+
+[https://www.php.net/manual/zh/language.types.type-juggling.php](https://www.php.net/manual/zh/language.types.type-juggling.php)
+
+```php
+'a' == 0 // true
+
+'1a' == 0 // false
+'1a' == 1 // true
+
+'a1' == 0 // true
+'a1' == 1 // false
+
+'123aa' == 123 // true
+'aa123' == 123 // false
+
+'123aa456' == 123 // true
+
+'0e123' == '0e456' //true
+```
+
+非数字开头的字符串转换成 int 类型时会变成 0, 数字开头的字符串转换 int 类型后会保留开头的数字
+
+string 类型的转换会从最左边开始, 直到遇到非数字的字符时停止
+
+含 e 的字符串转换成 int 类型时会被当做科学计数法处理, `123e456` 表示 123 的 456 次方
+
+`0e123` 表示 0 的 123 次方, 总是等于 0
+
+`0e456` 同理
+
+另外在数字开头加入 `\f \t \s \n \r` 等返回 true
+
+```php
+' 36'=='36'; // true
+'36 '=='36'; // false
+'3 6'=='36'; // false
+
+"\n36"=="36"; // true
+"\t36"=="36"; // true
+
+"36\n"=="36"; // false
+"36\t"=="36"; // false
+
+" 36" === "36" // false
+"36 " === "36" // false
+
+"\n36"==="36"; // false
+"\t36"==="36"; // false
+```
+
+
+
+## 进制转换
+
+一个十进制数与十六进制/八进制数比较时, PHP 会将十六进制/八进制数转换为十进制数
+
+十六进制数以 `0x` 开头, 八进制数以 `0` 开头
+
+```php
+01555 == 877
+01555 === 877
+
+0x36D == 877
+0x36D === 877
+```
+
+以上结果均返回 true
+
+## == 与 ===
+
+[https://www.php.net/manual/zh/language.operators.comparison.php](https://www.php.net/manual/zh/language.operators.comparison.php)
+
+== 弱类型比较, 仅要求两边变量类型转换后的值相等
+
+=== 强类型比较, 不仅要求两个变量的值相等, 还要求变量的类型相同
+
+同理 != 是弱类型比较, 而 !== 是强类型比较
+
+```php
+'123' == 123 // true
+'123' === 123 // false
+```
+
+## preg_match()
+
+ ### 单行/多行匹配
+
+几种模式修饰符
+
+https://www.php.net/manual/zh/reference.pcre.pattern.modifiers.php
+
+默认单行匹配匹配换行符
+
+/m 多行匹配不匹配换行符
+
+一个通过这种方式绕过的实例: Apache 换行解析漏洞 (CVE-2017-15715)
+
+[https://blog.csdn.net/qq_46091464/article/details/108278486](https://blog.csdn.net/qq_46091464/article/details/108278486)
+
+[https://www.leavesongs.com/PENETRATION/apache-cve-2017-15715-vulnerability.html](https://www.leavesongs.com/PENETRATION/apache-cve-2017-15715-vulnerability.html)
+
+### 传递数组
+
+函数传入数组时会返回 false
+
+### 正则回溯绕过
+
+正则表达式溢出 回溯绕过
+
+[https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html](https://www.leavesongs.com/PENETRATION/use-pcre-backtrack-limit-to-bypass-restrict.html)
+
+## intval()
+
+```php
+intval(mixed $value, int $base = 10): int
+```
+
+当 `$base = 0` 时, intval 会检测 value 的格式来决定使用的进制, 可以使用八进制或者十六进制绕过
+
+另外 intval 可以取整 (去除小数点后的部分) 和截断 (去除数字后的字符串, 包括科学计数法)
+
+在数字前加空格也能正常执行 intval
+
+```php
+intval('1146.0');
+intval('1146.123');
+intval('1146aa');
+
+intval('1146e123');
+
+intval('0x117c', 0);
+intval('010574', 0);
+
+intval(' 1146');
+```
+
+以上结果均返回 1146
+
+## strpos()
+
+`strpos('01234', 0)` 返回的结果是 0 对应的索引 0, 也就是 false
+
+如果是 `!strpos()` 这种则会返回 true
+
+代码使用了 `if(!strpos($str, 0))` 对八进制进行过滤, 可以在字符串开头加空格绕过
+
+strpos() 遇到数组返回 null
+
+strrpos() stripos() strripos() 同理
+
+## is_numeric()
+
+识别科学计数法
+
+`0123e4567` 返回 true
+
+包含非 e 字母返回 false
+
+可以尝试利用 base64 + bin2hex 找到一些只含 e 和数字的 payload
+
+在数字**开头**加入空格 换行符 tab 等特殊字符可以绕过检测
+
+```php
+is_numeric(' 36'); // true
+is_numeric('36 '); // false
+is_numeric('3 6'); // false
+
+is_numeric("\n36"); // true
+is_numeric("\t36"); // true
+
+is_numeric("36\n"); // false
+is_numeric("36\t"); // false
+```
+
+## in_array()
+
+将待搜索的值的类型自动转换为数组中的值的类型
+
+```php
+var_dump(in_array('1abc', [1,2,3,4,5])); // true
+var_dump(in_array('abc', [1,2,3,4,5])); // false
+var_dump(in_array('abc', [0,1,2,3,4,5])); // true
+```
+
+## ereg()
+
+存在截断漏洞
+
+`%00` 后面的字符串不解析
+
+## trim()
+
+不过滤 \f 换页符, url 编码后是 `%0c36`
+
+## 路径穿越
+
+通过绝对路径/相对路径绕过正则对文件名的检测, 例如 `preg_match('/flag.php/', $str)`
+
+```
+./flag.php
+./ctfshow/../flag.php
+/var/www/html/flag.php
+```
+
+利用 Linux 下的软链接绕过
+
+https://www.anquanke.com/post/id/213235
+
+```
+/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/p
+roc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/pro
+c/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/
+self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/se
+lf/root/proc/self/root/var/www/html/flag.php
+```
+
+## 伪协议
+
+[https://www.php.net/manual/zh/wrappers.php](https://www.php.net/manual/zh/wrappers.php)
+
+常见的 php://filter php://input data:// 都很熟悉了
+
+下面是一些不是很常见的 payload
+
+```php
+compress.zlib://flag.php
+php://filter/ctfshow/resource=flag.php
+```
+
+php://filter 遇到不存在的过滤器会直接跳过, 可以绕过一些对关键字的检测
+
+## md5 sha 1 0e漏洞
+
+本质上是科学计数法和类型转换的问题, 0 的任何次方都是 0
+
+加密比较的时候用的必须得是 `==`, 而不是 `===`
+
+```php
+'0e123' == '0e456' // true
+'0e123' === '0e456' // false
+```
+
+md5() sha1() 返回的都是字符串类型
+
+md5 0e payload
+
+```
+QNKCDZO
+240610708
+s878926199a
+s155964671a
+s214587387a
+```
+
+sha1 0e payload
+
+```
+aaroZmOk
+aaK1STfY
+aaO8zKZF
+aa3OFF9m
+0e1290633704
+10932435112
+```
+
+## md5 sha1 数组绕过
+
+md5 加密数组时返回 null
+
+```php
+$a = Array();
+$b = Array();
+
+md5($a) == md5($b); // null == null true
+md5($a) === md5($b); // null === null true
+```
+
+sha1 同理
+
+## 运算符优先级
+
+[https://www.php.net/manual/zh/language.operators.precedence.php](https://www.php.net/manual/zh/language.operators.precedence.php)
+
+例如
+
+```php
+$v0 = is_numeric($v1) and is_numeric($v2) and is_numeric($v3);
+```
+
+实际上是先赋值
+
+```php
+$v0 = is_numeric($v1)
+```
+
+然后是这种奇怪的形式
+
+```php
+$v0 and is_numeric($v2) and is_numeric($v3);
+```
+
+例如 && 和 || 的顺序也要注意
+
+## 实例化类 列目录/rce
+
+一般都是 `echo new $v1($v2('xxx'))` 或者 `eval($v('ctfshow'))` 的形式, 有时候可以跳出来执行其它代码
+
+ReflectionClass 和 Exception 里面可以执行其它函数
+
+FilesystemIterator 列目录
+
+[https://www.php.net/manual/zh/filesystemiterator.construct.php](https://www.php.net/manual/zh/filesystemiterator.construct.php)
+
+```php
+new Exception(system('xx'))
+new ReflectionClass(system('xx'))
+new FilesystemIterator(getcwd())
+    
+echo new ReflectionClass('stdClass');system()//
+```
+
+## 变量覆盖
+
+几种形式
+
+```php
+$$key = $$value;
+
+extract()
+parse_str()
+import_request_variables()
+```
+
+思路是 `$_GET` `$_POST` `$_COOKIKE` 相互转换
+
+或者利用 `$GLOBALS` 输出所有的全局变量
+
+另外 parse_str() 接受数组传参 支持数组内变量覆盖
+
+```
+?_POST[key1]=36d&_POST[key2]=36d
+```
+
+## $GLOBALS 和 get_defined_vars()
+
+[https://www.php.net/manual/zh/reserved.variables.globals](https://www.php.net/manual/zh/reserved.variables.globals)
+
+[https://www.php.net/manual/zh/function.get-defined-vars](https://www.php.net/manual/zh/function.get-defined-vars)
+
+`$GLOBALS` 引用全局作用域中可用的全部变量
+
+get_defined_vars() 返回由所有已定义变量所组成的数组
+
+有时候可以从这里面查看 `$flag`
+
+## 非法变量名转换
+
+> 变量名与 PHP 中其它的标签一样遵循相同的规则。一个有效的变量名由字母或者下划线开头，后面跟上任意数量的字母，数字，或者下划线。 按照正常的正则表达式，它将被表述为：'`^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$`'。
+
+非法的字符 (点, 空格, 括号等) 会被转换成下划线
+
+例如过滤了 `_` 如何构造 `__CTFSHOW__` ?
+
+答案是传参的时候参数名写成 `..CTFSHOW..`
+
+另外有一个绕过转换的 trick, PHP < 8 有效
+
+https://blog.csdn.net/mochu7777777/article/details/115050295
+
+`[` 被转换为`_`, 而后面的 `.` 不转换
+
+例如, 构造 `CTF_SHOW.COM` 的变量名可以传参 `CTF[SHOW.COM`
+
+## $\_SERVER['argv'] 与 $\_SERVER['QUERY_STRING']
+
+前者是数组, 后者是字符串 (截取 `?` 之后的部分)
+
+前者用空格分割数组内容
+
+加空格绕过 querystring 对参数的检测
+
+## 不加引号的字符串
+
+PHP 会自动帮我们 assume 对应值的类型
+
+例如下面的代码执行后会爆 Warning, 但能正常输出 `flag_give_me`
+
+```php
+$fl0g = flag_give_me;
+
+echo $fl0g;
+```
+
+## call_user_func
+
+```php
+call_user_func(callable $callback, mixed ...$args): mixed
+```
+
+调用静态方法
+
+```php
+call_user_func('myclass::static_method')
+```
+
+传递数组
+
+```php
+call_user_func(array('myclass', 'static_method'));
+
+call_user_func(array(new myclass(), 'dynamic_method'));
+```
+
+## 不含字母数字的函数
+
+`_()` 为 gettext() 别名, 类似于 echo 输出
+
+[https://www.php.net/manual/zh/function.gettext](https://www.php.net/manual/zh/function.gettext)
+
+[https://www.cnblogs.com/lost-1987/articles/3309693.html](https://www.cnblogs.com/lost-1987/articles/3309693.html)
+
+```php
+var_dump(call_user_func(call_user_func("_", "get_defined_vars")));
+```
+
+以上命令可以返回所有已定义变量
+
+## 无参数函数读文件/rce
+
+无参数函数指形如 `a(b(c()))` 这种不需要参数或者只需要一个参数, 并且对应的参数可以通过另一个函数的返回值来获取的函数
+
+例如在当前目录仅存在 index.php flag.php 的情况下, 无参数读取 flag.php 的内容
+
+```php
+show_source(next(array_reverse(scandir(pos(localeconv())))));
+```
+
+或者是配合 get 传参进行 rce
+
+```php
+eval(end(current(get_defined_vars())))
+```
+
+[https://www.freebuf.com/articles/system/242482.html](https://www.freebuf.com/articles/system/242482.html)
+
+[https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE](https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE)
+
+## 反引号内引用变量
+
+```bash
+`$F`; sleep 3
+```
+
+反引号内能够引用变量, 与 `"$var"` 类似
+
+https://blog.csdn.net/qq_46091464/article/details/109095382
+
+## php session upload progress
+
+条件竞争, 缓存文件 getshell
+
+/tmp/phpxxxxxx
+
+利用 . 执行文件
+
+## 静态调用
+
+两种方式
+
+通过 `::` 访问
+
+```php
+$ctfshow::getFlag();
+```
+
+通过 `call_user_func($_POST['ctfshow'])` 以数组形式调用静态方法
+
+```
+ctfshow[]=ctfshow&ctfshow[]=getFlag
+```
+
+[https://www.php.net/manual/zh/language.oop5.static.php](https://www.php.net/manual/zh/language.oop5.static.php)
+
+## 返回值为空的函数
+
+f1=sleep&f2=sleep
+
+f1=md5&f2=phpinfo
+f1=md5&f2=md5
+
+f1=sha1&f2=getcwd
+
+f1=intval&f2=getcwd
+f1=getcwd&f2=getcwd
+
+f1=exec&f2=exec
+f1=system&f2=system
+
+echo current(localeconv()); // .
+
+intval 之后为0
+
+## 位运算
+
+与 或 取反 异或
+
+python脚本
+
+($a)('xx') 调用执行函数
+
+[https://www.php.net/manual/zh/language.operators.php](https://www.php.net/manual/zh/language.operators.php)
+
+## 函数与数字运算
+
+在 PHP 中, 函数与数字进行运算的时候, 函数能够被正常执行
+
+1+phpinfo()+1
+
++-*/ & | || && 都行
+
+[https://www.php.net/manual/zh/language.operators.php](https://www.php.net/manual/zh/language.operators.php)
+
+## 三目运算符
+
+return 1?phpinfo():1
+
+## create_function 匿名函数
+
+create_function('xx', 'xxx}system('xxx')') 闭合括号执行任意代码
+
+根命名空间 \create_function() 绕过过滤
+
+https://paper.seebug.org/755/
+
+## __autoload
+
+class_exists() 默认调用 autoload
+
+## session 文件包含
+

@@ -1,6 +1,7 @@
 ---
 title: "{{ replace .TranslationBaseName "-" " " | title }}"
 date: {{ .Date }}
+lastmod: {{ .Date }}
 draft: false
 author: "X1r0z"
 

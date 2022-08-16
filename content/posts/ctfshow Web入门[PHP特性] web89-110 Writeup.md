@@ -236,7 +236,7 @@ var_dump(in_array('abc', [1,2,3,4,5])); // false
 var_dump(in_array('abc', [0,1,2,3,4,5])); // true
 ```
 
-`in_array()` 会将带搜索的值的类型自动转换为数组中的值的类型 (string to int)
+`in_array()` 会将待搜索的值的类型自动转换为数组中的值的类型 (string to int)
 
 所以我们构造 `n=123.php` 并不影响 `in_array()` 的查找
 
