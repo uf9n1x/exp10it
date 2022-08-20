@@ -68,13 +68,21 @@ enableEmoji = true
         title = ""
         weight = 3
       [[languages.en.menu.main]]
+        identifier = "links"
+        pre = ""
+        post = ""
+        name = "Links"
+        url = "/links/"
+        title = ""
+        weight = 4
+      [[languages.en.menu.main]]
         identifier = "about"
         pre = ""
         post = ""
         name = "About"
         url = "/about/"
         title = ""
-        weight = 4
+        weight = 5
       [[languages.en.menu.main]]
         identifier = "github"
         pre = "<i class='fab fa-github fa-fw'></i>"
@@ -82,7 +90,7 @@ enableEmoji = true
         name = ""
         url = "https://github.com/X1r0z/exp10it"
         title = "GitHub"
-        weight = 5
+        weight = 6
     [languages.en.params]
       # site description
       description = "X1r0z Blog"
@@ -543,7 +551,7 @@ enableEmoji = true
     # Comment config
     # 评论系统设置
     [params.page.comment]
-      enable = true
+      enable = false
       # Disqus comment config (https://disqus.com/)
       # Disqus 评论系统设置 (https://disqus.com/)
       [params.page.comment.disqus]
