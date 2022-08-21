@@ -77,7 +77,7 @@ with open('phar_new.phar', 'wb+') as f:
 
 对 gzip bzip2 处理时, PHP 会将其解压缩, 然后解析里面的 phar 文件
 
-而对 tar 处理时, PHP 会检测压缩包中是否存在 `.phar/.metadata`, 存在的话就会直接将 .metadata 里的内容**直接进行反序列化**
+而对 tar 处理时, PHP 会检测压缩包中是否存在 `.phar/.metadata`, 存在的话就会将 .metadata 里的内容**直接进行反序列化**
 
 测试代码
 
