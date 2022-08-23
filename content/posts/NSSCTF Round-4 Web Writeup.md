@@ -127,7 +127,7 @@ $phar->stopBuffering();
 
 [https://www.anquanke.com/post/id/240007](https://www.anquanke.com/post/id/240007)
 
-可以通过 tar gzip b2zip 的方式压缩 phar 文件, PHP 处理时会自动解压缩并且解析里面的 phar
+可以通过 tar gzip bzip2 的方式压缩 phar 文件, PHP 处理时会自动解压缩并且解析里面的 phar
 
 同时这里存在 `__wakeup`, 可以改数字绕过
 

@@ -19,7 +19,7 @@ lightgallery: false
 
 > 申请友链请联系 [i@exp10it.cn](mailto:i@exp10it.cn), 并附上 logo 地址
 
-{{< friend name="ChaBug" url="https://www.chabug.org/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220821122729.png" bio="ChaBug 安全团队" >}}
+{{< friend name="ChaBug" url="https://www.chabug.org/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208212217274.png" bio="ChaBug 安全团队" >}}
 
 {{< friend name="Y4er" url="https://y4er.com/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220821122747.png" bio="Security Re-Searcher" >}}
 
