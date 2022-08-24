@@ -2,7 +2,7 @@
 title: "Ctfshow Web入门[SSTI] Writeup"
 date: 2022-08-23T19:05:46+08:00
 lastmod: 2022-08-23T19:05:46+08:00
-draft: false
+draft: true
 author: "X1r0z"
 
 tags: []

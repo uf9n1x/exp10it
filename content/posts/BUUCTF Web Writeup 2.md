@@ -2,7 +2,7 @@
 title: "BUUCTF Web Writeup 2"
 date: 2022-08-24T22:00:41+08:00
 lastmod: 2022-08-24T22:00:41+08:00
-draft: true
+draft: false
 author: "X1r0z"
 
 tags: ['sql','upload','php','python','ctf']
