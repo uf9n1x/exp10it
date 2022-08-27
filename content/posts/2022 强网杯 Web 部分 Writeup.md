@@ -1,5 +1,5 @@
 ---
-title: "2022 强网杯 Web 部分 WriteUp"
+title: "2022 强网杯 Web 部分 Writeup"
 date: 2022-08-01T18:22:43+08:00
 draft: false
 author: "X1r0z"
