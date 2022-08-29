@@ -1,5 +1,5 @@
 ---
-title: "2022 网鼎杯 Web 部分 Writeup"
+title: "2022 网鼎杯青龙组 Web 部分 Writeup"
 date: 2022-08-26T20:03:48+08:00
 lastmod: 2022-08-26T20:03:48+08:00
 draft: false

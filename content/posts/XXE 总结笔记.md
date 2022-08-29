@@ -6,7 +6,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['ctf','xxe']
-categories: ['web','CTF笔记']
+categories: ['web','CTF 笔记']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

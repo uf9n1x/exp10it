@@ -968,7 +968,7 @@ User-agent: *
 Disallow: /fAke_f1agggg.php
 ```
 
-访问 fAke_f1agggg
+访问 fAke_f1agggg.php
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208272352732.png)
 
@@ -1019,7 +1019,7 @@ if (isset($_GET['get_flag'])){
 ?>
 ```
 
-首先是 intval 的绕过, 这一次的绕过有点意思
+首先是 intval 的绕过, 这次的绕过有点意思
 
 因为 intval 对科学计数法会截断处理, 例如 `123e456` 会变成 123 (PHP 5)
 
