@@ -22,7 +22,7 @@ web 三道题两道都是 java 呜呜呜
 
 <!--more-->
 
-# web669
+## web669
 
 application.py
 
@@ -565,3 +565,9 @@ dd if=/flag of=/tmp/flag.txt
 结果发现成功读取到 flag
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202208261801624.png)
+
+## 补充
+
+看到其它师傅 wp 中方法是通过更改 session 里面的 updir 来进行文件写入, 我这个应该算是有点非预期了
+
+也有的师傅是覆写 result.html 直接进行 ssti, 原因应该是在第一次渲染 result.html 之前进行了覆写

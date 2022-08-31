@@ -197,7 +197,7 @@ mysql> select 3 from (select 1,2,3 union select * from users)c;
 14 rows in set (0.00 sec)
 ```
 
-如果过滤了反引号的话, 还可以通过别名或者引号来绕过
+如果过滤了反引号的话, 还可以通过别名或者单双引号来绕过
 
 别名 第一种方式 (字段别名)
 
