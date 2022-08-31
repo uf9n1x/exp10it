@@ -409,7 +409,7 @@ def shrine(shrine):
     def safe_jinja(s):
         s = s.replace('(', '').replace(')', '')
         blacklist = ['config', 'self']
-        return ''.join(['{{% set {}=None%}}'.format(c) for c in blacklist]) + s
+        return ''.join(['\{\{\% set {}=None \%\}\}'.format(c) for c in blacklist]) + s
 
     return flask.render_template_string(safe_jinja(shrine))
 
