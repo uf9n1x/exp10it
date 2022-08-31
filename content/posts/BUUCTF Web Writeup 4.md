@@ -1,11 +1,11 @@
 ---
 title: "BUUCTF Web Writeup 4"
-date: 2022-08-28T15:47:40+08:00
-lastmod: 2022-08-28T15:47:40+08:00
-draft: true
+date: 2022-08-31T15:47:40+08:00
+lastmod: 2022-08-31T15:47:40+08:00
+draft: false
 author: "X1r0z"
 
-tags: ['ctf','php']
+tags: ['ctf','php','python']
 categories: ['web']
 
 hiddenFromHomePage: false
