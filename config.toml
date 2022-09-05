@@ -325,7 +325,7 @@ enableEmoji = true
     # Hosted on (HTML format is supported)
     # 托管服务信息 (支持 HTML 格式)
     # <a title="Github Pages" href="https://docs.github.com/en/pages/" target="_blank" rel="noopener noreffer">GitHub Pages</a>
-    hostedOn = '<a title="Github Pages" href="https://docs.github.com/en/pages/" target="_blank" rel="noopener noreffer">GitHub Pages</a>' 
+    hostedOn = '<a title="Tencent Cloud" href="https://cloud.tencent.com/" target="_blank" rel="noopener noreffer">Tencent Cloud</a>' 
     # whether to show copyright info
     # 是否显示版权信息
     copyright = true
@@ -337,7 +337,7 @@ enableEmoji = true
     since = 2017
     # ICP info only in China (HTML format is supported)
     # ICP 备案信息，仅在中国使用 (支持 HTML 格式)
-    icp = ""
+    icp = '<a href="https://beian.miit.gov.cn/">苏 ICP 备 2022036266 号</a>'
     # license info (HTML format is supported)
     # 许可协议信息 (支持 HTML 格式)
     license= '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'

