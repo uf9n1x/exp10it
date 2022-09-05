@@ -1,5 +1,5 @@
 ---
-title: "ISCC 2018 Misc WriteUp"
+title: "ISCC 2018 Misc Writeup"
 date: 2018-05-20T00:00:00+08:00
 draft: false
 author: "X1r0z"

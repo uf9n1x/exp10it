@@ -1,5 +1,5 @@
 ---
-title: "ChaBug Web2 WriteUp"
+title: "ChaBug Web2 Writeup"
 date: 2018-05-16T00:00:00+08:00
 draft: false
 author: "X1r0z"

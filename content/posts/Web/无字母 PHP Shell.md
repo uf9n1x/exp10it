@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['php']
-categories: ['编程','web']
+categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

@@ -5,7 +5,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['sqli','python']
-categories: ['编程']
+categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false

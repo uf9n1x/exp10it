@@ -3,7 +3,7 @@ import os
 doc = os.listdir('.')
 
 for filename in doc:
-    if filename == 'rep.py':
+    if filename == 'header.py':
         break
     with open(filename, 'r', encoding="utf-8") as f:
         content = f.readlines()
