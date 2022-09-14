@@ -626,7 +626,7 @@ create_function('', "system('whoami');//");
 \phpinfo();
 ```
 
-## __autoload 和 class_exists()
+## \_\_autoload 和 class_exists()
 
 ```php
 class_exists(string $class, bool $autoload = true): bool
@@ -635,3 +635,9 @@ class_exists(string $class, bool $autoload = true): bool
 `__autoload` 是为了定义 PHP 加载未知类的时候进行的操作, 之前强网杯也出过 `spl_autoload` 相关的题 (`spl_autoload` 是 `__autoload` 的默认实现)
 
 这里需要注意的是用 `class_exist` 检查一个类是否存在的时候, 默认会**自动**调用 `__autoload` 方法
+
+# 属性类型不敏感
+
+在 PHP 7.1 + 的版本中, 对属性类型 (public protected private) 不敏感
+
+因为 protected 和 private 反序列化后的结果中含有 `%00`, 部分题目会禁止这种字符, 可在构造 payload 时将属性全部改成 public 来绕过限制 

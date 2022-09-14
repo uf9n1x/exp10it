@@ -26,3 +26,5 @@ lightgallery: false
 {{< friend name="Sch0lar" url="https://poc10.cn/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220821122811.png" bio="爱好 Web 安全" >}}
 
 {{< friend name="松鼠A" url="https://www.sshuo.cc/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220821122834.png" bio="松鼠A的博客" >}}
+
+{{< friend name="羽墨" url="https://www.yumoyumo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209141342239.png" bio="羽墨的个人博客" >}}
