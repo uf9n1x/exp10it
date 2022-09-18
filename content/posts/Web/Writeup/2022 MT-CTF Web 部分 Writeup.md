@@ -220,7 +220,7 @@ pickle.loads(base64.b64decode(session.get('ser_data')))
 
 过滤了 R i o b 的 opcode, 几乎无法命令执行 (也可能是我了解的不是很深还没找出来绕过的方法...)
 
-但是需要注意的是判断之前进行了好几次 replace, 但后面被反序列化的内容还是被替换之前的 ser_data
+但是需要注意的是判断之前进行了好几次 replace, 但后面反序列化的内容还是被替换之前的 ser_data
 
 而且这里 in 的判断是区分大小写的
 
@@ -515,7 +515,7 @@ app.run 中有一个 `debug=True` 的参数, 猜测可能是利用 flask pin 或
 
 想到了之前网鼎杯的时候利用 unrar 的 cve, 搜了一下发现 unzip 目前还没有类似的 cve
 
-因为系统是 linux 的, 想试试软链接行不行, 但是之前也没遇到过类似的利用方式
+因为系统是 linux 的, 想试试软链接行不行, 但之前也没遇到过类似的利用方式, 只能碰碰运气了
 
 参考文章
 
@@ -557,8 +557,8 @@ zip --symlinks test.zip ./*
 
 ```
 /etc/passwd
-/sys/class/net/eth0/address`
-/etc/machine-id`
+/sys/class/net/eth0/address
+/etc/machine-id
 ```
 
 ```python
@@ -607,7 +607,7 @@ print(rv)
 
 用 pin 登录的时候发现登录失败, 然后想到 flask 2020 年有一次更新导致生成 pin 的方式发生了变化
 
-翻了一下题目服务器里的对应源码
+看看题目服务器里的对应源码
 
 ```
 http://eci-2ze7a80yj44cia7kndlu.cloudeci1.ichunqiu.com:8888/display/uploads/4b3c/8cab/test/usr/local/lib/python3.8/site-packages/werkzeug/__init__.py
@@ -626,11 +626,13 @@ with open("cgroup", "rb") as f:
 print(linux)
 ```
 
+输出
+
 ```
 96cec10d3d9307792745ec3b85c8962054c838c708041d6ae60ad7fbc13b336e438b8f820bbdb971f8fa7cd6b96644fe
 ```
 
-改了之后还是不行, 于是到网上搜了一下, 发现 flask 新版本生成 pin 的时候, 原来的 md5 加密改成了 sha1
+改了之后还是不行, 又在网上搜了搜发现 flask 新版本生成 pin 的时候, 原来的 md5 加密改成了 sha1
 
 参考文章
 
