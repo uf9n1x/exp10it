@@ -458,6 +458,7 @@ if (isset($_POST['guess'])) {
 参考文章 [https://www.cnblogs.com/yesec/p/15429527.html](https://www.cnblogs.com/yesec/p/15429527.html)
 
 >With the default locale setting "C", basename() drops non-ASCII-chars at the beginning of a filename.
+>
 >在使用默认语言环境设置时，basename() 会删除文件名开头的非 ASCII 字符。
 
 测试后发现非 ASCII 字符必须要加在 `/` 的后面, 例如
