@@ -27,4 +27,6 @@ lightgallery: false
 
 {{< friend name="松鼠A" url="https://www.sshuo.cc/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/20220821122834.png" bio="松鼠A的博客" >}}
 
-{{< friend name="羽墨" url="https://www.yumoyumo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209141342239.png" bio="羽墨的个人博客" >}}
+{{< friend name="羽墨" url="https://www.yumoyumo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209141342239.png" bio="后端大手子" >}}
+
+{{< friend name="AIMISAKA" url="http://blog.aimisaka.site/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209211722437.png" bio="Go 语言大佬" >}}
