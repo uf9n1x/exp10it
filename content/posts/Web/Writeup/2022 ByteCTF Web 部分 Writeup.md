@@ -22,8 +22,6 @@ lightgallery: false
 
 感觉挺难的, 就做出来两道题
 
-看了官方 wp 中其他几道题的思路感觉收获很大
-
 <!--more-->
 
 ## easy_grafana
