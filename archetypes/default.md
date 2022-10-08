@@ -2,7 +2,7 @@
 title: "{{ replace .TranslationBaseName "-" " " | title }}"
 date: {{ .Date }}
 lastmod: {{ .Date }}
-draft: false
+draft: true
 author: "X1r0z"
 
 tags: []

