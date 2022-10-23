@@ -1376,7 +1376,7 @@ if(!empty($_POST["user_name"]) && !empty($_POST["address"]) && !empty($_POST["ph
 
 新的 `$address` 虽然也是拼接, 但是有 addslashes 包着
 
-回到 confirm.php 里看发现传入的 `$_POST['address']` 没有任何顾虑
+回到 confirm.php 里看发现传入的 `$_POST['address']` 没有任何过滤
 
 所以这题思路应该就是二次注入, 注入点就是 address
 
