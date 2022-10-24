@@ -382,7 +382,7 @@ http://43.143.7.97:28254/?name={{config.__class__.__init__.__globals__['os']['po
 
 一共两个插件, 第一个没搜出来什么, 反倒是第二个 simple-link-directory, 存在 sql 注入
 
-[](https://wpscan.com/vulnerability/1c83ed73-ef02-45c0-a9ab-68a3468d2210)
+[https://wpscan.com/vulnerability/1c83ed73-ef02-45c0-a9ab-68a3468d2210](https://wpscan.com/vulnerability/1c83ed73-ef02-45c0-a9ab-68a3468d2210)
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210091628711.png)
 
@@ -589,9 +589,9 @@ if($week_1 && $week_2){
 
 log4j 反序列化
 
-[](https://www.freebuf.com/vuls/309584.html)
+[https://www.freebuf.com/vuls/309584.html](https://www.freebuf.com/vuls/309584.html)
 
-[](https://github.com/WhiteHSBG/JNDIExploit)
+[https://github.com/WhiteHSBG/JNDIExploit](https://github.com/WhiteHSBG/JNDIExploit)
 
 直接用 payload 打就行
 

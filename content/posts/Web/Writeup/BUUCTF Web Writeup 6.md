@@ -30,7 +30,7 @@ lightgallery: false
 
 真正的做法是利用 proc 中的 cmdline 和 fd
 
-参考文章 [](https://www.anquanke.com/post/id/241148)
+参考文章 [https://www.anquanke.com/post/id/241148](https://www.anquanke.com/post/id/241148)
 
 大致总结一下
 
@@ -280,7 +280,7 @@ vps 挂着 php 代码, 然后通过 GET 命令下载到网站上另存为 a.php
 
 正确的思路是利用 perl open 函数的命令执行漏洞来 getshell
 
-参考文章 [](https://lorexxar.cn/2017/11/10/hitcon2017-writeup/#ssrfme)
+参考文章 [https://lorexxar.cn/2017/11/10/hitcon2017-writeup/#ssrfme](https://lorexxar.cn/2017/11/10/hitcon2017-writeup/#ssrfme)
 
 这里就不写了
 
@@ -678,7 +678,7 @@ information_schema 被过滤了, 因为含有 or
 
 当然这个 payload 目前还有点问题, 比如不能区分大小写 (binary 含有 in 被过滤了)
 
-(绕过 binary 过滤来区分大小写的参考文章 [](https://nosec.org/home/detail/3830.html))
+(绕过 binary 过滤来区分大小写的参考文章 [https://nosec.org/home/detail/3830.html](https://nosec.org/home/detail/3830.html)
 
 不过对于本题读取 flag 来说是不影响的
 
@@ -919,7 +919,7 @@ select unhex(load_file('d:/hex.txt')) into dumpfile 'd:/DS_Store'
 
 最后用工具读取
 
- [](https://github.com/gehaxelt/Python-dsstore)
+ [https://github.com/gehaxelt/Python-dsstore](https://github.com/gehaxelt/Python-dsstore)
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201526638.png)
 
@@ -1290,9 +1290,9 @@ system 等函数被禁用了, flag 在 phpinfo 里
 
 参考文章
 
-[](https://www.cnblogs.com/tr1ple/p/11301743.html)
+[https://www.cnblogs.com/tr1ple/p/11301743.html](https://www.cnblogs.com/tr1ple/p/11301743.html)
 
-[](https://www.cnblogs.com/linuxsec/articles/11278477.html)
+[https://www.cnblogs.com/linuxsec/articles/11278477.html](https://www.cnblogs.com/linuxsec/articles/11278477.html)
 
 > php < 7.2: php://filter/string.strip_tags/resource=/etc/passwd
 >
@@ -1370,7 +1370,7 @@ echo json_encode(['content' => $content]);
 
 json decode 时会自动把 `\u` 开头的 Unicode 编码转换为正常的字符串 (看 wp 才发现的, 一搜这个技巧出来的全都是这题的 wp...)
 
-在线工具 [](https://tool.chinaz.com/tools/native_ascii.aspx)
+在线工具 [https://tool.chinaz.com/tools/native_ascii.aspx](https://tool.chinaz.com/tools/native_ascii.aspx)
 
 代码同时也对 content 做了过滤, 这里自然而然就想到了 php://filter + base64 绕过
 

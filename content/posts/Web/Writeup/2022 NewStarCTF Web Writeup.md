@@ -596,7 +596,7 @@ poc.xml 里面看到了 rome 的依赖
 
 猜测是 rome 反序列化
 
-参考文章 [](https://www.anquanke.com/post/id/258575)
+参考文章 [https://www.anquanke.com/post/id/258575](https://www.anquanke.com/post/id/258575)
 
 ysoserial 中的利用链
 

@@ -561,7 +561,7 @@ date -f /hereisflag/flllll111aaagg
 
 hade_waibo 听其它师傅说利用的是最近出来的 issue 来绕过 \_\_wakeup
 
-[](https://github.com/php/php-src/issues/9618)
+[https://github.com/php/php-src/issues/9618](https://github.com/php/php-src/issues/9618)
 
 这样的话目前绕过 \_\_wakeup 的方法就不止 CVE-2016-7124 了, 加上 p 牛知识星球里的方法, 至少有四五种
 
