@@ -269,7 +269,7 @@ $c = new Easy();
 
 $b = new Sec();
 $b->obj = $c;
-$b->var = $d;;
+$b->var = $d;
 
 $a = new Start();
 $a->name = $b;
