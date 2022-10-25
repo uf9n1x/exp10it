@@ -1,8 +1,8 @@
 ---
 title: "MoeCTF 2022 Writeup"
-date: 2022-09-11T09:43:54+08:00
-lastmod: 2022-09-11T09:43:54+08:00
-draft: true
+date: 2022-10-26T09:43:54+08:00
+lastmod: 2022-10-26T09:43:54+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
@@ -18,9 +18,13 @@ math:
 lightgallery: false
 ---
 
+web 的支付系统挺有意思的
+
+其它方向的题之前也做了点, 后面就懒得写了...
+
 <!--more-->
 
-## Web 审计与渗透测试
+## Web
 
 ### ezhtml
 
@@ -685,7 +689,7 @@ id=1432&user=707aee25-e078-4821-9804-b29fe1e15179&amount=100&status=0&desc=2123&
 
 写 wp 的时候发现 flag 涨价了? 变成 200 块了
 
-## 隐写等杂项
+## Misc
 
 ### Hide-and-seek
 
@@ -725,7 +729,7 @@ U2FsdGVkX1+EPlLmNvaJK4Pe06nW0eLquWsUpdyv3fjXM2PcDBDKlXeKupnnWlFHewFEGmqpGyC1VdX8
 
 ### 寻找黑客的家
 
-先放着
+百度识图找到地址就行... flag 忘记了
 
 ### Locked bass
 
@@ -944,7 +948,7 @@ def hamming_correct(bitblock):
 b'Once upon a time, there were 1023 identical bottles, 1022 of which were plain water and one of which was poison. Any creature that drinks the poison will die within a week. Now, with 10 mice and a week, how do you tell which bottle has poison in it? moectf{Oh_Bin4ry_Mag1c_1s_s0o_c0O1!} Great!'
 ```
 
-## 古典密码
+## Crypto
 
 ### ABCDEFG~
 
@@ -1059,7 +1063,7 @@ moectf{attacking_the_vigenere_cipher_is_interesting}
 
 密钥是 `ghijklmnopqrstuvwxyzabcdef`
 
-## 软件逆向工程
+## Reverse
 
 ### check in
 
@@ -1277,7 +1281,7 @@ s.model()
  flag[3] = 99,
  flag[10] = 105,
  flag[14] = 101]
- ```
+```
 
 整理一下
 
