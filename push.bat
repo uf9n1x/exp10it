@@ -1,4 +1,4 @@
 git add .
-git commit -m "更新文章"
+git commit -m "auto deploy"
 git push
 pause
