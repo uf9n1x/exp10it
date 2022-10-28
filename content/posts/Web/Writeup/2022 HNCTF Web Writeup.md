@@ -1,8 +1,8 @@
 ---
 title: "2022 HNCTF Web Writeup"
-date: 2022-10-03T16:20:40+08:00
-lastmod: 2022-10-03T16:20:40+08:00
-draft: true
+date: 2022-10-29T9:20:40+08:00
+lastmod: 2022-10-29T9:20:40+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
@@ -17,6 +17,8 @@ math:
   enable: false
 lightgallery: false
 ---
+
+题目还行
 
 <!--more-->
 
