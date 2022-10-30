@@ -1,8 +1,8 @@
 ---
 title: "0xGame 2022 Writeup"
-date: 2022-10-27T11:08:03+08:00
-lastmod: 2022-10-27T11:08:03+08:00
-draft: true
+date: 2022-10-30T11:08:03+08:00
+lastmod: 2022-10-30T11:08:03+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
