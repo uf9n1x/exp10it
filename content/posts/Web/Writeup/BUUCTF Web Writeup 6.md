@@ -2,7 +2,7 @@
 title: "BUUCTF Web Writeup 6"
 date: 2022-11-02T19:36:33+08:00
 lastmod: 2022-11-02T19:36:33+08:00
-draft: true
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
