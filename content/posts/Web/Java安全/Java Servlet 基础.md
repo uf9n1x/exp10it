@@ -26,11 +26,11 @@ lightgallery: false
 
 ## Servlet 介绍
 
-> Servlet（Server Applet），全称Java Servlet。是用Java编写的服务器端程序。其主要功能在于交互式地浏览和修改数据，生成动态Web内容。狭义的Servlet是指Java语言实现的一个接口，广义的Servlet是指任何实现了这个Servlet接口的类，一般情况下，人们将Servlet理解为后者。
+> Servlet (Server Applet), 全称Java Servlet. 是用 Java 编写的服务器端程序. 其主要功能在于交互式地浏览和修改数据, 生成动态 Web 内容. 狭义的 Servlet 是指 Java 语言实现的一个接口, 广义的 Servlet 是指任何实现了这个 Servlet 接口的类, 一般情况下, 人们将 Servlet 理解为后者.
 >
-> Servlet运行于支持Java的应用服务器中。从实现上讲，Servlet可以响应任何类型的请求，但绝大多数情况下Servlet只用来扩展基于HTTP协议的Web服务器。
+> Servlet 运行于支持 Java 的应用服务器中. 从实现上讲, Servlet 可以响应任何类型的请求, 但绝大多数情况下 Servlet 只用来扩展基于 HTTP 协议的 Web 服务器.
 >
-> 最早支持Servlet标准的是JavaSoft的Java Web Server。此后，一些其它的基于Java的Web服务器开始支持标准的Servlet。
+> 最早支持 Servlet 标准的是 JavaSoft 的 Java Web Server. 此后, 一些其它的基于 Java 的 Web 服务器开始支持标准的 Servlet.
 
 [https://zh.wikipedia.org/wiki/Java_Servlet](https://zh.wikipedia.org/wiki/Java_Servlet)
 
@@ -843,7 +843,7 @@ public class EvilListener implements ServletRequestListener {
 
 代码使用了 RequestFacade 结合反射获取 Request 对象, 最终得到 Response, 然后获取 PrintWriter 进行回显
 
-idea 需添加 `org.apache.tomcat:catalina` 依赖
+idea 需添加 `org.apache.tomcat:tomcat-catalina` 依赖
 
 正常访问
 
