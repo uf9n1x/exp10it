@@ -5,7 +5,7 @@ lastmod: 2022-11-03T14:31:34+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['java 安全']
+tags: ['java安全']
 categories: ['web']
 
 hiddenFromHomePage: false

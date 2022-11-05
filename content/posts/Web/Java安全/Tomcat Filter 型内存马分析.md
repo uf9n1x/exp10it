@@ -209,7 +209,7 @@ filter 是被调用 Filter 实例, filterClass 是 Filter 对应的 Class, filte
 
 根据上面加载流程, 我们注入内存马的过程为
 
-1. 在 StandardContext 的 filterDefs 中添加 FilterDef (validateFilterMap 验证))
+1. 在 StandardContext 的 filterDefs 中添加 FilterDef (validateFilterMap 验证)
 2. 向 filterMaps 中添加 FilterMap
 3. 将对应的 FilterConfig (包含 FilterDef) 添加到 filterConfigs
 
@@ -308,6 +308,8 @@ filter 是被调用 Filter 实例, filterClass 是 Filter 对应的 Class, filte
         Constructor constructor = ApplicationFilterConfig.class.getDeclaredConstructor(Context.class, FilterDef.class);
         constructor.setAccessible(true);
         ApplicationFilterConfig applicationFilterConfig = (ApplicationFilterConfig) constructor.newInstance(standardContext, filterDef);
+        
+        // 添加 FilterConfig
         filterConfigs.put(filterName, applicationFilterConfig);
 
         out.print("inject success");
