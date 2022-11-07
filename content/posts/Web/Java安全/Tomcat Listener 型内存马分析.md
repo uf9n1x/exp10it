@@ -131,7 +131,7 @@ RequestFacade 实现了 HttpServletRequest 接口, 到这里其实已经可以�
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211051654004.png)
 
-Response 实现了 HttpServletResponse, 那么同样的也可以正常处理 response 响应
+Response 实现了 HttpServletResponse 接口, 那么同样的也可以正常处理 response 响应
 
 有关 Request 和 Response 的参考文章
 
