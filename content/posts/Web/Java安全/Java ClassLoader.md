@@ -78,7 +78,7 @@ class 的加载方法分为两种
 - 显式加载: 通过反射的形式, 例如 `Class.forName()` 或者调用 ClassLoader 的 loadClass 方法
 
 > 其中 `Class.forName()` 有两个重载方法
-> ```php
+> ```java
 > public static Class<?> forName(String className);
 > public static Class<?> forName(String name, boolean initialize, ClassLoader loader);
 > ```
