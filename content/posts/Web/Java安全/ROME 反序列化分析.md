@@ -18,7 +18,7 @@ math:
 lightgallery: false
 ---
 
-ROME 反序列化分析
+之前打 ctf 遇到的, 顺带写一下吧
 
 <!--more-->
 
