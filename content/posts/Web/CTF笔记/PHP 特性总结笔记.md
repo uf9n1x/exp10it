@@ -636,7 +636,7 @@ class_exists(string $class, bool $autoload = true): bool
 
 这里需要注意的是用 `class_exist` 检查一个类是否存在的时候, 默认会**自动**调用 `__autoload` 方法
 
-### 属性类型不敏感
+## 属性类型不敏感
 
 在 PHP 7.1 + 的版本中, 对属性类型 (public protected private) 不敏感
 
