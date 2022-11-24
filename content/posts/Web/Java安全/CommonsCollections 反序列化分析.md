@@ -24,7 +24,7 @@ CommonsCollections 反序列化分析, 鸽了好久了
 
 ## 基本知识
 
-Apache Commons Collections 可以看成是对 jdk Collection 类的扩展, 对其常用的数据结构操作进行了很好的封装, 抽象和补充
+Apache Commons Collections 可以看成是 jdk Collection 类的扩展, 它对常用的数据结构操作进行了很好的封装, 抽象和补充
 
 cc 链反序列化的根本原因就是它提供了一系列的 transformer, 将这些 transformer 组合起来就可以执行任意命令甚至是 java 字节码
 
@@ -587,7 +587,7 @@ cc3 相比于前面的 cc 链有两个特性, 第一是它引入了 TemplatesImp
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231623073.png)
 
-它的构造方法能够调用 `templates.newTransformer()`, 正好能与 TemplatesImpl 链串起来
+它的构造方法会调用 `templates.newTransformer()`, 正好能与 TemplatesImpl 链串起来
 
 TemplatesImpl 在之前讲 ClassLoader 的时候分析过, 这里就不写了
 
@@ -785,7 +785,7 @@ Gadget chain:
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231636059.png)
 
-这里会判断是否存在 comparator (通过构造方法传入), 存在的话则会进入 siftDownUsingComparator()
+判断是否存在 comparator (通过构造方法传入), 存在的话则会进入 siftDownUsingComparator()
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231637148.png)
 
@@ -793,7 +793,7 @@ Gadget chain:
 
 ![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211231638491.png)
 
-到这里思路以及很明显了, payload 如下
+到这里思路已经很明显了, payload 如下
 
 ```java
 package com.example.CommonsCollections2;
