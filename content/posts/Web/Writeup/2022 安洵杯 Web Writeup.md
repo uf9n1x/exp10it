@@ -5,7 +5,7 @@ lastmod: 2022-11-28T09:56:41+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['ct']
+tags: ['ctf']
 categories: ['web']
 
 hiddenFromHomePage: false
