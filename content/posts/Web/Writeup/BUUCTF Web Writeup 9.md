@@ -140,7 +140,7 @@ while True:
 
 ## [GWCTF 2019]mypassword
 
-随便注册一个用户登录, 然后看到 Feedback, 右键注释如下
+注册一个用户登录, 然后看到 Feedback, 右键注释如下
 
 ```php
 if(is_array($feedback)){
@@ -169,7 +169,7 @@ Content-Security-Policy: default-src 'self';script-src 'unsafe-inline' 'self'
 
 上面的黑名单绕过逻辑有点问题, 这里可以通过添加某个关键词来绕过该关键词前面的内容
 
-即往 input script src 这些单词里面插入 cookie 可以绕过, 但是 cookie 关键词本身绕不过去, 无法获取 `document. cookie` 的内容
+即往 input script src 这些单词里面插入 cookie 可以绕过, 但是 cookie 关键词本身绕不过去, 无法获取 `document.cookie` 的内容
 
 之后发现登录界面引用了一个 js 文件
 
