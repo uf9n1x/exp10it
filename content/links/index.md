@@ -33,7 +33,7 @@ lightgallery: false
 
 {{< friend name="PiCpo" url="http://picpo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210081952777.png" bio="二进制 + 前端大佬" >}}
 
-{{< friend name="To1in" url="http://blog.tolinchan.xyz/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250803971.png" bio="To1in" >}}
+{{< friend name="To1in" url="http://blog.tolinchan.xyz/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250803971.png" bio="密码大爹" >}}
 
 {{< friend name="winmt" url="https://www.cnblogs.com/winmt/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250808530.png" bio="Pwn 神" >}}
 
