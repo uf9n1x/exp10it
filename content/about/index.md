@@ -1,6 +1,6 @@
 ---
 title: "About"
-date: 2022-07-01T21:38:52+08:00
+date: 2022-12-15T21:38:52+08:00
 draft: false
 author: "X1r0z"
 
@@ -17,12 +17,14 @@ math:
 lightgallery: false
 ---
 
-南京邮电大学 大一新生
+### 介绍
 
-信安菜鸟
+南京邮电大学 大一在读
 
-半吊子程序员
+X1cT34m Web CTFer
 
-~~二次元~~
+业余半吊子程序员
 
-~~音游萌新~~
+### 联系
+
+[i@exp10it.cn](mailto:i@exp10it.cn)

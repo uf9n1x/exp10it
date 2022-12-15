@@ -95,7 +95,7 @@ enableEmoji = true
       # site description
       description = "X1r0z Blog"
       # site keywords
-      keywords = ["x1r0z", "blog", "security", "web", "ctf", "pentest", "php", "python", "java"]
+      keywords = ["x1r0z", "blog", "security", "web", "ctf", "awd", "pentest", "php", "python", "java", "exp10it"]
       # App icon config
       [languages.en.params.app]
         # optional site title override for the app when added to an iOS home screen or Android launcher
@@ -154,7 +154,7 @@ enableEmoji = true
           # title shown in home page (HTML format is supported)
           title = "X1r0z"
           # subtitle shown in home page
-          subtitle = "Student, NJUPT"
+          subtitle = "Student, X1cT34m"
           # whether to use typeit animation for subtitle
           typeit = true
           # whether to show social links
@@ -570,7 +570,7 @@ enableEmoji = true
       # Valine comment config (https://github.com/xCss/Valine)
       # Valine 评论系统设置 (https://github.com/xCss/Valine)
       [params.page.comment.valine]
-        enable = true
+        enable = false
         appId = "akLQ26jybmktV9apB3nOmo5U-gzGzoHsz"
         appKey = "eP1Ll3UDRY7ubEps9k4off0s"
         placeholder = ""
