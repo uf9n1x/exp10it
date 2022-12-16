@@ -4,8 +4,8 @@ date: 2018-08-24T00:00:00+08:00
 draft: false
 author: "X1r0z"
 
-tags: ["python"]
-categories: ["web","编程"]
+tags: ["python", "bugscan"]
+categories: ["编程"]
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
