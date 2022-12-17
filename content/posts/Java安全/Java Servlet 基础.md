@@ -6,7 +6,7 @@ draft: false
 author: "X1r0z"
 
 tags: ['servlet']
-categories: ['Java 安全']
+categories: ['Java安全']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
