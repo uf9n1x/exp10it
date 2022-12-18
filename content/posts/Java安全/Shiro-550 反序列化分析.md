@@ -71,7 +71,7 @@ web.xml 如下
 </web-app>
 ```
 
-在 Servlet 中 shiro 通过注入自定义的 web filter 来实现其功能, 所以我们只要跟着 ShiroFilter 这个类来一步一步调试即可
+在 Servlet 中 shiro 通过注入自定义的 web filter 来实现其功能, 所以我们只要跟着 ShiroFilter 这个类一步一步调试即可
 
 在 Spring 中 shiro 通过注册 Bean 来实现, 因为后面的关键逻辑都一样就不写了
 
@@ -117,7 +117,7 @@ Builder 部分就是创建 subjectContext, 设置 SecurityManager 为 DefaultWeb
 
 从 cookie 的 rememberMe 参数中拿到 base64 数据并解码
 
-然后会转到 convertBytesToPrincipals 方法, 产生反序列化
+然后会转到 convertBytesToPrincipals 方法
 
 ![image-20221218211423843](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212182114030.png)
 
