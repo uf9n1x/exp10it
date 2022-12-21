@@ -18,7 +18,7 @@ math:
 lightgallery: false
 ---
 
-BUUCTF 刷题记录... (第3页上)
+BUUCTF 刷题记录...
 
 最近忙着开学耽误了一点时间
 

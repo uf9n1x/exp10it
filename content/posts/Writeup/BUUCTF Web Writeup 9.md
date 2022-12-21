@@ -18,7 +18,7 @@ math:
 lightgallery: false
 ---
 
-BUUCTF 刷题记录... (第5页上)
+BUUCTF 刷题记录...
 
 <!--more-->
 

