@@ -5,7 +5,7 @@ lastmod: 2022-08-27T23:53:19+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['ctf', 'php']
+tags: ['ctf']
 categories: ['Writeup']
 
 hiddenFromHomePage: false
@@ -18,7 +18,7 @@ math:
 lightgallery: false
 ---
 
-BUUCTF 刷题记录...
+BUUCTF 刷题记录... (第2页上)
 
 <!--more-->
 

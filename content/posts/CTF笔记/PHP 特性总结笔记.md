@@ -1,7 +1,7 @@
 ---
 title: "PHP 特性总结笔记"
 date: 2022-08-16T17:24:37+08:00
-lastmod: 2022-08-16T17:24:37+08:00
+lastmod: 2022-12-20T17:24:37+08:00
 draft: false
 author: "X1r0z"
 
@@ -255,6 +255,13 @@ aa3OFF9m
 10932435112
 ```
 
+其它有时候可能用到的 payload
+
+```
+md5(240610708) = 0e462097431906509019562988736854
+md5(0e215962017) = 0e291242476940776845150308577824
+```
+
 ## md5 sha1 数组绕过
 
 md5 加密数组时返回 null
@@ -467,7 +474,7 @@ echo $fl0g;
 
 https://blog.csdn.net/qq_46091464/article/details/109095382
 
-## $GLOBALS 和 get_defined_vars()
+## \$GLOBALS 和 get_defined_vars()
 
 [https://www.php.net/manual/zh/reserved.variables.globals](https://www.php.net/manual/zh/reserved.variables.globals)
 
@@ -479,7 +486,7 @@ get_defined_vars() 返回由所有已定义变量所组成的数组
 
 有时候可以从这里面查看 `$flag`
 
-## $\_SERVER['argv'] 与 $\_SERVER['QUERY_STRING']
+## \$\_SERVER['argv'] 与 \$\_SERVER['QUERY_STRING']
 
 同样都是 GET 传参, 截取 ? 之后的部分
 
