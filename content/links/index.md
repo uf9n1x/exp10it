@@ -42,3 +42,5 @@ lightgallery: false
 {{< friend name="zysgmzb" url="https://www.cnblogs.com/zysgmzb/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250809409.png" bio="章鱼烧购买正版" >}}
 
 {{< friend name="安权" url="https://anoquan.cn/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212112254828.jpeg" bio="XDSEC & L-team Weber" >}}
+
+{{< friend name="狒猩橙" url="https://www.cnblogs.com/pwnfeifei/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212232143289.png" bio="另一位 Pwn 神" >}}
