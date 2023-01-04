@@ -36,7 +36,7 @@ wiki 讲的比我好
 
 JNDI 本质上就是以一种统一的方式来管理对象, 开发者也可以通过它提供的接口来接入自己的服务
 
-一个简单的通过 jndi 来访问 rmi 对象的 demo
+一个简单的通过 JNDI 来访问 RMI 对象的 demo
 
 RMIServer.java
 
@@ -110,7 +110,7 @@ interface Hello extends Remote {
 }
 ```
 
-InitialContext 为初始环境上下文, 我们通过上下文来访问各种 jndi 服务
+InitialContext 为初始环境上下文, 我们通过上下文来访问各种 JNDI 服务
 
 它有如下几个常用方法
 
@@ -120,7 +120,7 @@ InitialContext 为初始环境上下文, 我们通过上下文来访问各种 jn
 - list(Sring name):
 - lookup(String name)
 
-jndi 注入的利用点就是这个 lookup 方法
+JNDI 注入的利用点就是这个 lookup 方法
 
 ## JNDI 注入
 
@@ -227,7 +227,7 @@ Reference 可以被绑定在 RMI 或 LDAP 服务器上, 下文将分别讲解如
 
 ### RMI + Reference
 
-对于 RMI 协议, 我们可以将 Reference (或者套上一层 ReferenceWrapper) 绑定到 RMI Registry, 然后控制 lookup 参数指向恶意 RMI 服务器, 从而加载恶意 class
+对于 RMI 协议, 我们可以将 Reference (或者套上一层 ReferenceWrapper) 绑定到 RMI Registry, 然后控制 lookup 参数指向恶意 RMI 服务器来加载恶意 class
 
 RMIServer.java
 
@@ -497,7 +497,7 @@ public class JNDIDemo {
 
 ![image-20221225121457288](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212251214491.png)
 
-LDAP 协议中存在一个 `JAVA_ATTRIBUTES` 静态数组, 通过它来获取 attribute name 然后去 var0 中查询
+LDAP 的通信过程中存在一个 `JAVA_ATTRIBUTES` 静态数组, 通过它来获取 attribute name 然后去 var0 中查询
 
 部分 attribute name 对应的值如下
 
@@ -533,7 +533,7 @@ java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer "http:/
 - **6u141, 7u131, 8u121 之后**: `com.sun.jndi.rmi.object.trustURLCodebase` 和 `com.sun.jndi.cosnaming.object.trustURLCodebase` 默认为 false, 禁止 RMI 和 CORBA 协议使用远程 codebase 来进行 JNDI 注入
 - **6u211, 7u201, 8u191 之后**: `com.sun.jndi.ldap.object.trustURLCodebase` 默认为 false, 禁止 LDAP 协议使用远程 codebase 来进行 JNDI 注入
 
-以下会列举一些绕过高版本 jdk 来进行 JNDI 注入的方法
+下面会列举一些绕过高版本 jdk 来进行 JNDI 注入的方法
 
 ### 利用本地 Class 作为 Factory
 
@@ -633,7 +633,7 @@ Exception in thread "main" javax.naming.NamingException: No set method found for
 
 ### 利用 LDAP 反序列化
 
-原理就是在返回 LDAP 查询结果的时候设置了 javaSerializedData 这个 attribute, 然后会调用 deserializeObject 进行反序列化
+原理就是在 LDAP 服务器返回查询结果的时候设置了 javaSerializedData 这个 attribute, 然后客户端就会调用 deserializeObject 进行反序列化
 
 缺点在于需要知道目标机的本地 classpath 中是否存在相应的 gadget
 
