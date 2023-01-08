@@ -374,7 +374,7 @@ Can-Retransform-Classes: true
 
 ![image-20230104190219022](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202301041902209.png)
 
-ApplicationFilterChain 这个类其实在之前研究 tomcat filter 型内存马的时候遇到过, 它管理着一组 filter 的调用
+ApplicationFilterChain 这个类其实在之前研究 tomcat filter 型内存马的时候就遇到过, 它管理着一组 filter 的调用
 
 从图中可以看出来它的 doFilter 会调用 internalDoFilter, 后者依次取出各种 filter 并链式调用其 doFilter 方法
 
@@ -609,7 +609,7 @@ springboot filter 执行流程跟 tomcat 有一点区别 (多了 OncePerRequestF
 
 最后说一下关于 agent 依赖包的问题
 
-网上看到很多文章中与反序列化结合的 payload 都是先用 URLClassLoader 在目标环境下加载 tools.jar, 然后通过一堆反射去调用 VirtualMachine 注入**已经上传好的** agent.jar (打包了 javaassist)
+网上看到很多文章中与反序列化结合的 payload 都是先用 URLClassLoader 在目标环境下加载 tools.jar, 然后通过一堆反射去调用 VirtualMachine 注入**已经上传好的** agent.jar (打包了 Javaassist)
 
 我的看法是既然你已经能够上传 agent 了, 那么直接把 tools.jar 一并打包进去就行, 没有必要那么麻烦的去用 URLClassLoader 加载
 
