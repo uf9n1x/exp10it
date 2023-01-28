@@ -768,9 +768,9 @@ PSYNC <40-bytes-data>
 
 本地用 poc 简单抓个包
 
-![image-20230112152825647](C:\Users\exp10it\AppData\Roaming\Typora\typora-user-images\image-20230112152825647.png)
+![image-20230112152825647](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202301282025771.png)
 
-![image-20230112152821174](C:\Users\exp10it\AppData\Roaming\Typora\typora-user-images\image-20230112152821174.png)
+![image-20230112152821174](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202301282025258.png)
 
 然后 redis 从 4.0 开始支持导入自定义 module, 所以我们可以利用自定义的 module 来执行任意命令或者反弹 shell
 
