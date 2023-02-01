@@ -501,7 +501,7 @@ public static void agentmain(String args, Instrumentation inst) throws Exception
 //代码 2
 ```
 
-这里我们先复习一下 JVM 的加载特性: **动态加载**
+这里我们先复习一下 JVM 的加载特性: 动态加载
 
 什么意思呢? JVM 只会在它需要用到这个 class 的时候才去加载它, 否则就不会加载
 
@@ -533,7 +533,7 @@ javassist.NotFoundException: org.apache.catalina.core.ApplicationFilterChain
 
 但实际上 ApplicationFilterChain 并没有被加载, 所以 getAllLoadedClasses 返回的结果里面根本就没有它, 这样的话后面也就不会执行 addTransformer, 更不会去重加载 ApplicationFilterChain
 
-所以综上所述, 最终的解决办法就是**在启动 web 容器之后, 先手动访问一下网页, 然后再去注入 agent 内存马** (这个时候的代码 1 和代码 2 没有任何区别)
+所以综上所述, 最终的解决办法就是在启动 web 容器之后, 先手动访问一下网页, 然后再去注入 agent 内存马 (这个时候的代码 1 和代码 2 没有任何区别)
 
 成功执行命令
 
@@ -595,9 +595,9 @@ springboot filter 执行流程跟 tomcat 有一点区别 (多了 OncePerRequestF
 
 调用栈中除了 OncePerRequestFilter 以外一共出现了四次其它的 filter, 所以一共会弹出五次计算器
 
-那么最终的结论是什么? **结论是我们在实战中最好不要直接利用 `ApplicationFilterChain#doFilter` 来注入内存马**
+那么最终的结论是什么? 结论是最好不要直接利用 `ApplicationFilterChain#doFilter` 来注入内存马
 
-因为程序会根据 filter 数量的不同, 执行多次 Java 代码 (至少两次), 这种情况在某些场景下可能会干扰正常业务的运行, 在攻防中甚至会暴露痕迹 (想象一下同时有五个 fscan 在扫内网)
+因为程序会根据 filter 数量的不同, 执行多次 Java 代码 (至少两次), 这种情况在某些场景下可能会干扰正常业务的运行, 甚至会暴露痕迹 (想象一下同时有五个 fscan 在扫内网)
 
 所以正确的做法是去 hook 某个在一次 request 请求中只会被调用一次的方法, 例如 `org.apache.catalina.core.StandardWrapperValve#invoke`
 
@@ -609,7 +609,7 @@ springboot filter 执行流程跟 tomcat 有一点区别 (多了 OncePerRequestF
 
 最后说一下关于 agent 依赖包的问题
 
-网上看到很多文章中与反序列化结合的 payload 都是先用 URLClassLoader 在目标环境下加载 tools.jar, 然后通过一堆反射去调用 VirtualMachine 注入**已经上传好的** agent.jar (打包了 Javaassist)
+网上看到很多文章中与反序列化结合的 payload 都是先用 URLClassLoader 在目标环境下加载 tools.jar, 然后通过一堆反射去调用 VirtualMachine 注入已经上传好的 agent.jar (打包了 Javaassist)
 
 我的看法是既然你已经能够上传 agent 了, 那么直接把 tools.jar 一并打包进去就行, 没有必要那么麻烦的去用 URLClassLoader 加载
 
@@ -617,7 +617,7 @@ springboot filter 执行流程跟 tomcat 有一点区别 (多了 OncePerRequestF
 
 另外内存马一旦注入了之后 agent jar 包就不能删除, 必须得一直保存在目标服务器上, 这样反而会文件落地, 感觉挺鸡肋的...
 
-**关于文件不落地的注入方法可以参考 rebeyond 师傅的文章**
+关于文件不落地的注入方法可以参考 rebeyond 师傅的文章
 
 [https://mp.weixin.qq.com/s/xxaOsJdRE5OoRkMLkIj3Lg](https://mp.weixin.qq.com/s/xxaOsJdRE5OoRkMLkIj3Lg)
 
