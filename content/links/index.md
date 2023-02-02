@@ -44,3 +44,5 @@ lightgallery: false
 {{< friend name="安权" url="https://anoquan.cn/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212112254828.jpeg" bio="XDSEC & L-team Weber" >}}
 
 {{< friend name="狒猩橙" url="https://www.cnblogs.com/pwnfeifei/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212232143289.png" bio="另一位 Pwn 神" >}}
+
+{{< friend name="crazyman_army" url="https://crazymanarmy.github.io/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202302022053016.png" bio="空白✌" >}}
