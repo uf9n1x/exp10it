@@ -1,6 +1,6 @@
 ---
 title: "2022 西湖论剑 Web 部分 Writeup"
-date: 2023-02-032T18:00:53+08:00
+date: 2023-02-03T18:00:53+08:00
 lastmod: 2023-02-03T18:00:53+08:00
 draft: false
 author: "X1r0z"
