@@ -27,4 +27,6 @@ X1cT34m Web CTFer
 
 ### 联系
 
-[i@exp10it.cn](mailto:i@exp10it.cn)
+Email: [i@exp10it.cn](mailto:i@exp10it.cn)
+
+QQ: `sha256(QQ) = 3b5e55b54e2e038c5ccb206a271f82212502f25a1007b2636833eca657e52555`
