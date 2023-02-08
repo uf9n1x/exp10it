@@ -21,7 +21,7 @@ lightgallery: false
 
 南京邮电大学 大一在读
 
-X1cT34m Web CTFer
+Web CTFer in X1cT34m & Nu1L Team
 
 业余半吊子程序员
 

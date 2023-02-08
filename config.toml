@@ -147,7 +147,7 @@ enableEmoji = true
           # title shown in home page (HTML format is supported)
           title = "X1r0z"
           # subtitle shown in home page
-          subtitle = "Student, X1cT34m"
+          subtitle = "Student, X1cT34m & Nu1L Team"
           # whether to use typeit animation for subtitle
           typeit = true
           # whether to show social links
@@ -711,7 +711,7 @@ enableEmoji = true
   [markup.highlight]
     codeFences = true
     guessSyntax = true
-    lineNos = true
+    lineNos = false
     lineNumbersInTable = true
     # false 是必要的设置 (https://github.com/dillonzq/LoveIt/issues/158)
     noClasses = false
