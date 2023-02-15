@@ -550,7 +550,7 @@ name 和 balance 的显示是由另一个访问 `/api/info` 的 ajax 请求来�
 
 从图中加载的顺序也可以看到, 这两个请求之间必定会存在一定的网络延迟
 
-所以我们可以用这么一种条件竞争的思路: 先在后端处理 `/create/xx` 路由的时候维持住 admin 的 token, 然后 render 渲染 html 返回, html 中加载了 populate.js, 然后发起 ajax 请求访问 `/api/info`, 在这时候进行条件竞争, 使得 token 更改为我们自定义的用户 (username 处注入了 meta 标签), 这样 js 接收到的就是包含 meta 标签的 username, 然后将数据渲染到 html 中, 浏览器就会发起 meta 跳转, 携带的反而是 admin 的 gift 地址
+所以我们可以用这么一种条件竞争的思路: 先在后端处理 `/create/xx` 路由的时候维持住 admin 的 token, 然后 render 渲染 html 返回, html 中加载了 populate.js, 然后发起 ajax 请求访问 `/api/info`, 在这时候进行条件竞争, 使得 token 更改为我们自定义的用户 (username 处注入了 meta 标签), 这样 js 接收到的就是包含 meta 标签的 username, 然后将数据渲染到 html 中, 浏览器就会发起 meta 跳转, 最后携带的反而是 admin 的 gift 地址
 
 所以可以得到如下的 exp
 
