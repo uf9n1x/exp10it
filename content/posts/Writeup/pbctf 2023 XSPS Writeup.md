@@ -495,4 +495,4 @@ async function main() {
 main();
 ```
 
-最后无论那种 exp 都会存在 20s 限制的问题, 所以不可避免地都要去多次 report url
+最后无论那种 exp 都会存在 20s 限制的问题, 所以都要不可避免地去多次 report url
