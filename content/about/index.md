@@ -36,3 +36,7 @@ QQ: `sha256(QQ) = 3b5e55b54e2e038c5ccb206a271f82212502f25a1007b2636833eca657e525
 | CVE-ID | Vendor | Product | Type | CVSS |
 | :----: | :----: | :----: | :----: | :----: |
 | [CVE-2023-21931](https://www.oracle.com/security-alerts/cpuapr2023.html) | Oracle | WebLogic Server | RCE | 7.5 |
+
+### My CNVD List
+
+- CNVD-2023-38292
