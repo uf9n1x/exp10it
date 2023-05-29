@@ -209,7 +209,7 @@ http://123.56.244.196:17997/flask?name=/shell?cmd=cat%2520/00cab53f1ece95d90020_
 
 ![image-20230527131325864](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202305271313912.png)
 
-## **DeserBug**
+## DeserBug
 
 题目给了 commons-collections 和 hutool 依赖, 由于前者是 3.2.2 版本的所以诸如 InvokeTransformer 之类的就不能用了
 
@@ -393,7 +393,7 @@ SecretKey012345678901234567890123456789012345678901234567890123456789
 
 ![image-20230528123723566](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202305281237618.png)
 
-## **dumpit**
+## dumpit
 
 参考文章: [https://mariadb.com/kb/en/mariadb-dump/](https://mariadb.com/kb/en/mariadb-dump/)
 
