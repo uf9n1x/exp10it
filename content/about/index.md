@@ -19,9 +19,11 @@ lightgallery: false
 
 ### 介绍
 
+ID: X1r0z (xz)
+
 南京邮电大学 大一在读
 
-Web CTFer in X1cT34m & Nu1L Team
+Web CTFer in [X1cT34m](https://ctf.njupt.edu.cn/) & [Nu1L Team](https://www.nu1l.com/) & [Straw Hat](https://strawhat.team/)
 
 业余半吊子程序员
 
