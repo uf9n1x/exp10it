@@ -33,18 +33,10 @@ lightgallery: false
 
 {{< friend name="羽墨" url="https://www.yumoyumo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209141342239.png" bio="后端大手子" >}}
 
-{{< friend name="AIMISAKA" url="http://blog.aimisaka.site/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202209211722437.png" bio="Go 语言大佬" >}}
-
-{{< friend name="PiCpo" url="http://picpo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210081952777.png" bio="二进制 + 前端大佬" >}}
-
-{{< friend name="To1in" url="http://blog.tolinchan.xyz/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250803971.png" bio="密码大爹" >}}
-
-{{< friend name="winmt" url="https://www.cnblogs.com/winmt/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250808530.png" bio="Pwn 神" >}}
-
-{{< friend name="zysgmzb" url="https://www.cnblogs.com/zysgmzb/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202210250809409.png" bio="章鱼烧购买正版" >}}
+{{< friend name="PiCpo" url="http://picpo.top/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202306271353630.png" bio="PiCpo 教授" >}}
 
 {{< friend name="安权" url="https://anoquan.cn/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212112254828.jpeg" bio="XDSEC & L-team Weber" >}}
 
-{{< friend name="狒猩橙" url="https://www.cnblogs.com/pwnfeifei/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212232143289.png" bio="另一位 Pwn 神" >}}
+{{< friend name="狒猩橙" url="https://www.cnblogs.com/pwnfeifei/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212232143289.png" bio="Pwn 神" >}}
 
 {{< friend name="crazyman_army" url="https://crazymanarmy.github.io/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202302022053016.png" bio="空白✌" >}}
