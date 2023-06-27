@@ -136,6 +136,54 @@ hashCode 可以碰撞, 参考 marshalsec 源码
 
 ### Patch
 
+FilterUtil
+
+```java
+package WEB-INF.classes.com.ctf.rceit.utils;
+
+public class FilterUtil {
+  public static boolean sqlFilter(String input) {
+    String str = input.toLowerCase();
+    String[] sqlKeywords = { 
+        "select", "insert", "update", "where", "if", "case", "delete", "drop", "truncate", "create", 
+        "org", "springframework", "flag", "cat", "less", "more", "tac", "bash", "sh", "readflag" };
+    String[] sqlOperators = { 
+        "'", "\"", "--", "=", "<", ">", "<=", ">=", "<>", "!=", 
+        "like", "and", "or", "{", "}", "[", "]", "@", "$" };
+    for (String keyword : sqlKeywords) {
+      if (str.contains(keyword))
+        return true; 
+    } 
+    for (String operator : sqlOperators) {
+      if (str.contains(operator))
+        return true; 
+    } 
+    return false;
+  }
+  
+  public static boolean keyFilter(String input) {
+    String str = input.toLowerCase();
+    String[] Keywords = { 
+        "framework", "getClass", "ClassLoader", "update", "values", "set", "ProcessBuilder", "thymeleaf", "mybatis", "wrapAsAPI", 
+        "getRuntime", "exec", "getStaticModels", "spring", "Runtime", "select", "java", "WHERE", "delete", "drop", 
+        "truncate", "invoke", "Manage", "script", "gson", "mysql", "org", "Gson", "com", "lang", 
+        "flag", "cat", "less", "more", "tac", "bash", "sh", "readflag" };
+    String[] Operators = { 
+        "@", "--", "<", ">", "<=", ">=", "<>", "!=", "'", "\"", 
+        "=" };
+    for (String keyword : Keywords) {
+      if (str.contains(keyword))
+        return true; 
+    } 
+    for (String operator : Operators) {
+      if (str.contains(operator))
+        return true; 
+    } 
+    return false;
+  }
+}
+```
+
 UserController
 
 ```java
@@ -457,7 +505,7 @@ nohup /app/babygo >/dev/null 2>&1 &
 
 ### Attack
 
-只有二进制文件, 哈哈, **过于抽象**
+只有二进制文件
 
 用 IDA 找了几个路由
 
@@ -548,3 +596,5 @@ else {
 评价是不如原神
 
 明年不会再打了
+
+![op](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202306271017870.jpeg)
