@@ -1,5 +1,5 @@
 ---
-title: "2023 CISCN 总决赛 Writeup"
+title: "2023 CISCN 总决赛 AWD & 渗透 Writeup"
 date: 2023-07-27T19:33:55+08:00
 lastmod: 2023-07-27T19:33:55+08:00
 draft: false
@@ -18,7 +18,7 @@ math:
 lightgallery: false
 ---
 
-2023 CISCN 总决赛 Writeup
+2023 CISCN 总决赛 AWD & 渗透 Writeup
 
 <!--more-->
 
