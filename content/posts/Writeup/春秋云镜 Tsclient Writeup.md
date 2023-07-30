@@ -644,6 +644,8 @@ flag03 在 Administrator 家目录下
 
 ## 后记
 
+中间重置了好几次靶机 (
+
 打完后才发现 `WIN2016$` 在 `Domain Admins` 组内, 所以直接 DCSync 也行
 
 查看域委派关系可以发现存在从 `WIN19-CLIENT` 到 `WIN2016` 的约束委派, 猜测或许也能通过 RDP 反打或者其它方式拿到 `WIN19-CLIENT` 的权限, 然后再通过委派拿到 `WIN2016` 的权限?
