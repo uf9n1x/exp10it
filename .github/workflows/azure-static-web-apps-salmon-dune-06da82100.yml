@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-          set-safe-directory: '/github/workflow'
+          set-safe-directory: '/github/workspace'
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
