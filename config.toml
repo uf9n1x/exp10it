@@ -295,8 +295,7 @@ enableEmoji = true
     # 是否显示 Hugo 和主题信息
     hugo = true
     # 托管服务信息 (支持 HTML 格式)
-    # <a title="Github Pages" href="https://docs.github.com/en/pages/" target="_blank" rel="noopener noreffer">GitHub Pages</a>
-    hostedOn = '<a title="Tencent Cloud" href="https://cloud.tencent.com/" target="_blank" rel="noopener noreffer">Tencent Cloud</a>' 
+    hostedOn = '<a title="Microsoft Azure" href="https://azure.com/" target="_blank" rel="noopener noreffer">Microsoft Azure</a>' 
     # 是否显示版权信息
     copyright = true
     # 是否显示作者
