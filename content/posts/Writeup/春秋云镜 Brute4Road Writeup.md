@@ -5,7 +5,7 @@ lastmod: 2023-08-04T16:52:23+08:00
 draft: false
 author: "X1r0z"
 
-tags: ['windows', 'domain' 'mssql']
+tags: ['windows', 'domain', 'mssql']
 categories: ['Writeup']
 
 hiddenFromHomePage: false
