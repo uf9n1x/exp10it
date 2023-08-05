@@ -558,10 +558,7 @@ BloodHound
 
 ![image-20230804153945192](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202308041539243.png)
 
-两种思路
-
-- Users 组为 Enterprise Admins 组的成员, 因此只要拿到 William 账户的凭据就能拿下域控
-- MSSQLSERVER 配置了到域控的约束委派, 可以通过 S4U 伪造高权限 ST 拿下域控
+MSSQLSERVER 配置了到域控的约束委派, 可以通过 S4U 伪造高权限 ST 拿下域控
 
 进程列表中可以看到存在 William 的会话
 
