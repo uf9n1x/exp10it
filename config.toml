@@ -295,7 +295,7 @@ enableEmoji = true
     # 是否显示 Hugo 和主题信息
     hugo = true
     # 托管服务信息 (支持 HTML 格式)
-    hostedOn = '<a title="Microsoft Azure" href="https://azure.com/" target="_blank" rel="noopener noreffer">Microsoft Azure</a>' 
+    hostedOn = '<a title="Tencent COS" href="https://cloud.tencent.com/product/cos" target="_blank" rel="noopener noreffer">Tencent COS</a>' 
     # 是否显示版权信息
     copyright = true
     # 是否显示作者
