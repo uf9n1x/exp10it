@@ -411,7 +411,7 @@ meterpreter > cat flag02.txt
            ##                                                           :####:
 
 
-flag02: flag{0286999a-84ba-4685-a220-bdaf3d8e0210}
+flag02: [REDACTED]
 ```
 
 ## flag03
