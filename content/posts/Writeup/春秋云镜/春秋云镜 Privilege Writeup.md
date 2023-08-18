@@ -581,8 +581,8 @@ NLSRTL Version 11.2.0.1.0 - Production
 
 ```sql
 begin dbms_java.grant_permission( 'XRADMIN', 'SYS:java.io.FilePermission', '<<ALL FILES>>', 'read,write,execute,delete');end;
-begin dbms_java.grant_permission( 'XRADMIN', 'SYS:java.lang.RuntimePermission', 'writeFileDescriptor', ''); end;
-begin dbms_java.grant_permission( 'XRADMIN', 'SYS:java.lang.RuntimePermission', 'readFileDescriptor', '' ); end;
+begin dbms_java.grant_permission( 'XRADMIN', 'SYS:java.lang.RuntimePermission', 'writeFileDescriptor', '');end;
+begin dbms_java.grant_permission( 'XRADMIN', 'SYS:java.lang.RuntimePermission', 'readFileDescriptor', '' );end;
 ```
 
 创建 java source

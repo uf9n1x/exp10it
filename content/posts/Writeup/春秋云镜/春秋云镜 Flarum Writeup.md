@@ -254,7 +254,7 @@ crackmapexec
 
 ![image-20230818153856663](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202308181538703.png)
 
-![image-20230818153922055](../../../../Library/Application Support/typora-user-images/image-20230818153922055.png)
+![image-20230818153922055](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202308181843393.png)
 
 也能 rdp 到 PC1, 不过没啥有用的信息
 
