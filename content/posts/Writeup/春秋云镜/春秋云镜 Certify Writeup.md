@@ -311,9 +311,6 @@ Certipy 跑一遍可以利用的证书
 
 ```shell
 $ proxychains certipy find -u 'liupeng@xiaorang.lab'  -password 'fiAzGwEMgTY' -dc-ip 172.22.9.7 -vulnerable -stdout
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 Certipy v4.7.0 - by Oliver Lyak (ly4k)
 
 [*] Finding certificate templates

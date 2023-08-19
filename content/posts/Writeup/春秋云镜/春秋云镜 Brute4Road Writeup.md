@@ -189,12 +189,6 @@ start vulscan
 
 ```shell
 $ proxychains wpscan --url "http://172.22.2.18/"
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 _______________________________________________________________
          __          _______   _____
          \ \        / /  __ \ / ____|
@@ -443,9 +437,6 @@ smb 版本信息
 
 ```shell
 $ proxychains nmap -sV -sT 172.22.2.18 -p 139,445
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 Starting Nmap 7.94 ( https://nmap.org ) at 2023-08-04 14:47 CST
 Stats: 0:00:03 elapsed; 0 hosts completed (0 up), 1 undergoing Ping Scan
 Parallel DNS resolution of 1 host. Timing: About 0.00% done

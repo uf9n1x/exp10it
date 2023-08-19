@@ -593,9 +593,6 @@ crackmapexec
 
 ```shell
 $ proxychains crackmapexec smb -u Aldrich -p 'P@ssw0rd' -d xiaorang.lab 172.22.8.0/24
-[proxychains] config file found: /usr/local/etc/proxychains.conf
-[proxychains] preloading /usr/local/lib/libproxychains4.dylib
-[proxychains] DLL init: proxychains-ng 4.16-git-13-g133e06b
 SMB         172.22.8.46     445    WIN2016          [*] Windows Server 2016 Datacenter 14393 x64 (name:WIN2016) (domain:xiaorang.lab) (signing:False) (SMBv1:True)
 SMB         172.22.8.18     445    WIN-WEB          [*] Windows Server 2016 Datacenter 14393 x64 (name:WIN-WEB) (domain:xiaorang.lab) (signing:False) (SMBv1:True)
 SMB         172.22.8.15     445    DC01             [*] Windows 10.0 Build 20348 x64 (name:DC01) (domain:xiaorang.lab) (signing:True) (SMBv1:False)
