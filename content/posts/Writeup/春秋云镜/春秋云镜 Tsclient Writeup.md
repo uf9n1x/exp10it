@@ -27,7 +27,7 @@ lightgallery: false
 fscan
 
 ```
-➜  fscan ./fscan_darwin_arm64 -h 39.99.141.107
+$ fscan ./fscan_darwin_arm64 -h 39.99.141.107
 
    ___                              _
   / _ \     ___  ___ _ __ __ _  ___| | __

