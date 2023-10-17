@@ -164,7 +164,7 @@ patch 听说是去网上找新版的补丁包然后直接替换
 
 最终靶场成绩为全场第1名
 
-![4238701B-9089-47AD-9F8B-CE5789EB39E5](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202310172133947.png)
+![IMG_6781](https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202310172154679.JPG)
 
 ### 节点1 - Redis (公网)
 
