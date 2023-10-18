@@ -40,3 +40,5 @@ lightgallery: false
 {{< friend name="狒猩橙" url="https://www.cnblogs.com/pwnfeifei/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202212232143289.png" bio="Pwn 神" >}}
 
 {{< friend name="crazyman_army" url="https://crazymanarmy.github.io/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202302022053016.png" bio="空白✌" >}}
+
+{{< friend name="狗and猫" url="https://fushuling.com/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202310180943190.jpg" bio="Web/Misc@SU" >}}

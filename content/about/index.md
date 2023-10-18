@@ -21,7 +21,7 @@ lightgallery: false
 
 ID: X1r0z (xz)
 
-南京邮电大学 大一在读
+南京邮电大学 大二在读
 
 Web CTFer in [X1cT34m](https://ctf.njupt.edu.cn/) & [Nu1L Team](https://www.nu1l.com/) & [Straw Hat](https://strawhat.team/)
 
@@ -38,3 +38,4 @@ QQ: `sha256(QQ) = 3b5e55b54e2e038c5ccb206a271f82212502f25a1007b2636833eca657e525
 | CVE-ID | Vendor | Product | Type | CVSS |
 | :----: | :----: | :----: | :----: | :----: |
 | [CVE-2023-21931](https://www.oracle.com/security-alerts/cpuapr2023.html) | Oracle | WebLogic Server | RCE | 7.5 |
+| [CVE-2023-22086](https://www.oracle.com/security-alerts/cpuoct2023.html) | Oracle | WebLogic Server | RCE | 7.5 |
