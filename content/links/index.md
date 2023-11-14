@@ -42,3 +42,5 @@ lightgallery: false
 {{< friend name="crazyman_army" url="https://crazymanarmy.github.io/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202302022053016.png" bio="空白✌" >}}
 
 {{< friend name="狗and猫" url="https://fushuling.com/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202310180943190.jpg" bio="Web/Misc@SU" >}}
+
+{{< friend name="tari" url="https://tari.moe/" avatar="https://exp10it-1252109039.cos.ap-shanghai.myqcloud.com/img/202311141645853.png" bio="Cloud Security | Web" >}}
